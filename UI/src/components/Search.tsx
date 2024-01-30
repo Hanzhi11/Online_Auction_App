@@ -95,7 +95,7 @@ function Search() {
                             }
                             return 'bg-white hover:bg-slate-200'
                         }}
-                        weekDayClassName={(_date: Date) => {
+                        weekDayClassName={() => {
                             return 'font-normal'
                         }}
                         renderCustomHeader={({
