@@ -23,9 +23,7 @@ export default {
       sans: ['Poppins', 'Arial', 'sans-serif']
     },
   },
-  plugins: [
-    require('flowbite/plugin')
-  ],
+  plugins: [],
   important: true,
 }
 
