@@ -36,7 +36,7 @@ const STATE_OPTIONS = [
 
 function Search() {
     const [address, setAddress] = useState<string>('');
-    const [selectedState, setSelectedState] = useState<string>(STATE_OPTIONS[1]);
+    const [selectedState, setSelectedState] = useState<string>(STATE_OPTIONS[0]);
     const [startDate, setStartDate] = useState<StartDate>(null);
 
     const sharedInputStyle = className('bg-stone-200 border-0 rounded-md bg-focus:ring-2 focus:ring-inset focus:ring-green-500')
@@ -73,8 +73,8 @@ function Search() {
                 <form className="flex flex-col md:h-10 mt-5 md:flex-row">
                     <input type="text" placeholder="Suburb or Postcode" autoComplete="address-input" value={address} onChange={handleOnChange} className={"flex-1 mb-4 pl-2 leading-10 md:w-4/12 md:mr-6 md:mb-0 " + sharedInputStyle} />
                     <select id="state" name="state" autoComplete="state-name" value={selectedState} onChange={handleOnChange} className={"mb-4 h-10 pl-1 md:w-3/12 md:mr-6 md:mb-0 " + sharedInputStyle}>
-                        {STATE_OPTIONS.map(state => {
-                            return <option>{state}</option>
+                        {STATE_OPTIONS.map((state, index) => {
+                            return <option key={index}>{state}</option>
                         })}
                     </select>
                     <DatePicker
