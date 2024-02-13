@@ -17,6 +17,9 @@ export default {
       },
       saturate: {
         75: '.75'
+      },
+      transitionProperty: {
+        'width': 'width',
       }
     },
     fontFamily: {

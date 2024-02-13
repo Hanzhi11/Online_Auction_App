@@ -63,8 +63,7 @@ function Header() {
     const isSmallScreen = windowSize.width < 768
 
     const topStyle = className('bg-indigo-900 h-20 flex justify-center', {
-        'bg-opacity-70': isTransparent,
-        'px-3.5': isSmallScreen
+        'bg-opacity-70': isTransparent
     })
 
     const bottomStyle = className('bg-green-500 h-8', {
@@ -101,9 +100,9 @@ function Header() {
 
     return (
         <IconContext.Provider value={{ color: 'white', size: iconSize, className: 'inline' }}>
-            <header className="fixed top-0 w-full" id={ELEMENT_ID.HEADER}>
+            <header className="fixed top-0 w-full z-50" id={ELEMENT_ID.HEADER}>
                 <div className={topStyle}>
-                    <div className="w-full flex md:px-[4%] ">
+                    <div className="w-full flex px-[4%] md:w-[720px] md:px-0 lg:w-[940px] xl:w-[1140px]">
                         <a className="w-fit flex items-center hover:cursor-pointer mr-auto">
                             <img src="/logo.svg" className="h-8 mr-3 scale-90" />
                             <span className="text-white tracking-[0.3em] text-2xl">BIDNOW</span>

@@ -4,6 +4,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useState } from "react";
 import className from "classnames";
+import SectionContainer from "./SectionContainer";
 
 type StartDate = Date | null
 
@@ -41,7 +42,7 @@ function Search() {
 
     const sharedInputStyle = className('bg-stone-200 border-0 rounded-md bg-focus:ring-2 focus:ring-inset focus:ring-green-500')
 
-    const handleOnChange=(event: React.ChangeEvent<HTMLElement>) => {
+    const handleOnChange = (event: React.ChangeEvent<HTMLElement>) => {
         const tagName = event.target.tagName
         const target = event.target as HTMLInputElement | HTMLSelectElement
         const value = target.value
@@ -56,21 +57,20 @@ function Search() {
         }
     }
 
-    const handleSubmit= (event: React.MouseEvent<HTMLButtonElement>) => {
+    const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault()
-        const formData={
+        const formData = {
             address: address,
             state: selectedState,
             date: startDate
         }
         console.log(formData)
-
     }
+
     return (
         <IconContext.Provider value={{ color: 'white', size: '1.2rem', className: 'inline stroke-[20]' }}>
-            <div className="w-full max-w-[1140px] mx-auto mt-3 md:mt-9 px-[4%] text-stone-800">
-                <h1 className="border-b border-stone-400 font-light pb-4 md:pb-6 text-lg md:text-3xl">Property Search</h1>
-                <form className="flex flex-col md:h-10 mt-5 md:flex-row">
+            <SectionContainer header='Property Search'>
+                <form className="flex flex-col md:h-10 md:flex-row">
                     <input type="text" placeholder="Suburb or Postcode" autoComplete="address-input" value={address} onChange={handleOnChange} className={"flex-1 mb-4 pl-2 leading-10 md:w-4/12 md:mr-6 md:mb-0 " + sharedInputStyle} />
                     <select id="state" name="state" autoComplete="state-name" value={selectedState} onChange={handleOnChange} className={"mb-4 h-10 pl-1 md:w-3/12 md:mr-6 md:mb-0 " + sharedInputStyle}>
                         {STATE_OPTIONS.map((state, index) => {
@@ -138,7 +138,7 @@ function Search() {
                     />
                     <button className="bg-green-500 rounded-full w-10 h-10 self-end md:ml-6" onClick={handleSubmit}><IoIosArrowForward /></button>
                 </form>
-            </div>
+            </SectionContainer>
         </IconContext.Provider >
     )
 }
