@@ -1,5 +1,6 @@
-using System.Runtime.Serialization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 using Server.Data;
 
 namespace Server.Models;
@@ -12,21 +13,16 @@ public static class SeedData
             serviceProvider.GetRequiredService<
             DbContextOptions<AppDbContext>>());
 
-        // if (context.Address.Any())
-        // {
-        //     context.Database.ExecuteSqlRaw("DELETE FROM \"Address\"");
-        // }
-        // if (context.State.Any())
-        // {
-        //     context.Database.ExecuteSqlRaw("DELETE FROM \"State\"");
-        // }
-
         try
         {
-            // Drop the database if it exists
-            context.Database.EnsureDeleted();
-            // Create the database if it doesn't exist
-            context.Database.EnsureCreated();
+            bool canConnect = context.Database.GetService<IDatabaseCreator>().CanConnect();
+            if (canConnect)
+            {
+                // Drop the database if it exists
+                context.Database.EnsureDeleted();
+                // Create the database if it doesn't exist
+                context.Database.EnsureCreated();
+            }
 
             State state1 = new("4113", "QLD");
             State state2 = new("4109", "QLD");
@@ -61,32 +57,12 @@ public static class SeedData
         }
         catch (Exception ex)
         {
-            if (ex.GetType() == typeof(DbUpdateException))
+            if (ex is DbUpdateException)
             {
                 Console.WriteLine("SQL State is " + ex.InnerException?.Data["SqlState"]);
                 Console.WriteLine("Error Message is " + ex.InnerException?.Data["MessageText"]);
                 Console.WriteLine("Error occured in the entity of " + ex.InnerException?.Data["TableName"]);
             }
         }
-    }
-}
-
-[Serializable]
-internal class DbEntityValidationException : Exception
-{
-    public DbEntityValidationException()
-    {
-    }
-
-    public DbEntityValidationException(string? message) : base(message)
-    {
-    }
-
-    public DbEntityValidationException(string? message, Exception? innerException) : base(message, innerException)
-    {
-    }
-
-    protected DbEntityValidationException(SerializationInfo info, StreamingContext context) : base(info, context)
-    {
     }
 }

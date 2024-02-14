@@ -15,5 +15,5 @@ public class Address(string streetNumber, string street, string suburb, string s
     public string Suburb {get; set;} = suburb;
     public string StatePostCode {get; set;} = statePostCode;
 
-    public State State { get; set;} = null!;
+    public State? State { get; set;}
 }

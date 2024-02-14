@@ -10,8 +10,7 @@ public class StateController(AppDbContext context) : ControllerBase
 
     public IActionResult Index()
     {
-        var states = _context.State.ToList();
-        // State states = new("4113", "QLD");
+        List<State> states = [.. _context.State];
         return Ok(states);
     }
 }
