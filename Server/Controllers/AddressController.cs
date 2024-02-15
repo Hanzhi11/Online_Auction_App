@@ -12,13 +12,13 @@ public class AddressController(AppDbContext context) : ControllerBase
     public IActionResult Index()
     {
         List<Address> addresses = [.. _context.Address];
-        List<FullAddress> fullAddresses = [];
+        List<FullAddressViewModel> fullAddresses = [];
         foreach (Address address in addresses)
         {
             State state = _context.State.FirstOrDefault(s => s.PostCode == address.StatePostCode)!;
             string stateName = state.Name;
 
-            FullAddress fulladdress = new()
+            FullAddressViewModel fulladdress = new()
             {
                 UnitNumber = address.UnitNumber,
                 StreetNumber = address.StreetNumber,

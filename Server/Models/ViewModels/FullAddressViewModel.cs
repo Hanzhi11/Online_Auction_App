@@ -1,6 +1,6 @@
 namespace Server.ViewModels;
 
-public class FullAddress
+public class FullAddressViewModel
 {
     public string UnitNumber {get; set;} = "";
     public string StreetNumber {get; set;} = "";
