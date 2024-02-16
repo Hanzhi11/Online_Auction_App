@@ -1,9 +1,10 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
-using Server.Data;
+using Server.Models;
 
-namespace Server.Models;
+namespace Server.Data;
 
 public static class SeedData
 {
@@ -51,8 +52,91 @@ public static class SeedData
                 new Address("15", "Meihua Street", "Wanhuayuan Meihuayuan District", "4113"),
                 new Address("15", "Hehua Street", "Wanhuayuan Hehuayuan", "4109"),
                 new Address("5", "Hehua Street", "Wanhuayuan Hehuayuan", "4109"),
-                new Address("6", "Hehua Street", "Wanhuayuan Hehuayuan", "4109")
+                new Address("6", "Hehua Street", "Wanhuayuan Hehuayuan", "4109"),
+                new Address("1", "Agency Street", "Zhongjie Gongsi", "4116"),
+                new Address("2", "Agency Street", "Zhongjie Gongsi", "4116")
             );
+
+            List<Role> roles = [.. context.Role];
+            Guid agentId = roles.FirstOrDefault(r => r.Name == "agent")!.Id;
+            Guid auctioneerId = roles.FirstOrDefault(r => r.Name == "auctioneer")!.Id;
+
+            Person person1 = new("May", "May");
+            Person person2 = new("David", "David");
+            Person person3 = new("Joe", "Joe");
+            Person person4 = new("June", "June");
+
+            context.Person.AddRange(
+                person1,
+                person2,
+                person3,
+                person4
+            );
+
+            context.SaveChanges();
+
+            List<Address> agencyAddresses = [.. context.Address.Where(a => a.Street == "Agency Street")];
+            List<Agency> agencies = agencyAddresses.Select(a => new Agency("Bid Now " + a.StreetNumber + " Agency", a.Id)).ToList();
+            context.Agency.AddRange(agencies);
+
+            List<Person> persons = [.. context.Person];
+            PersonRole personRole1 = new()
+            {
+                PersonId = context.Person.FirstOrDefault(p => p.FirstName == person1.FirstName)!.Id,
+                RoleId = agentId,
+                Mobile = "0412341234",
+                Email = person1.FirstName + person1.LastName + "@bidnow.com.au",
+                Agency = agencies[0]
+            };
+            PersonRole personRole2 = new()
+            {
+                PersonId = context.Person.FirstOrDefault(p => p.FirstName == person2.FirstName)!.Id,
+                RoleId = agentId,
+                Mobile = "0443214321",
+                Email = person2.FirstName + person2.LastName + "@bidnow.com.au",
+                Agency = agencies[1]
+            };
+            PersonRole personRole3 = new()
+            {
+                PersonId = context.Person.FirstOrDefault(p => p.FirstName == person3.FirstName)!.Id,
+                RoleId = auctioneerId,
+                LicenceNumber = "12345678"
+            };
+            PersonRole personRole4 = new()
+            {
+                PersonId = context.Person.FirstOrDefault(p => p.FirstName == person4.FirstName)!.Id,
+                RoleId = auctioneerId,
+                LicenceNumber = "87654321"
+            };
+            context.PersonRole.AddRange(
+                personRole1,
+                personRole2,
+                personRole3,
+                personRole4
+            );
+
+
+            context.SaveChanges();
+
+            Guid addressId = context.Address.FirstOrDefault()!.Id;
+            Guid propertyTypeId = context.PropertyType.FirstOrDefault()!.Id;
+
+            Guid personAuctioneerId = context.PersonRole
+            .Include(pr => pr.Person)
+            .Include(pr => pr.Role)
+            .FirstOrDefault(pr => pr.Role!.Name == "auctioneer")!.Id;
+            DateTime auctionDateTime = DateTime.SpecifyKind(new DateTime(2024, 3, 23, 14, 30, 0), DateTimeKind.Utc);
+
+            context.Listing.Add(new("", "", auctionDateTime, addressId, propertyTypeId, agencies[0].Id, personAuctioneerId));
+            context.SaveChanges();
+
+            Guid listingId = context.Listing.FirstOrDefault()!.Id;
+            Guid personAgentId = context.PersonRole
+                .Include(pr => pr.Person)
+                .Include(pr => pr.Role)
+                .FirstOrDefault(pr => pr.Role!.Name == "agent")!.Id;
+            ListingAgent listingAgent = new(listingId, personAgentId);
+            context.ListingAgent.Add(listingAgent);
             context.SaveChanges();
         }
         catch (Exception ex)
@@ -62,6 +146,10 @@ public static class SeedData
                 Console.WriteLine("SQL State is " + ex.InnerException?.Data["SqlState"]);
                 Console.WriteLine("Error Message is " + ex.InnerException?.Data["MessageText"]);
                 Console.WriteLine("Error occured in the entity of " + ex.InnerException?.Data["TableName"]);
+            }
+            if (ex is ValidationException)
+            {
+                Console.WriteLine("Error Message is " + ex.Message);
             }
         }
     }
