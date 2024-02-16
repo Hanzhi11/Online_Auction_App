@@ -20,7 +20,9 @@ public static class SeedData
             if (!canConnect)
             {
                 context.Database.EnsureCreated();
-            } else if (context.HasData())
+            } 
+   
+            if (context.HasData())
             {
                 return;
             }

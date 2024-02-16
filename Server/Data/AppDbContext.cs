@@ -1,5 +1,8 @@
 using System.ComponentModel.DataAnnotations;
+using System.Data;
+using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Server.Models;
 
 namespace Server.Data;
@@ -20,19 +23,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     {
         modelBuilder.Entity<Address>()
             .HasAlternateKey(a => new { a.UnitNumber, a.StreetNumber, a.Street, a.Suburb, a.StatePostCode });
-
-        // modelBuilder.Entity<PropertyType>()
-        // .HasData(
-        //     new ("house"),
-        //     new ("townhouse"),
-        //     new ("unit"),
-        //     new ("land")
-        // );
-        // modelBuilder.Entity<Role>()
-        // .HasData(
-        //     new ("agent"),
-        //     new ("auctioneer")
-        // );
     }
 
     public override int SaveChanges()
@@ -54,20 +44,27 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
     public bool HasData()
     {
-        foreach (var entityType in Model.GetEntityTypes())
+        Database.OpenConnection();
+        foreach (IEntityType entityType in Model.GetEntityTypes())
         {
-            var tableName = entityType.GetTableName();
-            var sql = $"SELECT COUNT(*) FROM {tableName}";
-
-            // Execute raw SQL query to count records in the table
-            var count = Database.ExecuteSqlRaw(sql);
-
-            if (count > 0)
+            string? tableName = entityType.GetTableName();
+            if (tableName != null)
             {
-                return true;
+                string sql = $"SELECT Count(*) FROM \"{tableName}\"";
+
+                DbCommand cmd = Database.GetDbConnection().CreateCommand();
+                cmd.CommandText = sql;
+                object? result = cmd.ExecuteScalar();
+                Int64 count = result != null ? (Int64)result : 0;
+
+                if (count > 0)
+                {
+                    Database.CloseConnection();
+                    return true;
+                }
             }
         }
-
+        Database.CloseConnection();
         return false;
     }
 }

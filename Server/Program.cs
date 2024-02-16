@@ -1,7 +1,6 @@
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
-using Server.Models;
 
 var AllowedSpecificOrigin = "_allowedSpecificOrigin";
 var builder = WebApplication.CreateBuilder(args);
