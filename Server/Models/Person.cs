@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Server.Model;
+namespace Server.Models;
 
 public class Person
 {
@@ -15,5 +15,5 @@ public class Person
         LastName = lastName;
     }
 
-    public ICollection<PersonRole>? PersonRoles {get;set;}
+    // public ICollection<PersonRole>? PersonRoles {get;set;}
 }

@@ -1,9 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Server.Models;
 
-[method: SetsRequiredMembers]
 public class State(string postCode, string name)
 {
     [Key]

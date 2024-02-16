@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Server.Model;
+namespace Server.Models;
 
 public class PersonRole
 {
@@ -21,4 +21,6 @@ public class PersonRole
     public Person? Person { get; set; }
     public Guid RoleId { get; set; }
     public Role? Role { get; set; }
+
+    public Agency? Agency {get;set;}
 }

@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using Server.Models;
 
-namespace Server.Model;
+namespace Server.Models;
 
 public class Agency(string name, Guid addressId )
 {
@@ -11,4 +10,6 @@ public class Agency(string name, Guid addressId )
     public Guid AddressId {get; set;} = addressId;
 
     public Address? Address;
+    public ICollection<PersonRole>? Agents {get;}
+    public ICollection<Listing>? Listings {get;}
 }

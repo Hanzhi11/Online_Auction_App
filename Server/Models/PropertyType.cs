@@ -1,4 +1,4 @@
-namespace Server.Model;
+namespace Server.Models;
 
 public class PropertyType(string type)
 {

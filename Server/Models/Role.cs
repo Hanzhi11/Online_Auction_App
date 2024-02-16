@@ -1,4 +1,4 @@
-namespace Server.Model;
+namespace Server.Models;
 
 public class Role(string name)
 {
@@ -6,6 +6,6 @@ public class Role(string name)
 
     public string Name {get;set;} = name;
 
-    public ICollection<PersonRole>? PersonRoles {get;set;}
+    // public ICollection<PersonRole>? PersonRoles {get;set;}
  
 }
