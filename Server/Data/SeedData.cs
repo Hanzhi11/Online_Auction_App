@@ -17,13 +17,29 @@ public static class SeedData
         try
         {
             bool canConnect = context.Database.GetService<IDatabaseCreator>().CanConnect();
-            if (canConnect)
+            if (!canConnect)
             {
-                // Drop the database if it exists
-                context.Database.EnsureDeleted();
-                // Create the database if it doesn't exist
                 context.Database.EnsureCreated();
+            } else if (context.HasData())
+            {
+                return;
             }
+
+            context.PropertyType.AddRange(
+                new("house"),
+                new("townhouse"),
+                new("unit"),
+                new("land")
+            );
+
+
+            Role agent = new("agent");
+            Role auctioneer = new("auctioneer");
+
+            context.Role.AddRange(
+                agent,
+                auctioneer
+            );
 
             State state1 = new("4113", "QLD");
             State state2 = new("4109", "QLD");
@@ -57,9 +73,8 @@ public static class SeedData
                 new Address("2", "Agency Street", "Zhongjie Gongsi", "4116")
             );
 
-            List<Role> roles = [.. context.Role];
-            Guid agentId = roles.FirstOrDefault(r => r.Name == "agent")!.Id;
-            Guid auctioneerId = roles.FirstOrDefault(r => r.Name == "auctioneer")!.Id;
+            Guid agentId = agent.Id;
+            Guid auctioneerId = auctioneer.Id;
 
             Person person1 = new("May", "May");
             Person person2 = new("David", "David");
@@ -114,7 +129,6 @@ public static class SeedData
                 personRole3,
                 personRole4
             );
-
 
             context.SaveChanges();
 

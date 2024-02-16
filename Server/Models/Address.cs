@@ -19,7 +19,7 @@ public class Address(string streetNumber, string street, string suburb, string s
     public FullAddressViewModel FormatToFullAddress()
     {
         FullAddressViewModel fullAddress = new();
-        
+
         if (State != null)
         {
             fullAddress.UnitNumber = UnitNumber;

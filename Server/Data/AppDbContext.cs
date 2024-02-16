@@ -21,18 +21,18 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         modelBuilder.Entity<Address>()
             .HasAlternateKey(a => new { a.UnitNumber, a.StreetNumber, a.Street, a.Suburb, a.StatePostCode });
 
-        modelBuilder.Entity<PropertyType>()
-        .HasData(
-            new ("house"),
-            new ("townhouse"),
-            new ("unit"),
-            new ("land")
-        );
-        modelBuilder.Entity<Role>()
-        .HasData(
-            new ("agent"),
-            new ("auctioneer")
-        );
+        // modelBuilder.Entity<PropertyType>()
+        // .HasData(
+        //     new ("house"),
+        //     new ("townhouse"),
+        //     new ("unit"),
+        //     new ("land")
+        // );
+        // modelBuilder.Entity<Role>()
+        // .HasData(
+        //     new ("agent"),
+        //     new ("auctioneer")
+        // );
     }
 
     public override int SaveChanges()
@@ -50,5 +50,24 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 validateAllProperties: true);
         }
         return base.SaveChanges();
+    }
+
+    public bool HasData()
+    {
+        foreach (var entityType in Model.GetEntityTypes())
+        {
+            var tableName = entityType.GetTableName();
+            var sql = $"SELECT COUNT(*) FROM {tableName}";
+
+            // Execute raw SQL query to count records in the table
+            var count = Database.ExecuteSqlRaw(sql);
+
+            if (count > 0)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
