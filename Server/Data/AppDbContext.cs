@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
-using Server.Model;
 using Server.Models;
 
 namespace Server.Data;
@@ -12,8 +11,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<PropertyType> PropertyType { get; set; }
     public DbSet<Agency> Agency { get; set; }
     public DbSet<Person> Person { get; set; }
-    public DbSet<PersonRole> PersonRole{ get; set; }
+    public DbSet<PersonRole> PersonRole { get; set; }
     public DbSet<Role> Role { get; set; }
+    public DbSet<Listing> Listing { get; set; }
+    public DbSet<ListingAgent> ListingAgent { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -50,5 +51,4 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         }
         return base.SaveChanges();
     }
-
 }
