@@ -12,8 +12,8 @@ public class Address(string streetNumber, string street, string suburb, string s
     public string StreetNumber { get; set; } = streetNumber;
     public string Street { get; set; } = street;
     public string Suburb { get; set; } = suburb;
+    
     public string StatePostCode { get; set; } = statePostCode;
-
     public State? State { get; set; }
 
     public FullAddressViewModel FormatToFullAddress()

@@ -23,6 +23,28 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     {
         modelBuilder.Entity<Address>()
             .HasAlternateKey(a => new { a.UnitNumber, a.StreetNumber, a.Street, a.Suburb, a.StatePostCode });
+
+        modelBuilder.Entity<State>()
+        .HasData(
+            new("4113", "QLD"),
+            new("4109", "QLD"),
+            new("4116", "QLD"),
+            new("4122", "QLD")
+        );
+
+        modelBuilder.Entity<Role>()
+        .HasData(
+            new("agent"),
+            new("auctioneer")
+        );
+
+        modelBuilder.Entity<PropertyType>()
+        .HasData(
+            new("house"),
+            new("townhouse"),
+            new("unit"),
+            new("land")
+        );
     }
 
     public override int SaveChanges()
@@ -42,13 +64,31 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         return base.SaveChanges();
     }
 
-    public bool HasData()
+    private readonly List<string> ExcludedTables = ["__EFMigrationsHistory", "State", "Role", "PropertyType"];
+
+    public void TruncateTables()
     {
         Database.OpenConnection();
         foreach (IEntityType entityType in Model.GetEntityTypes())
         {
             string? tableName = entityType.GetTableName();
-            if (tableName != null)
+            if (tableName != null && !ExcludedTables.Contains(tableName))
+            {
+                string truncateSql = $"TRUNCATE TABLE \"{tableName}\" CASCADE";
+                Database.ExecuteSqlRaw(truncateSql);
+            }
+        }
+        Database.CloseConnection();
+    }
+
+    public bool HasCustomData()
+    {
+        Database.OpenConnection();
+        bool hasData = false;
+        foreach (IEntityType entityType in Model.GetEntityTypes())
+        {
+            string? tableName = entityType.GetTableName();
+            if (tableName != null && !ExcludedTables.Contains(tableName))
             {
                 string sql = $"SELECT Count(*) FROM \"{tableName}\"";
 
@@ -59,12 +99,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
                 if (count > 0)
                 {
-                    Database.CloseConnection();
-                    return true;
+                    hasData = true;
+                    break;
                 }
             }
         }
         Database.CloseConnection();
-        return false;
+        return hasData;
     }
 }

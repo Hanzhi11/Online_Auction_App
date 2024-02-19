@@ -8,7 +8,7 @@ namespace Server.Data;
 
 public static class SeedData
 {
-    public static void Initialze(IServiceProvider serviceProvider)
+    public static void Initialze(IServiceProvider serviceProvider, IWebHostEnvironment env)
     {
         using var context = new AppDbContext(
             serviceProvider.GetRequiredService<
@@ -20,63 +20,56 @@ public static class SeedData
             if (!canConnect)
             {
                 context.Database.EnsureCreated();
-            } 
-   
-            if (context.HasData())
+            }
+
+            bool hasCustomData = context.HasCustomData();
+            bool shouldTruncateTables = env.IsDevelopment();
+
+            if (!shouldTruncateTables)
             {
                 return;
             }
 
-            context.PropertyType.AddRange(
-                new("house"),
-                new("townhouse"),
-                new("unit"),
-                new("land")
-            );
+            if (hasCustomData)
+            {
+                context.TruncateTables();
+            }
 
+            List<State> states = [..context.State];
+            List<string> postCodes = [.. context.State.Select(s => s.PostCode)];
+            string postCode1 = postCodes[0];
+            string postCode2 = postCodes[1];
+            string postCode3 = postCodes[2];
 
-            Role agent = new("agent");
-            Role auctioneer = new("auctioneer");
-
-            context.Role.AddRange(
-                agent,
-                auctioneer
-            );
-
-            State state1 = new("4113", "QLD");
-            State state2 = new("4109", "QLD");
-            State state3 = new("4116", "QLD");
-            context.State.AddRange(
-                state1, state2, state3
-            );
             context.Address.AddRange(
-                new Address("28", "Meihua Street", "Wanhuayuan Meihuayuan District", "4113"),
-                new Address("14", "Meihua Street", "Wanhuayuan Meihuayuan District", "4113")
+                new Address("28", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1),
+                new Address("14", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1)
                 {
                     UnitNumber = "1"
+
                 },
-                new Address("14", "Meihua Street", "Wanhuayuan Meihuayuan District", "4113")
+                new Address("14", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1)
                 {
                     UnitNumber = "2"
                 },
-                new Address("14", "Meihua Street", "Wanhuayuan Meihuayuan District", "4113")
+                new Address("14", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1)
                 {
                     UnitNumber = "3"
                 },
-                new Address("14", "Meihua Street", "Wanhuayuan Meihuayuan District", "4113")
+                new Address("14", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1)
                 {
                     UnitNumber = "4"
                 },
-                new Address("15", "Meihua Street", "Wanhuayuan Meihuayuan District", "4113"),
-                new Address("15", "Hehua Street", "Wanhuayuan Hehuayuan", "4109"),
-                new Address("5", "Hehua Street", "Wanhuayuan Hehuayuan", "4109"),
-                new Address("6", "Hehua Street", "Wanhuayuan Hehuayuan", "4109"),
-                new Address("1", "Agency Street", "Zhongjie Gongsi", "4116"),
-                new Address("2", "Agency Street", "Zhongjie Gongsi", "4116")
+                new Address("15", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1),
+                new Address("15", "Hehua Street", "Wanhuayuan Hehuayuan", postCode2),
+                new Address("5", "Hehua Street", "Wanhuayuan Hehuayuan", postCode2),
+                new Address("6", "Hehua Street", "Wanhuayuan Hehuayuan", postCode2),
+                new Address("1", "Agency Avenue", "Zhongjie Gongsi", postCode3),
+                new Address("2", "Agency Avenue", "Zhongjie Gongsi", postCode3)
             );
 
-            Guid agentId = agent.Id;
-            Guid auctioneerId = auctioneer.Id;
+            Guid agentId = context.Role.FirstOrDefault(r => r.Name == "agent")!.Id;
+            Guid auctioneerId = context.Role.FirstOrDefault(r => r.Name == "auctioneer")!.Id;
 
             Person person1 = new("May", "May");
             Person person2 = new("David", "David");
@@ -92,7 +85,7 @@ public static class SeedData
 
             context.SaveChanges();
 
-            List<Address> agencyAddresses = [.. context.Address.Where(a => a.Street == "Agency Street")];
+            List<Address> agencyAddresses = [.. context.Address.Where(a => a.Street == "Agency Avenue")];
             List<Agency> agencies = agencyAddresses.Select(a => new Agency("Bid Now " + a.StreetNumber + " Agency", a.Id)).ToList();
             context.Agency.AddRange(agencies);
 

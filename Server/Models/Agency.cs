@@ -9,7 +9,7 @@ public class Agency(string name, Guid addressId )
     public string Name {get; set;} = name;
     public Guid AddressId {get; set;} = addressId;
 
-    public Address? Address;
+    public Address? Address {get; set;}
     public ICollection<PersonRole>? Agents {get;}
     public ICollection<Listing>? Listings {get;}
 }

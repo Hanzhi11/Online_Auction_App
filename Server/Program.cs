@@ -26,11 +26,13 @@ builder.Services.AddControllers()
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
+if (!app.Environment.IsProduction())
 {
+    using var scope = app.Services.CreateScope();
     var services = scope.ServiceProvider;
-    SeedData.Initialze(services);
+    SeedData.Initialze(services, app.Environment);
 }
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -50,6 +52,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller}/{action=Index}/{id?}");
+    pattern: "{controller=Listing}/{action=Index}/{id?}");
 
 app.Run();
