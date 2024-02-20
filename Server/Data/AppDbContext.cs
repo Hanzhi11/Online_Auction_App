@@ -11,7 +11,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 {
     public DbSet<State> State { get; set; }
     public DbSet<Address> Address { get; set; }
-    public DbSet<PropertyType> PropertyType { get; set; }
     public DbSet<Agency> Agency { get; set; }
     public DbSet<Person> Person { get; set; }
     public DbSet<PersonRole> PersonRole { get; set; }
@@ -36,14 +35,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         .HasData(
             new("agent"),
             new("auctioneer")
-        );
-
-        modelBuilder.Entity<PropertyType>()
-        .HasData(
-            new("house"),
-            new("townhouse"),
-            new("unit"),
-            new("land")
         );
     }
 

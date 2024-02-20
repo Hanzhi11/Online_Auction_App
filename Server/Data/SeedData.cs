@@ -128,7 +128,7 @@ public static class SeedData
             context.SaveChanges();
 
             Guid addressId = context.Address.FirstOrDefault()!.Id;
-            string propertyType = context.PropertyType.FirstOrDefault()!.Id;
+            PropertyType propertyType = PropertyType.House;
 
             Guid personAuctioneerId = context.PersonRole
             .Include(pr => pr.Person)

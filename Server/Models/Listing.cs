@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Server.ViewModels;
+using Server.Data;
 
 namespace Server.Models;
 
@@ -8,7 +9,7 @@ public class Listing(
     string copyWriting,
     DateTime auctionDateTime,
     Guid addressId,
-    string propertyTypeId,
+    PropertyType propertyType,
     Guid agencyId,
     Guid personAuctioneerId
     )
@@ -25,8 +26,7 @@ public class Listing(
     public Guid AddressId { get; set; } = addressId;
     public Address? Address { get; set; }
 
-    public string PropertyTypeId { get; set; } = propertyTypeId;
-    public PropertyType? PropertyType { get; set; }
+    public PropertyType PropertyType { get; set; } = propertyType;
 
     public ICollection<ListingAgent>? ListingAgents { get; set; }
 
