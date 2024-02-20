@@ -68,8 +68,8 @@ public static class SeedData
                 new Address("2", "Agency Avenue", "Zhongjie Gongsi", postCode3)
             );
 
-            string agentId = "agent";
-            string auctioneerId = "auctioneer";
+            Role agent = Role.Agent;
+            Role auctioneer = Role.Auctioneer;
 
             Person person1 = new("May", "May");
             Person person2 = new("David", "David");
@@ -93,7 +93,7 @@ public static class SeedData
             PersonRole personRole1 = new()
             {
                 PersonId = context.Person.FirstOrDefault(p => p.FirstName == person1.FirstName)!.Id,
-                RoleId = agentId,
+                Role = agent,
                 Mobile = "0412341234",
                 Email = person1.FirstName + person1.LastName + "@bidnow.com.au",
                 Agency = agencies[0]
@@ -101,7 +101,7 @@ public static class SeedData
             PersonRole personRole2 = new()
             {
                 PersonId = context.Person.FirstOrDefault(p => p.FirstName == person2.FirstName)!.Id,
-                RoleId = agentId,
+                Role = agent,
                 Mobile = "0443214321",
                 Email = person2.FirstName + person2.LastName + "@bidnow.com.au",
                 Agency = agencies[1]
@@ -109,13 +109,13 @@ public static class SeedData
             PersonRole personRole3 = new()
             {
                 PersonId = context.Person.FirstOrDefault(p => p.FirstName == person3.FirstName)!.Id,
-                RoleId = auctioneerId,
+                Role = auctioneer,
                 LicenceNumber = "12345678"
             };
             PersonRole personRole4 = new()
             {
                 PersonId = context.Person.FirstOrDefault(p => p.FirstName == person4.FirstName)!.Id,
-                RoleId = auctioneerId,
+                Role = auctioneer,
                 LicenceNumber = "87654321"
             };
             context.PersonRole.AddRange(
@@ -132,8 +132,7 @@ public static class SeedData
 
             Guid personAuctioneerId = context.PersonRole
             .Include(pr => pr.Person)
-            .Include(pr => pr.Role)
-            .FirstOrDefault(pr => pr.Role!.Id == auctioneerId)!.Id;
+            .FirstOrDefault(pr => pr.Role == Role.Auctioneer)!.Id;
             DateTime auctionDateTime = DateTime.SpecifyKind(new DateTime(2024, 3, 23, 14, 30, 0), DateTimeKind.Utc);
 
             context.Listing.Add(new("", "", auctionDateTime, addressId, propertyType, agencies[0].Id, personAuctioneerId));
@@ -142,8 +141,7 @@ public static class SeedData
             Guid listingId = context.Listing.FirstOrDefault()!.Id;
             Guid personAgentId = context.PersonRole
                 .Include(pr => pr.Person)
-                .Include(pr => pr.Role)
-                .FirstOrDefault(pr => pr.Role!.Id == agentId)!.Id;
+                .FirstOrDefault(pr => pr.Role == Role.Agent)!.Id;
             ListingAgent listingAgent = new(listingId, personAgentId);
             context.ListingAgent.Add(listingAgent);
             context.SaveChanges();

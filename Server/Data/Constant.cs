@@ -1,10 +1,10 @@
 namespace Server.Data;
 
-// enum Role 
-// {
-//     Agent,
-//     Auctioneer
-// }
+public enum Role 
+{
+    Agent,
+    Auctioneer
+}
 
 public enum PropertyType 
 {

@@ -14,7 +14,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Agency> Agency { get; set; }
     public DbSet<Person> Person { get; set; }
     public DbSet<PersonRole> PersonRole { get; set; }
-    public DbSet<Role> Role { get; set; }
     public DbSet<Listing> Listing { get; set; }
     public DbSet<ListingAgent> ListingAgent { get; set; }
 
@@ -29,12 +28,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             new("4109", "QLD"),
             new("4116", "QLD"),
             new("4122", "QLD")
-        );
-
-        modelBuilder.Entity<Role>()
-        .HasData(
-            new("agent"),
-            new("auctioneer")
         );
     }
 
@@ -55,7 +48,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         return base.SaveChanges();
     }
 
-    private readonly List<string> ExcludedTables = ["__EFMigrationsHistory", "State", "Role", "PropertyType"];
+    private readonly List<string> ExcludedTables = ["__EFMigrationsHistory", "State"];
 
     public void TruncateTables()
     {
