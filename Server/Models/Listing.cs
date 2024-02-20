@@ -30,22 +30,33 @@ public class Listing(
 
     public ICollection<ListingAgent>? ListingAgents { get; set; }
 
-    public Guid AgencyId {get;set;} = agencyId;
-    public Agency? Agency {get;set;}
+    public Guid AgencyId { get; set; } = agencyId;
+    public Agency? Agency { get; set; }
 
     public Guid AuctioneerId { get; set; } = auctioneerId;
     public Person? Auctioneer { get; set; }
 
-    public ListingBriefViewModel GetInformation(){
+    public ICollection<Photo>? Photos { get; }
+
+    public ListingBriefViewModel GetInformation()
+    {
         string agencyName = "";
         if (Agency is not null)
         {
             agencyName = Agency.Name;
         }
+        string dataUrl = "";
+        byte[] photoBytes = Photos!.OrderBy(p => p.DateTimeCreated).FirstOrDefault()!.Bytes;
+        if (photoBytes != null)
+        {
+            string base64String = Convert.ToBase64String(photoBytes);
+            dataUrl = $"data:image/jpeg;base64,{base64String}";
+        }
         ListingBriefViewModel information = new(
-            Address!.FormatToFullAddress(), 
-            AuctionDateTime, 
-            agencyName
+            Address!.FormatToFullAddress(),
+            AuctionDateTime,
+            agencyName,
+            dataUrl
             );
         return information;
     }

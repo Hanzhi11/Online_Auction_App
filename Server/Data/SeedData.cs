@@ -67,6 +67,7 @@ public static class SeedData
                 new Address("1", "Agency Avenue", "Zhongjie Gongsi", postCode3),
                 new Address("2", "Agency Avenue", "Zhongjie Gongsi", postCode3)
             );
+
             context.SaveChanges();
 
             List<Address> agencyAddresses = [.. context.Address.Where(a => a.Street == "Agency Avenue")];
@@ -116,7 +117,9 @@ public static class SeedData
             .FirstOrDefault(pr => pr.Role == Role.Auctioneer)!.Id;
             DateTime auctionDateTime = DateTime.SpecifyKind(new DateTime(2024, 3, 23, 14, 30, 0), DateTimeKind.Local).ToUniversalTime();
 
-            context.Listing.Add(new("", "", auctionDateTime, addressId, PropertyType.House, agencies[0].Id, auctioneerId));
+            // ICollection<Photo> photos = [..context.Photo];
+            Listing listing = new("", "", auctionDateTime, addressId, PropertyType.House, agencies[0].Id, auctioneerId);
+            context.Listing.Add(listing);
             context.SaveChanges();
 
             Guid listingId = context.Listing.FirstOrDefault()!.Id;
@@ -124,6 +127,27 @@ public static class SeedData
                 .FirstOrDefault(pr => pr.Role == Role.Agent)!.Id;
             ListingAgent listingAgent = new(listingId, agentId);
             context.ListingAgent.Add(listingAgent);
+            context.SaveChanges();
+
+            string photoPath1 = "/Users/hanzhizhang/Desktop/BidNow/UI/public/h1.jpeg";
+            string photoPath2 = "/Users/hanzhizhang/Desktop/BidNow/UI/public/th1.jpeg";
+            string[] photoPaths = [photoPath1, photoPath2];
+            foreach (string photoPath in photoPaths)
+            {
+                byte[] photoBytes;
+                string fileName = Path.GetFileNameWithoutExtension(photoPath);
+                using (FileStream fileStream = new(photoPath, FileMode.Open, FileAccess.Read))
+                {
+                    photoBytes = new byte[fileStream.Length];
+                    fileStream.Read(photoBytes, 0, (int)fileStream.Length);
+                }
+
+                Photo photo = new (fileName, photoBytes)
+                {
+                    Listing = context.Listing.FirstOrDefault()
+                };
+                context.Photo.Add(photo);
+            }
             context.SaveChanges();
         }
         catch (Exception ex)

@@ -14,6 +14,7 @@ public class ListingController(AppDbContext context) : ControllerBase
         List<Listing> listings = [.. _context.Listing];
 
         return Ok(listings);
+
     }
 
     public IActionResult Information()
@@ -22,7 +23,8 @@ public class ListingController(AppDbContext context) : ControllerBase
         List<Listing> listings = [.. _context.Listing
         .Include(l => l.Address)
         .ThenInclude(a => a!.State)
-        .Include(l => l.Agency)];
+        .Include(l => l.Agency)
+        .Include(l => l.Photos)];
 
         List<ListingBriefViewModel> listingsInfo = [];
         foreach (Listing listing in listings)
