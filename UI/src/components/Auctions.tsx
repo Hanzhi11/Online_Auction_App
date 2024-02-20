@@ -17,6 +17,7 @@ interface ListingInfo {
     address: FullAddress;
     auctionDateTime: Date;
     agencyName: string;
+    photoDataURL: string;
 }
 
 function Auctions() {
@@ -166,7 +167,7 @@ function Auctions() {
         const anchorStyle = 'ml-auto hover:cursor-pointer border-b border-transparent hover:border-green-500 self-center'
 
         return (
-            <div className="transition-width duration-0 xl:duration-500 ease-in-out w-[315px] h-52 relative md:w-[345px] lg:w-[294px] xl:w-[360px] overflow-hidden group rounded-md text-white bg-cover" style={{ backgroundImage: `url(h1.jpeg)` }} key={index}>
+            <div className="transition-width duration-0 xl:duration-500 ease-in-out w-[315px] h-52 relative md:w-[345px] lg:w-[294px] xl:w-[360px] overflow-hidden group rounded-md text-white bg-cover" style={{ backgroundImage: `url('${listingInfo.photoDataURL}')` }} key={index}>
                 <header className={'bg-indigo-900 bg-opacity-70 h-10 px-5 py-2.5 text-sm truncate ' + defaultOpacityTransition}>{fullAddress}</header>
                 <span className={"bg-white font-medium px-2 py-1 absolute bottom-2.5 right-2 text-black " + defaultOpacityTransition}>{listingInfo.agencyName}</span>
                 <div className={"absolute inset-0 grid grid-rows-6 grid-cols-2 bg-indigo-900 bg-opacity-70 text-sm font-medium h-full p-5 pb-12 " + overLayOpacityTransition}>
