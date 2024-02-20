@@ -11,7 +11,7 @@ public class Listing(
     Guid addressId,
     PropertyType propertyType,
     Guid agencyId,
-    Guid personAuctioneerId
+    Guid auctioneerId
     )
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -33,8 +33,8 @@ public class Listing(
     public Guid AgencyId {get;set;} = agencyId;
     public Agency? Agency {get;set;}
 
-    public Guid PersonAuctioneerId { get; set; } = personAuctioneerId;
-    public PersonRole? PersonAuctioneer { get; set; }
+    public Guid AuctioneerId { get; set; } = auctioneerId;
+    public Person? Auctioneer { get; set; }
 
     public ListingBriefViewModel GetInformation(){
         string agencyName = "";

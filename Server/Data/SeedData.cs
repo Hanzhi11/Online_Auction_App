@@ -35,7 +35,7 @@ public static class SeedData
                 context.TruncateTables();
             }
 
-            List<State> states = [..context.State];
+            List<State> states = [.. context.State];
             List<string> postCodes = [.. context.State.Select(s => s.PostCode)];
             string postCode1 = postCodes[0];
             string postCode2 = postCodes[1];
@@ -67,14 +67,39 @@ public static class SeedData
                 new Address("1", "Agency Avenue", "Zhongjie Gongsi", postCode3),
                 new Address("2", "Agency Avenue", "Zhongjie Gongsi", postCode3)
             );
+            context.SaveChanges();
+
+            List<Address> agencyAddresses = [.. context.Address.Where(a => a.Street == "Agency Avenue")];
+            List<Agency> agencies = agencyAddresses.Select(a => new Agency("Bid Now " + a.StreetNumber + " Agency", a.Id)).ToList();
+            context.Agency.AddRange(agencies);
 
             Role agent = Role.Agent;
             Role auctioneer = Role.Auctioneer;
 
-            Person person1 = new("May", "May");
-            Person person2 = new("David", "David");
-            Person person3 = new("Joe", "Joe");
-            Person person4 = new("June", "June");
+            Person person1 = new("May", "May")
+            {
+                Role = agent,
+                Mobile = "0412341234",
+                Email = "MayMay@bidnow.com.au",
+                Agency = agencies[0]
+            };
+            Person person2 = new("David", "David")
+            {
+                Role = agent,
+                Mobile = "0443214321",
+                Email = "DavidDavid@bidnow.com.au",
+                Agency = agencies[1]
+            };
+            Person person3 = new("Joe", "Joe")
+            {
+                Role = auctioneer,
+                LicenceNumber = "12345678"
+            };
+            Person person4 = new("June", "June")
+            {
+                Role = auctioneer,
+                LicenceNumber = "87654321"
+            };
 
             context.Person.AddRange(
                 person1,
@@ -85,64 +110,20 @@ public static class SeedData
 
             context.SaveChanges();
 
-            List<Address> agencyAddresses = [.. context.Address.Where(a => a.Street == "Agency Avenue")];
-            List<Agency> agencies = agencyAddresses.Select(a => new Agency("Bid Now " + a.StreetNumber + " Agency", a.Id)).ToList();
-            context.Agency.AddRange(agencies);
-
-            List<Person> persons = [.. context.Person];
-            PersonRole personRole1 = new()
-            {
-                PersonId = context.Person.FirstOrDefault(p => p.FirstName == person1.FirstName)!.Id,
-                Role = agent,
-                Mobile = "0412341234",
-                Email = person1.FirstName + person1.LastName + "@bidnow.com.au",
-                Agency = agencies[0]
-            };
-            PersonRole personRole2 = new()
-            {
-                PersonId = context.Person.FirstOrDefault(p => p.FirstName == person2.FirstName)!.Id,
-                Role = agent,
-                Mobile = "0443214321",
-                Email = person2.FirstName + person2.LastName + "@bidnow.com.au",
-                Agency = agencies[1]
-            };
-            PersonRole personRole3 = new()
-            {
-                PersonId = context.Person.FirstOrDefault(p => p.FirstName == person3.FirstName)!.Id,
-                Role = auctioneer,
-                LicenceNumber = "12345678"
-            };
-            PersonRole personRole4 = new()
-            {
-                PersonId = context.Person.FirstOrDefault(p => p.FirstName == person4.FirstName)!.Id,
-                Role = auctioneer,
-                LicenceNumber = "87654321"
-            };
-            context.PersonRole.AddRange(
-                personRole1,
-                personRole2,
-                personRole3,
-                personRole4
-            );
-
-            context.SaveChanges();
-
             Guid addressId = context.Address.FirstOrDefault()!.Id;
             PropertyType propertyType = PropertyType.House;
 
-            Guid personAuctioneerId = context.PersonRole
-            .Include(pr => pr.Person)
+            Guid auctioneerId = context.Person
             .FirstOrDefault(pr => pr.Role == Role.Auctioneer)!.Id;
             DateTime auctionDateTime = DateTime.SpecifyKind(new DateTime(2024, 3, 23, 14, 30, 0), DateTimeKind.Utc);
 
-            context.Listing.Add(new("", "", auctionDateTime, addressId, propertyType, agencies[0].Id, personAuctioneerId));
+            context.Listing.Add(new("", "", auctionDateTime, addressId, propertyType, agencies[0].Id, auctioneerId));
             context.SaveChanges();
 
             Guid listingId = context.Listing.FirstOrDefault()!.Id;
-            Guid personAgentId = context.PersonRole
-                .Include(pr => pr.Person)
+            Guid agentId = context.Person
                 .FirstOrDefault(pr => pr.Role == Role.Agent)!.Id;
-            ListingAgent listingAgent = new(listingId, personAgentId);
+            ListingAgent listingAgent = new(listingId, agentId);
             context.ListingAgent.Add(listingAgent);
             context.SaveChanges();
         }

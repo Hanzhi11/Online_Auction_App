@@ -10,6 +10,6 @@ public class Agency(string name, Guid addressId )
     public Guid AddressId {get; set;} = addressId;
 
     public Address? Address {get; set;}
-    public ICollection<PersonRole>? Agents {get;}
+    public ICollection<Person>? Agents {get;}
     public ICollection<Listing>? Listings {get;}
 }
