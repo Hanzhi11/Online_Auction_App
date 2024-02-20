@@ -5,8 +5,8 @@ import Search from './components/Search'
 import Auctions from './components/Auctions'
 
 interface State {
-  postCode: string,
-  name: string
+  postCode: string;
+  name: string;
 }
 
 function App() {
@@ -14,8 +14,8 @@ function App() {
   useEffect(() => {
     fetch('https://localhost:7184/State')
     .then(res => res.json())
-    .then(data => setData(data.map((s: State) => <p>{s.postCode}</p>)))
-  })
+    .then(data => setData(data.map((s: State, index: number) => <p key={index}>{s.postCode}</p>)))
+  }, [])
   return (
     <>
       <Header />
@@ -25,7 +25,7 @@ function App() {
         </div>
         <Search />
         <Auctions />
-        <p>{data}</p>
+        <div>{data}</div>
       </main>
     </>
   )
