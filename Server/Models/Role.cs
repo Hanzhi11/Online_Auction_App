@@ -1,8 +1,9 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Server.Models;
 
-public class Role(string name)
-{
-    public Guid Id {get;set;} = Guid.NewGuid();
-
-    public string Name {get;set;} = name; 
+public class Role(string id)
+{    
+    [Key]
+    public string Id {get;set;} = id; 
 }
