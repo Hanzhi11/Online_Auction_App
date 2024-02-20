@@ -117,7 +117,6 @@ public static class SeedData
             .FirstOrDefault(pr => pr.Role == Role.Auctioneer)!.Id;
             DateTime auctionDateTime = DateTime.SpecifyKind(new DateTime(2024, 3, 23, 14, 30, 0), DateTimeKind.Local).ToUniversalTime();
 
-            // ICollection<Photo> photos = [..context.Photo];
             Listing listing = new("", "", auctionDateTime, addressId, PropertyType.House, agencies[0].Id, auctioneerId);
             context.Listing.Add(listing);
             context.SaveChanges();
@@ -129,8 +128,8 @@ public static class SeedData
             context.ListingAgent.Add(listingAgent);
             context.SaveChanges();
 
-            string photoPath1 = "/Users/hanzhizhang/Desktop/BidNow/UI/public/h1.jpeg";
-            string photoPath2 = "/Users/hanzhizhang/Desktop/BidNow/UI/public/th1.jpeg";
+            string photoPath1 = "Data/Assets/h1.jpeg";
+            string photoPath2 = "Data/Assets/th1.jpeg";
             string[] photoPaths = [photoPath1, photoPath2];
             foreach (string photoPath in photoPaths)
             {
