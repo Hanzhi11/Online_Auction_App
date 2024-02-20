@@ -6,3 +6,13 @@ export enum ELEMENT_ID {
     HOME_RUNNER = 'homeRunner',
     HEADER = 'header'
 }
+
+export enum STATE {
+    QLD = 'QLD',
+    NSW = 'NSW',
+    VIC = 'VIC',
+    ACT = 'ACT',
+    NT = 'NT',
+    TAS = 'TAS',
+    SA = 'SA'
+}
