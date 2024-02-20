@@ -8,7 +8,7 @@ public class Listing(
     string copyWriting,
     DateTime auctionDateTime,
     Guid addressId,
-    Guid propertyTypeId,
+    string propertyTypeId,
     Guid agencyId,
     Guid personAuctioneerId
     )
@@ -25,7 +25,7 @@ public class Listing(
     public Guid AddressId { get; set; } = addressId;
     public Address? Address { get; set; }
 
-    public Guid PropertyTypeId { get; set; } = propertyTypeId;
+    public string PropertyTypeId { get; set; } = propertyTypeId;
     public PropertyType? PropertyType { get; set; }
 
     public ICollection<ListingAgent>? ListingAgents { get; set; }

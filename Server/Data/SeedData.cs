@@ -128,7 +128,7 @@ public static class SeedData
             context.SaveChanges();
 
             Guid addressId = context.Address.FirstOrDefault()!.Id;
-            Guid propertyTypeId = context.PropertyType.FirstOrDefault()!.Id;
+            string propertyType = context.PropertyType.FirstOrDefault()!.Id;
 
             Guid personAuctioneerId = context.PersonRole
             .Include(pr => pr.Person)
@@ -136,7 +136,7 @@ public static class SeedData
             .FirstOrDefault(pr => pr.Role!.Name == "auctioneer")!.Id;
             DateTime auctionDateTime = DateTime.SpecifyKind(new DateTime(2024, 3, 23, 14, 30, 0), DateTimeKind.Utc);
 
-            context.Listing.Add(new("", "", auctionDateTime, addressId, propertyTypeId, agencies[0].Id, personAuctioneerId));
+            context.Listing.Add(new("", "", auctionDateTime, addressId, propertyType, agencies[0].Id, personAuctioneerId));
             context.SaveChanges();
 
             Guid listingId = context.Listing.FirstOrDefault()!.Id;
