@@ -29,6 +29,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             new("4116", "QLD"),
             new("4122", "QLD")
         );
+
+        modelBuilder.HasSequence<int>("ListingNumbers");
+
+        modelBuilder.Entity<Listing>()
+        .Property(l => l.ListingNumber)
+        .HasDefaultValueSql("NEXTVAL ('\"ListingNumbers\"')");
     }
 
     public override int SaveChanges()

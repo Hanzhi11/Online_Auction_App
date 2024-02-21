@@ -17,6 +17,8 @@ public class Listing(
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
 
+    public int ListingNumber {get;set;}
+
     public string Heading { get; set; } = heading;
     public string CopyWriting { get; set; } = copyWriting;
     public DateTime DateTimeCreated { get; set; } = DateTime.UtcNow;

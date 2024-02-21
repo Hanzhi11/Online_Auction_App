@@ -40,7 +40,7 @@ public class ImageDownloader
         {
             // Handle request errors
             Console.WriteLine($"Error retrieving image '{imageUrl}': {ex.Message}");
-            return null;
+            return [];
         }
     }
 }
