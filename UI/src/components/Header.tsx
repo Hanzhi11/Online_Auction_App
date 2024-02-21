@@ -5,6 +5,8 @@ import OverLay from "./OverLay";
 import className from 'classnames';
 import NavBar from "./NavBar";
 import { ELEMENT_ID } from './Constants'
+import Logo from "./Logo";
+import SectionContainer from "./SectionContainer";
 
 function Header() {
     const [overLayStatus, setOverLayStatus] = useState({
@@ -100,15 +102,12 @@ function Header() {
 
     return (
         <IconContext.Provider value={{ color: 'white', size: iconSize, className: 'inline' }}>
-            <header className="fixed top-0 w-full z-50" id={ELEMENT_ID.HEADER}>
+            <header className="fixed top-0 w-full" id={ELEMENT_ID.HEADER}>
                 <div className={topStyle}>
-                    <div className="w-full flex px-[4%] md:w-[720px] md:px-0 lg:w-[940px] xl:w-[1140px]">
-                        <a className="w-fit flex items-center hover:cursor-pointer mr-auto">
-                            <img src="/logo.svg" className="h-8 mr-3 scale-90" />
-                            <span className="text-white tracking-[0.3em] text-2xl">BIDNOW</span>
-                        </a>
+                    <SectionContainer style="flex">
+                        <Logo />
                         {content}
-                    </div>
+                    </SectionContainer>
                 </div>
                 <div className={bottomStyle}></div>
             </header>
