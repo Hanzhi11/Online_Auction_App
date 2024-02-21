@@ -40,7 +40,7 @@ public class Listing(
 
     public ICollection<Photo>? Photos { get; }
 
-    public ListingBriefViewModel GetInformation()
+    public ListingInfoViewModel GetInformation()
     {
         string agencyName = "";
         if (Agency is not null)
@@ -54,10 +54,11 @@ public class Listing(
             string base64String = Convert.ToBase64String(photoBytes);
             dataUrl = $"data:image/jpeg;base64,{base64String}";
         }
-        ListingBriefViewModel information = new(
+        ListingInfoViewModel information = new(
             Address!.FormatToFullAddress(),
             AuctionDateTime,
             agencyName,
+            ListingNumber,
             dataUrl
             );
         return information;
