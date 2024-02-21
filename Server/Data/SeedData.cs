@@ -8,7 +8,7 @@ namespace Server.Data;
 
 public static class SeedData
 {
-    public static void Initialze(IServiceProvider serviceProvider, IWebHostEnvironment env)
+    public static async void Initialze(IServiceProvider serviceProvider, IWebHostEnvironment env)
     {
         using var context = new AppDbContext(
             serviceProvider.GetRequiredService<
@@ -52,13 +52,13 @@ public static class SeedData
                 {
                     UnitNumber = "2"
                 },
-                new Address("14", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1)
+                new Address("24", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1)
                 {
-                    UnitNumber = "3"
+                    UnitNumber = "301"
                 },
-                new Address("14", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1)
+                new Address("24", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1)
                 {
-                    UnitNumber = "4"
+                    UnitNumber = "102"
                 },
                 new Address("15", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1),
                 new Address("15", "Hehua Street", "Wanhuayuan Hehuayuan", postCode2),
@@ -111,7 +111,7 @@ public static class SeedData
 
             context.SaveChanges();
 
-            Guid addressId = context.Address.FirstOrDefault()!.Id;
+            Guid addressId = context.Address.OrderByDescending(a => a.StreetNumber).FirstOrDefault()!.Id;
 
             Guid auctioneerId = context.Person
             .FirstOrDefault(pr => pr.Role == Role.Auctioneer)!.Id;
@@ -127,25 +127,25 @@ public static class SeedData
             ListingAgent listingAgent = new(listingId, agentId);
             context.ListingAgent.Add(listingAgent);
             context.SaveChanges();
+            
+            ImageDownloader imageDownloader = new ImageDownloader();
+            byte[][] imageBytesArray = await imageDownloader.DownloadImagesAsync(HouseOutURLs.Concat(HouseInURLs));
 
-            string photoPath1 = "Data/Assets/h1.jpeg";
-            string photoPath2 = "Data/Assets/th1.jpeg";
-            string[] photoPaths = [photoPath1, photoPath2];
-            foreach (string photoPath in photoPaths)
+            for (int i = 0; i < imageBytesArray.Length; i++)
             {
-                byte[] photoBytes;
-                string fileName = Path.GetFileNameWithoutExtension(photoPath);
-                using (FileStream fileStream = new(photoPath, FileMode.Open, FileAccess.Read))
+                if (imageBytesArray[i] != null)
                 {
-                    photoBytes = new byte[fileStream.Length];
-                    fileStream.Read(photoBytes, 0, (int)fileStream.Length);
+                    string name = $"house{i + 1}";
+                    Photo photo = new(name, imageBytesArray[i])
+                    {
+                        Listing = context.Listing.FirstOrDefault()
+                    };
+                    context.Photo.Add(photo);
                 }
-
-                Photo photo = new (fileName, photoBytes)
+                else
                 {
-                    Listing = context.Listing.FirstOrDefault()
-                };
-                context.Photo.Add(photo);
+                    Console.WriteLine($"Failed to download house image {i + 1}.");
+                }
             }
             context.SaveChanges();
         }
@@ -163,4 +163,41 @@ public static class SeedData
             }
         }
     }
+
+    private static readonly IEnumerable<string> HouseOutURLs =
+    [
+        "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8aG91c2V8ZW58MHx8MHx8fDA%3D",
+        // "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGhvdXNlfGVufDB8fDB8fHww",
+        // "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGhvdXNlfGVufDB8fDB8fHww"
+    ];
+    private static readonly IEnumerable<string> HouseInURLs =
+    [
+        "https://plus.unsplash.com/premium_photo-1661962841993-99a07c27c9f4?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aG91c2V8ZW58MHx8MHx8fDA%3D",
+        "https://images.unsplash.com/photo-1554995207-c18c203602cb?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8aG91c2V8ZW58MHx8MHx8fDA%3D",
+        "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjN8fGhvdXNlfGVufDB8fDB8fHww",
+        "https://images.unsplash.com/photo-1629079448081-c6ab9cbea877?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHRvd25ob3VzZXxlbnwwfHwwfHx8MA%3D%3D"
+    ];
+    private static readonly IEnumerable<string> TownHouseOutURLs =
+    [
+        "https://images.unsplash.com/photo-1625283518755-6047df2fb180?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8dG93bmhvdXNlfGVufDB8fDB8fHww"
+    ];
+    private static readonly IEnumerable<string> TownHouseInURLs =
+    [
+        "https://images.unsplash.com/photo-1560185007-5f0bb1866cab?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHRvd25ob3VzZXxlbnwwfHwwfHx8MA%3D%3D",
+        "https://images.unsplash.com/photo-1629079448062-78cb01434ef6?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjZ8fHRvd25ob3VzZXxlbnwwfHwwfHx8MA%3D%3D",
+        "https://images.unsplash.com/photo-1560185008-186576e0f1e2?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NDB8fHRvd25ob3VzZXxlbnwwfHwwfHx8MA%3D%3D"
+    ];
+    private static readonly IEnumerable<string> UnitOutURLs =
+    [
+        "https://images.unsplash.com/photo-1460317442991-0ec209397118?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8YXBhcnRtZW50fGVufDB8fDB8fHww"
+    ];
+    private static readonly IEnumerable<string> UnitInURLs =
+    [
+        "https://images.unsplash.com/photo-1646775813661-f4803e746bd1?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTA5fHx0b3duaG91c2V8ZW58MHx8MHx8fDA%3D",
+        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8YXBhcnRtZW50fGVufDB8fDB8fHww"
+    ];
+    private static readonly IEnumerable<string> LandURLs =
+        [
+            "https://images.unsplash.com/photo-1669003154058-e1876138ac3c?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzR8fGxhbmQlMjBmb3IlMjBzYWxlfGVufDB8fDB8fHww"
+        ];
 }
