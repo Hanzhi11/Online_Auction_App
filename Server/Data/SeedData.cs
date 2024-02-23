@@ -77,26 +77,44 @@ public static class SeedData
             Role agent = Role.Agent;
             Role auctioneer = Role.Auctioneer;
 
-            Person person1 = new("May", "May")
+            string portrait1 = "Data/Assets/portrait1.jpeg";
+            string portrait2 = "Data/Assets/portrait2.jpeg";
+            string portrait3 = "Data/Assets/portrait3.jpeg";
+            string portrait4 = "Data/Assets/portrait4.jpeg";
+            string[] photoPaths = [portrait1, portrait2, portrait3, portrait4];
+            List<byte[]> portraits = [];
+            foreach (string photoPath in photoPaths)
+            {
+                byte[] photoBytes;
+                string fileName = Path.GetFileNameWithoutExtension(photoPath);
+                using (FileStream fileStream = new(photoPath, FileMode.Open, FileAccess.Read))
+                {
+                    photoBytes = new byte[fileStream.Length];
+                    fileStream.Read(photoBytes, 0, (int)fileStream.Length);
+                }
+                portraits.Add(photoBytes);
+            }
+
+            Person person1 = new("May", "May", portraits[0])
             {
                 Role = agent,
                 Mobile = "0412341234",
                 Email = "MayMay@bidnow.com.au",
-                Agency = agencies[0]
+                Agency = agencies[0],
             };
-            Person person2 = new("David", "David")
+            Person person2 = new("David", "David", portraits[1])
             {
                 Role = agent,
                 Mobile = "0443214321",
                 Email = "DavidDavid@bidnow.com.au",
                 Agency = agencies[1]
             };
-            Person person3 = new("Joe", "Joe")
+            Person person3 = new("Joe", "Joe", portraits[3])
             {
                 Role = auctioneer,
                 LicenceNumber = "12345678"
             };
-            Person person4 = new("June", "June")
+            Person person4 = new("June", "June", portraits[2])
             {
                 Role = auctioneer,
                 LicenceNumber = "87654321"
@@ -117,7 +135,18 @@ public static class SeedData
             .FirstOrDefault(pr => pr.Role == Role.Auctioneer)!.Id;
             DateTime auctionDateTime = DateTime.SpecifyKind(new DateTime(2024, 3, 23, 14, 30, 0), DateTimeKind.Local).ToUniversalTime();
 
-            Listing listing = new("", "", auctionDateTime, addressId, PropertyType.House, agencies[0].Id, auctioneerId);
+            Listing listing = new(
+                "", 
+                "", 
+                4,
+                3,
+                2,
+                auctionDateTime, 
+                addressId, 
+                PropertyType.House, 
+                agencies[0].Id, 
+                auctioneerId
+                );
             context.Listing.Add(listing);
             context.SaveChanges();
 
@@ -166,38 +195,13 @@ public static class SeedData
 
     private static readonly IEnumerable<string> HouseOutURLs =
     [
-        "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8aG91c2V8ZW58MHx8MHx8fDA%3D",
-        // "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGhvdXNlfGVufDB8fDB8fHww",
-        // "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGhvdXNlfGVufDB8fDB8fHww"
+        "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=1750&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     ];
     private static readonly IEnumerable<string> HouseInURLs =
     [
-        "https://plus.unsplash.com/premium_photo-1661962841993-99a07c27c9f4?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aG91c2V8ZW58MHx8MHx8fDA%3D",
-        "https://images.unsplash.com/photo-1554995207-c18c203602cb?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8aG91c2V8ZW58MHx8MHx8fDA%3D",
-        "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjN8fGhvdXNlfGVufDB8fDB8fHww",
-        "https://images.unsplash.com/photo-1629079448081-c6ab9cbea877?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHRvd25ob3VzZXxlbnwwfHwwfHx8MA%3D%3D"
+        "https://plus.unsplash.com/premium_photo-1661962841993-99a07c27c9f4?w=1750&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aG91c2V8ZW58MHx8MHx8fDA%3D",
+        "https://images.unsplash.com/photo-1554995207-c18c203602cb?w=1750&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8aG91c2V8ZW58MHx8MHx8fDA%3D",
+        "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=1750&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjN8fGhvdXNlfGVufDB8fDB8fHww",
+        "https://images.unsplash.com/photo-1629079448081-c6ab9cbea877?w=1750&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHRvd25ob3VzZXxlbnwwfHwwfHx8MA%3D%3D"
     ];
-    private static readonly IEnumerable<string> TownHouseOutURLs =
-    [
-        "https://images.unsplash.com/photo-1625283518755-6047df2fb180?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8dG93bmhvdXNlfGVufDB8fDB8fHww"
-    ];
-    private static readonly IEnumerable<string> TownHouseInURLs =
-    [
-        "https://images.unsplash.com/photo-1560185007-5f0bb1866cab?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHRvd25ob3VzZXxlbnwwfHwwfHx8MA%3D%3D",
-        "https://images.unsplash.com/photo-1629079448062-78cb01434ef6?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjZ8fHRvd25ob3VzZXxlbnwwfHwwfHx8MA%3D%3D",
-        "https://images.unsplash.com/photo-1560185008-186576e0f1e2?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NDB8fHRvd25ob3VzZXxlbnwwfHwwfHx8MA%3D%3D"
-    ];
-    private static readonly IEnumerable<string> UnitOutURLs =
-    [
-        "https://images.unsplash.com/photo-1460317442991-0ec209397118?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8YXBhcnRtZW50fGVufDB8fDB8fHww"
-    ];
-    private static readonly IEnumerable<string> UnitInURLs =
-    [
-        "https://images.unsplash.com/photo-1646775813661-f4803e746bd1?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTA5fHx0b3duaG91c2V8ZW58MHx8MHx8fDA%3D",
-        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8YXBhcnRtZW50fGVufDB8fDB8fHww"
-    ];
-    private static readonly IEnumerable<string> LandURLs =
-        [
-            "https://images.unsplash.com/photo-1669003154058-e1876138ac3c?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzR8fGxhbmQlMjBmb3IlMjBzYWxlfGVufDB8fDB8fHww"
-        ];
 }

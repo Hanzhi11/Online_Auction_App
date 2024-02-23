@@ -1,12 +1,17 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Server.ViewModels;
 using Server.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Server.Models;
 
+[Index(nameof(ListingNumber), IsUnique = true)]
 public class Listing(
     string heading,
     string copyWriting,
+    int bedNumber,
+    int bathNumber,
+    int garageNumber,
     DateTime auctionDateTime,
     Guid addressId,
     PropertyType propertyType,
@@ -17,10 +22,13 @@ public class Listing(
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
 
-    public int ListingNumber {get;set;}
+    public int ListingNumber { get; set; }
 
     public string Heading { get; set; } = heading;
     public string CopyWriting { get; set; } = copyWriting;
+    public int BedNumber { get; set; } = bedNumber;
+    public int BathNumber { get; set; } = bathNumber;
+    public int GarageNumber { get; set; } = garageNumber;
     public DateTime DateTimeCreated { get; set; } = DateTime.UtcNow;
 
     public DateTime AuctionDateTime { get; set; } = auctionDateTime;
@@ -62,5 +70,64 @@ public class Listing(
             dataUrl
             );
         return information;
+    }
+
+    public ListingDetailsViewModel GetDetails()
+    {
+        List<AgentViewModel> agents = [];
+        if (ListingAgents!.Count != 0)
+        {
+            foreach (ListingAgent listingAgent in ListingAgents)
+            {
+                AgentViewModel agent = new()
+                {
+                    FullName = listingAgent.Agent!.FirstName + " " + listingAgent.Agent.LastName,
+                    Email = listingAgent.Agent.Email,
+                    Mobile = listingAgent.Agent.Mobile,
+                    PortraitBytes = listingAgent.Agent.PortraitBytes
+                };
+                agents.Add(agent);
+            }
+        }
+
+        AuctioneerViewModel auctioneer = new();
+        if (Auctioneer != null)
+        {
+            auctioneer.FullName = Auctioneer.FirstName + " " + Auctioneer.LastName;
+            auctioneer.LicenceNumber = Auctioneer.LicenceNumber;
+            auctioneer.PortraitBytes = Auctioneer.PortraitBytes;
+        }
+
+        AgencyViewModel agency = new();
+
+        if (Agency != null)
+        {
+            agency.Name = Agency.Name;
+            agency.Address = Agency.Address!.FormatToFullAddress();
+        };
+
+        List<byte[]> photosBytes = [];
+        if (Photos!.Count != 0)
+        {
+            photosBytes = Photos!.OrderBy(p => p.DateTimeCreated).Select(p => p.Bytes).ToList();
+        }
+
+        ListingDetailsViewModel details = new()
+        {
+            Heading = Heading,
+            CopyWriting = CopyWriting,
+            BedNumber = BedNumber,
+            BathNumber = BathNumber,
+            GarageNumber = GarageNumber,
+            AuctionDateTime = AuctionDateTime,
+            Address = Address!.FormatToFullAddress(),
+            PropertyType = PropertyType.ToString(),
+            Agents = agents,
+            Agency = agency,
+            Auctioneer = auctioneer,
+            PhotosBytes = photosBytes
+        };
+
+        return details;
     }
 }

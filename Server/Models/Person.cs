@@ -4,7 +4,7 @@ using Server.Data;
 
 namespace Server.Models;
 
-public class Person(string firstName, string lastName)
+public class Person(string firstName, string lastName, byte[] portraitBytes)
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
@@ -21,6 +21,8 @@ public class Person(string firstName, string lastName)
     public string? LicenceNumber { get; set; }
 
     public Role Role { get; set; }
+
+    public byte[] PortraitBytes {get; set;} = portraitBytes;
 
     public Agency? Agency {get;set;}
 }
