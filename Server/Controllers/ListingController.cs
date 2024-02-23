@@ -26,13 +26,43 @@ public class ListingController(AppDbContext context) : ControllerBase
         .Include(l => l.Agency)
         .Include(l => l.Photos)];
 
-        List<ListingBriefViewModel> listingsInfo = [];
+        List<ListingInfoViewModel> listingsInfo = [];
         foreach (Listing listing in listings)
         {
-            ListingBriefViewModel info = listing.GetInformation();
+            ListingInfoViewModel info = listing.GetInformation();
             listingsInfo.Add(info);
         }
 
         return Ok(listingsInfo);
+    }
+
+    public IActionResult Details(int? id)
+    {
+        if (id == null)
+        {
+            return NotFound();
+        }
+
+        Listing? listing = _context.Listing
+        .Where(l => l.ListingNumber == id)
+        .Include(l => l.Address)
+        .ThenInclude(a => a!.State)
+        .Include(l => l.ListingAgents)!
+        .ThenInclude(la => la.Agent)
+        .Include(l => l.Agency)
+        .ThenInclude(a => a!.Address)
+        .ThenInclude(a => a!.State)
+        .Include(l => l.Auctioneer)
+        .Include(l => l.Photos)
+        .FirstOrDefault();
+
+        if (listing == null)
+        {
+            return NotFound();
+        }
+
+        ListingDetailsViewModel details = listing.GetDetails();
+
+        return Ok(details);
     }
 }
