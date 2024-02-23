@@ -20,6 +20,9 @@ export default {
       },
       transitionProperty: {
         'width': 'width',
+      },
+      zIndex: {
+        '9999': '9999',
       }
     },
     fontFamily: {
