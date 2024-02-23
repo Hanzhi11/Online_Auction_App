@@ -14,10 +14,10 @@ function SectionContainer(props: Props) {
     }
     )
     return (
-        <div className={styles} >
+        <section className={styles} >
             {header && <h1 className="border-b border-stone-400 font-light pb-4 md:pb-6 text-lg md:text-3xl mb-5">{header}</h1>}
             {props.children}
-        </div>
+        </section>
     )
 }
 

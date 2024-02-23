@@ -3,7 +3,7 @@ import SectionContainer from "./SectionContainer"
 
 function Footer() {
     return (
-        <footer className="bg-green-500 mt-5 text-white flex justify-center">
+        <footer className="bg-green-500 text-white flex justify-center mt-auto">
             <SectionContainer style="items-center py-7 lg:grid lg:grid-cols-2">
                     <section>
                         <Logo />

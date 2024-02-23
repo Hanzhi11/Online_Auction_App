@@ -18,7 +18,7 @@ function OverLay(props: Props) {
     }, [])
 
     return ReactDOM.createPortal(
-        <div className="absolute inset-0 pt-6 bg-indigo-900 bg-opacity-90 flex flex-col overflow-scroll">
+        <div className="absolute inset-0 py-6 bg-indigo-900 bg-opacity-90 flex flex-col overflow-auto z-9999">
             <button id={ELEMENT_ID.CLOSE_OVERLAY_BUTTON} className="hover:cursor-pointer ml-auto mr-3.5 w-fit" onClick={onClose}>
                 <IoClose />
             </button>
