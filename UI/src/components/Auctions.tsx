@@ -4,6 +4,7 @@ import { IconContext } from "react-icons";
 import { FaPlus } from "react-icons/fa6";
 import { STATE } from "./Constants";
 import { Link } from 'react-router-dom'
+import Button from "./Button";
 
 export interface FullAddress {
     unitNumber: string;
@@ -30,117 +31,6 @@ function Auctions() {
             .then(res => res.json())
             .then(data => setListingsInfo(data))
     }, [])
-    // const cards = [{
-    //     unitNumber: null,
-    //     streetNumber: 28,
-    //     street: 'Meihua Street',
-    //     suburb: 'Huayuanli Meihuayuan District',
-    //     auctionDate: '2024-02-24 11:00',
-    //     agency: 'Bid Now Agency',
-    //     agencyLogo: '',
-    //     mainPhoto: 'h1.jpeg',
-    //     agents: [{
-    //         name: 'First Agent',
-    //         email: 'firstagent@bidnow.com.au',
-    //         mobile: '0412341234',
-    //         portrait: 'portrait1.jpeg'
-    //     }, {
-    //         name: 'Second Agent',
-    //         email: 'secondagent@bidnow.com.au',
-    //         mobile: '0443214321',
-    //         portrait: 'portrait2.jpeg'
-    //     }]
-    // }, {
-    //     unitNumber: 1,
-    //     streetNumber: 14,
-    //     street: 'Meihua Street',
-    //     suburb: 'Huayuan',
-    //     auctionDate: '10:00 2024-02-17',
-    //     agency: 'BN Agency',
-    //     agencyLogo: '',
-    //     mainPhoto: 'th1.jpeg',
-    //     agents: [{
-    //         name: 'Third Agent',
-    //         email: 'thirdagent@bidnow.com.au',
-    //         mobile: '0412121212',
-    //         portrait: 'portrait3.jpeg'
-    //     }]
-    // }, {
-    //     unitNumber: 1,
-    //     streetNumber: 14,
-    //     street: 'Meihua Street',
-    //     suburb: 'Huayuan',
-    //     auctionDate: '14:00 2024-02-17',
-    //     agency: 'BN Agency',
-    //     agencyLogo: '',
-    //     mainPhoto: 'th1.jpeg',
-    //     agents: [{
-    //         name: 'Third Agent',
-    //         email: 'thirdagent@bidnow.com.au',
-    //         mobile: '0412121212',
-    //         portrait: 'portrait3.jpeg'
-    //     }]
-    // }, {
-    //     unitNumber: 1,
-    //     streetNumber: 14,
-    //     street: 'Meihua Street',
-    //     suburb: 'Huayuan',
-    //     auctionDate: '14:00 2024-02-17',
-    //     agency: 'BN Agency',
-    //     agencyLogo: '',
-    //     mainPhoto: 'th1.jpeg',
-    //     agents: [{
-    //         name: 'Third Agent',
-    //         email: 'thirdagent@bidnow.com.au',
-    //         mobile: '0412121212',
-    //         portrait: 'portrait3.jpeg'
-    //     }]
-    // }, {
-    //     unitNumber: 1,
-    //     streetNumber: 14,
-    //     street: 'Meihua Street',
-    //     suburb: 'Huayuan',
-    //     auctionDate: '14:00 2024-02-17',
-    //     agency: 'BN Agency',
-    //     agencyLogo: '',
-    //     mainPhoto: 'th1.jpeg',
-    //     agents: [{
-    //         name: 'Third Agent',
-    //         email: 'thirdagent@bidnow.com.au',
-    //         mobile: '0412121212',
-    //         portrait: 'portrait3.jpeg'
-    //     }]
-    // }, {
-    //     unitNumber: 1,
-    //     streetNumber: 14,
-    //     street: 'Meihua Street',
-    //     suburb: 'Huayuan',
-    //     auctionDate: '14:00 2024-02-17',
-    //     agency: 'BN Agency',
-    //     agencyLogo: '',
-    //     mainPhoto: 'th1.jpeg',
-    //     agents: [{
-    //         name: 'Third Agent',
-    //         email: 'thirdagent@bidnow.com.au',
-    //         mobile: '0412121212',
-    //         portrait: 'portrait3.jpeg'
-    //     }]
-    // }, {
-    //     unitNumber: 1,
-    //     streetNumber: 14,
-    //     street: 'Meihua Street',
-    //     suburb: 'Huayuan',
-    //     auctionDate: '14:00 2024-02-17',
-    //     agency: 'BN Agency',
-    //     agencyLogo: '',
-    //     mainPhoto: 'th1.jpeg',
-    //     agents: [{
-    //         name: 'Third Agent',
-    //         email: 'thirdagent@bidnow.com.au',
-    //         mobile: '0412121212',
-    //         portrait: 'portrait3.jpeg'
-    //     }]
-    // }]
 
     const content = listingsInfo.map((listingInfo, index) => {
         const address = listingInfo.address
@@ -187,10 +77,10 @@ function Auctions() {
     })
 
     return (
-        <IconContext.Provider value={{ color: 'white', size: '1.2rem', className: 'inline stroke-[20]' }}>
+        <IconContext.Provider value={{ size: '1.2rem', className: 'stroke-[20]'}}>
             <SectionContainer header='Upcoming Auctions'>
                 <div className="grid grid-cols-1 justify-items-center gap-y-4 md:gap-x-6 md:grid-cols-2 lg:grid-cols-3">{content}</div>
-                <button className="block mx-auto my-5 bg-green-500 rounded-full w-10 h-10" onClick={() => { }}><FaPlus /></button>
+                <Button height='h-10' type='primary' classNames="mx-auto my-5 md:w-10 md:rounded-full" onClick={() => { }}><span className="md:hidden">More</span><FaPlus className="hidden md:block"/></Button>
             </SectionContainer>
         </IconContext.Provider >
     )

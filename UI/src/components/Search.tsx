@@ -5,6 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useState } from "react";
 import className from "classnames";
 import SectionContainer from "./SectionContainer";
+import Button from "./Button";
 
 type StartDate = Date | null
 
@@ -57,7 +58,7 @@ function Search() {
         }
     }
 
-    const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const handleSubmit = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault()
         const formData = {
             address: address,
@@ -106,14 +107,16 @@ function Search() {
                             nextMonthButtonDisabled,
                         }) => (
                             <div className="grid grid-cols-4 grid-rows-1">
-                                {prevMonthButtonDisabled ? <div></div> : <button className='text-xl text-left px-4'
+                                {prevMonthButtonDisabled ? <div></div> : 
+                                <button className='text-xl text-left px-4'
                                     onClick={(event) => {
                                         event.preventDefault()
                                         decreaseMonth()
                                     }}
                                     disabled={prevMonthButtonDisabled}>
                                     {"<"}
-                                </button>}
+                                </button> 
+                                }
                                 <header className="text-base font-normal leading-7 col-span-2">{MONTHS[date.getMonth()] + ' ' + date.getFullYear().toString()}</header>
                                 <button className='text-xl text-right px-4'
                                     onClick={(event) => {
@@ -136,7 +139,7 @@ function Search() {
                             },
                         ]}
                     />
-                    <button className="bg-green-500 rounded-full w-10 h-10 self-end md:ml-6" onClick={handleSubmit}><IoIosArrowForward /></button>
+                    <Button height='h-10' type='primary' classNames="self-end md:ml-6 md:w-10 md:rounded-full" onClick={handleSubmit}><span className="md:hidden">Search</span><IoIosArrowForward className="hidden md:block"/></Button>
                 </form>
             </SectionContainer>
         </IconContext.Provider >
