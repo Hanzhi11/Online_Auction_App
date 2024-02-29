@@ -119,12 +119,18 @@ public static class SeedData
                 Role = auctioneer,
                 LicenceNumber = "87654321"
             };
+            Person person5 = new("Sammy", "Agent", []){
+                Role = agent,
+                Mobile = "0499999999",
+                Email = "SammyAgent@bidnow.com.au"
+            };
 
             context.Person.AddRange(
                 person1,
                 person2,
                 person3,
-                person4
+                person4,
+                person5
             );
 
             context.SaveChanges();
@@ -132,12 +138,14 @@ public static class SeedData
             Guid addressId = context.Address.OrderByDescending(a => a.StreetNumber).FirstOrDefault()!.Id;
 
             Guid auctioneerId = context.Person
-            .FirstOrDefault(pr => pr.Role == Role.Auctioneer)!.Id;
+            .FirstOrDefault(pr => pr.FirstName == "Joe")!.Id;
             DateTime auctionDateTime = DateTime.SpecifyKind(new DateTime(2024, 3, 23, 14, 30, 0), DateTimeKind.Local).ToUniversalTime();
+            string heading = "Exquisite Luxury Awaits: Discover Your Dream Two-Storey Home Today!";
+            string copyWriting = "Nestled in the heart of Wanhuayuan Hehuayuan, this magnificent two-storey luxury residence epitomizes grandeur and sophistication. Boasting meticulous craftsmanship and timeless design, every corner of this opulent abode exudes luxury.";
 
             Listing listing = new(
-                "", 
-                "", 
+                heading, 
+                copyWriting, 
                 4,
                 3,
                 2,
@@ -152,9 +160,14 @@ public static class SeedData
 
             Guid listingId = context.Listing.FirstOrDefault()!.Id;
             Guid agentId = context.Person
-                .FirstOrDefault(pr => pr.Role == Role.Agent)!.Id;
+                .FirstOrDefault(pr => pr.FirstName == "May")!.Id;
             ListingAgent listingAgent = new(listingId, agentId);
             context.ListingAgent.Add(listingAgent);
+
+            Guid agentId2 = context.Person.FirstOrDefault(p => p.FirstName == "Sammy")!.Id;
+            ListingAgent listingAgent2 = new(listingId, agentId2);
+            context.ListingAgent.Add(listingAgent2);
+
             context.SaveChanges();
             
             ImageDownloader imageDownloader = new ImageDownloader();
