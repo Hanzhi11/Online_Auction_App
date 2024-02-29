@@ -9,7 +9,7 @@ function Footer() {
                         <Logo />
                         <p className="text-sm my-2.5">2024© BidNow All rights reserved</p>
                     </section>
-                    <section className="text-sm">
+                    <section className="text-sm ml-auto">
                         <p><span className="font-medium">for sales</span>: sales@bidnow.com.au</p>
                         <p><span className="font-medium">for support</span>: support@bidnow.com.au</p>
                         <ul className="list-disc px-6">
