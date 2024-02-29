@@ -7,6 +7,10 @@ interface Props {
     person: Agent[] | Auctioneer;
 }
 
+function isAgent(person: Agent | Auctioneer): person is Agent {
+    return (person as Agent).mobile !== undefined;
+}
+
 function PersonList(props: Props) {
     const { person } = props;
 
@@ -28,11 +32,30 @@ function PersonList(props: Props) {
             portrait = (
                 <div className="flex h-full border border-green-500 rounded-full">
                     <span className="m-auto text-lg">
-                        {person.fullName.split(" ").map((name) => name[0]).join('')}
+                        {person.fullName
+                            .split(" ")
+                            .map((name) => name[0])
+                            .join("")}
                     </span>
                 </div>
             );
         }
+
+        let mobile;
+        let email;
+        let licenceNumber;
+        if (isAgent(person)) {
+            mobile =
+                person.mobile.slice(0, 4) +
+                " " +
+                person.mobile.slice(4, 7) +
+                " " +
+                person.mobile.slice(7);
+            email = person.email;
+        } else {
+            licenceNumber = person.licenceNumber;
+        }
+
         return (
             <div
                 key={index}
@@ -43,26 +66,22 @@ function PersonList(props: Props) {
                 </div>
                 <div className="overflow-hidden">
                     <p>{person.fullName}</p>
-                    {(person as Agent).email && (
+                    {email && (
                         <div className="flex items-center">
                             <MdEmail />
-                            <p className="ml-2 truncate">
-                                {(person as Agent).email}
-                            </p>
+                            <p className="ml-2 truncate">{email}</p>
                         </div>
                     )}
-                    {(person as Agent).mobile && (
+                    {mobile && (
                         <div className="flex items-center">
                             <FaPhone />
-                            <p className="ml-2">{(person as Agent).mobile}</p>
+                            <p className="ml-2">{mobile}</p>
                         </div>
                     )}
-                    {(person as Auctioneer).licenceNumber && (
+                    {licenceNumber && (
                         <div className="flex items-center">
                             <AiFillSafetyCertificate />
-                            <p className="ml-2">
-                                {(person as Auctioneer).licenceNumber}
-                            </p>
+                            <p className="ml-2">{licenceNumber}</p>
                         </div>
                     )}
                 </div>
