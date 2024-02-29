@@ -4,7 +4,11 @@ export enum ELEMENT_ID {
     JOIN_BUTTON = 'joinButton',
     CLOSE_OVERLAY_BUTTON = 'closeOverLayButton',
     HOME_RUNNER = 'homeRunner',
-    HEADER = 'header'
+    HEADER = 'header',
+    PHOTO_BACK = 'photoBack',
+    PHOTO_FORWARD = 'photoForward',
+    PHOTO_BAR_BACK = 'photoBarBack',
+    PHOTO_BAR_FORWARD = 'photoBarForward'
 }
 
 export enum STATE {
@@ -15,4 +19,9 @@ export enum STATE {
     NT = 'NT',
     TAS = 'TAS',
     SA = 'SA'
+}
+
+export enum OVERLAY_CONTENTS {
+    NAV = 'nav',
+    PHOTOS = 'photos'
 }
