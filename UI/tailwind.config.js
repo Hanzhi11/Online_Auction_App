@@ -23,6 +23,9 @@ export default {
       },
       zIndex: {
         '9999': '9999',
+      },
+      fontSize: {
+        xxs: '0.65rem'
       }
     },
     fontFamily: {
