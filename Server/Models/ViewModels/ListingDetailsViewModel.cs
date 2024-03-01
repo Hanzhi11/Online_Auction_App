@@ -1,6 +1,3 @@
-using Server.Data;
-using Server.Models;
-
 namespace Server.ViewModels;
 
 public class ListingDetailsViewModel()
@@ -11,7 +8,7 @@ public class ListingDetailsViewModel()
     public int BathNumber { get; set; }
     public int GarageNumber { get; set; }
     public DateTime AuctionDateTime { get; set; }
-    public FullAddressViewModel? Address { get; set; }
+    public string? Address { get; set; }
     public string? PropertyType { get; set; }
     public IEnumerable<AgentViewModel>? Agents { get; set; }
 

@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { FullAddress } from "./Auctions";
 import { IoCameraOutline } from "react-icons/io5";
 import { IconContext } from "react-icons";
 import Button from "./Button";
@@ -32,10 +31,10 @@ export interface Auctioneer {
 }
 
 interface Details {
-    address: FullAddress;
+    address: string;
     agency: {
         name: string;
-        address: FullAddress;
+        address: string;
     };
     agents: Agent[];
     auctionDateTime: Date;
@@ -118,24 +117,6 @@ function Listing() {
         }
     };
 
-    function convertToFullAddress(address: FullAddress) {
-        let fullAddress =
-            address.streetNumber +
-            " " +
-            address.street +
-            ", " +
-            address.suburb +
-            ", " +
-            address.state +
-            " " +
-            address.postCode;
-        if (address.unitNumber) {
-            fullAddress = address.unitNumber + "/" + fullAddress;
-        }
-
-        return fullAddress;
-    }
-
     useEffect(() => {
         fetch(
             `${import.meta.env.VITE_BASE_URL}/Listing/Details/${listingNumber}`
@@ -167,8 +148,8 @@ function Listing() {
         copyWriting,
     } = details;
 
-    const propertyFullAddress = convertToFullAddress(address);
-    const agencyFullAddress = convertToFullAddress(agency.address);
+    const propertyFullAddress = address;
+    const agencyFullAddress = agency.address;
 
     const mainPhotoUrl = `data:image/jpeg;base64,${photosBytes[0]}`;
 

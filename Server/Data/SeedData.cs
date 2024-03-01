@@ -46,7 +46,6 @@ public static class SeedData
                 new Address("14", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1)
                 {
                     UnitNumber = "1"
-
                 },
                 new Address("14", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1)
                 {

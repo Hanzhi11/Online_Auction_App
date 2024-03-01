@@ -2,21 +2,11 @@ import { useEffect, useState } from "react";
 import SectionContainer from "./SectionContainer";
 import { IconContext } from "react-icons";
 import { FaPlus } from "react-icons/fa6";
-import { STATE } from "./Constants";
 import { Link } from 'react-router-dom'
 import Button from "./Button";
 
-export interface FullAddress {
-    unitNumber: string;
-    streetNumber: string;
-    street: string;
-    suburb: string;
-    postCode: string;
-    state: keyof typeof STATE;
-}
-
 interface ListingInfo {
-    address: FullAddress;
+    address: string;
     auctionDateTime: Date;
     agencyName: string;
     photoDataURL: string;
@@ -34,11 +24,8 @@ function Auctions() {
 
     const content = listingsInfo.map((listingInfo, index) => {
         const address = listingInfo.address
-        let fullAddress = address.streetNumber + ' ' + address.street + ', ' + address.suburb
-        const routeFrag = address.suburb.replace(' ', '+') + '-' + address.state + '-' + listingInfo.listingNumber
-        if (address.unitNumber) {
-            fullAddress = address.unitNumber + '/' + fullAddress
-        }
+
+        const routeFrag = address.split(', ').at(-1)?.replace(' ', '+') + '-' + listingInfo.listingNumber
 
         const auctionDate = new Date(listingInfo.auctionDateTime)
         const options: Intl.DateTimeFormatOptions = {
@@ -61,10 +48,10 @@ function Auctions() {
 
         return (
             <div className="transition-width duration-0 xl:duration-500 ease-in-out w-[315px] h-52 relative md:w-[345px] lg:w-[294px] xl:w-[360px] overflow-hidden group rounded-md text-white bg-cover" style={{ backgroundImage: `url('${listingInfo.photoDataURL}')`}} key={index}>
-                <header className={'bg-indigo-900 bg-opacity-70 h-10 px-5 py-2.5 text-sm truncate ' + defaultOpacityTransition}>{fullAddress}</header>
+                <header className={'bg-indigo-900 bg-opacity-70 h-10 px-5 py-2.5 text-sm truncate ' + defaultOpacityTransition}>{address}</header>
                 <span className={"bg-white font-medium px-2 py-1 absolute bottom-2.5 right-2 text-black " + defaultOpacityTransition}>{listingInfo.agencyName}</span>
                 <div className={"absolute inset-0 grid grid-rows-6 grid-cols-2 bg-indigo-900 bg-opacity-70 text-sm font-medium h-full p-5 pb-12 " + overLayOpacityTransition}>
-                    <p className="text-green-500 col-span-2 row-span-2 self-start">{fullAddress}</p>
+                    <p className="text-green-500 col-span-2 row-span-2 self-start">{address}</p>
                     <p className="col-span-2">{formattedDate}</p>
                     <p className="text-green-500 col-span-2">{listingInfo.agencyName}</p>
                     <p>Auction Listing</p>

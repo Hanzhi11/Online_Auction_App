@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
 using Server.Models;
-using Server.ViewModels;
 
 namespace Server.Controllers;
 
@@ -13,11 +12,11 @@ public class AddressController(AppDbContext context) : ControllerBase
     public IActionResult Index()
     {
         List<Address> addresses = _context.Address.Include(a => a.State).ToList();
-        List<FullAddressViewModel> fullAddresses = [];
+        List<string> fullAddresses = [];
 
         foreach (Address address in addresses)
         {
-            FullAddressViewModel fullAddress = address.FormatToFullAddress();
+            string fullAddress = address.FormatToFullAddress();
             fullAddresses.Add(fullAddress);
         }
 
