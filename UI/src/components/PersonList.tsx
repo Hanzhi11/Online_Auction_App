@@ -61,27 +61,27 @@ function PersonList(props: Props) {
                 key={index}
                 className="flex items-center bg-white rounded-r-md rounded-l-[48px] mb-3 overflow-hidden"
             >
-                <div className="w-24 h-24 min-w-24 rounded-full overflow-hidden mr-5">
+                <div className="w-24 h-24 min-w-24 rounded-full overflow-hidden mr-5 md:w-14 md:h-14 md:min-w-14 lg:w-16 lg:h-16 lg:min-w-16 xl:w-24 xl:h-24 xl:min-w-24">
                     {portrait}
                 </div>
                 <div className="overflow-hidden">
-                    <p>{person.fullName}</p>
+                    <p className="md:text-sm xl:text-lg">{person.fullName}</p>
                     {email && (
                         <div className="flex items-center">
-                            <MdEmail />
-                            <p className="ml-2 truncate">{email}</p>
+                            <div><MdEmail /></div>
+                            <p className="ml-2 break-all md:text-sm xl:text-base">{email}</p>
                         </div>
                     )}
                     {mobile && (
                         <div className="flex items-center">
-                            <FaPhone />
-                            <p className="ml-2">{mobile}</p>
+                            <div><FaPhone /></div>
+                            <p className="ml-2 md:text-sm xl:text-base">{mobile}</p>
                         </div>
                     )}
                     {licenceNumber && (
                         <div className="flex items-center">
-                            <AiFillSafetyCertificate />
-                            <p className="ml-2">{licenceNumber}</p>
+                            <div><AiFillSafetyCertificate /></div>
+                            <p className="ml-2 md:text-sm xl:text-base">{licenceNumber}</p>
                         </div>
                     )}
                 </div>

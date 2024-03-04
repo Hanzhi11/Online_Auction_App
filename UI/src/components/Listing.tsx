@@ -16,6 +16,7 @@ import OverLay from "./OverLay";
 import { OverLayContentContext, WindowSizeContext } from "../App";
 import { OVERLAY_CONTENTS } from "./Constants";
 import PersonList from "./PersonList";
+import SectionContainer from "./SectionContainer";
 
 export interface Agent {
     fullName: string;
@@ -244,7 +245,7 @@ function Listing() {
                 <ul>
                     {contents.map((item) => {
                         return (
-                            <li key={item}>
+                            <li key={item} className="md:text-sm">
                                 -{" "}
                                 <Link
                                     to=""
@@ -274,116 +275,155 @@ function Listing() {
         );
     });
 
-    return (
-        <main className="bg-neutral-100 pb-5">
-            {
-                <>
-                    <div
-                        className="bg-cover bg-center h-[45vh] max-h-80 relative"
-                        style={{ backgroundImage: `url('${mainPhotoUrl}')` }}
-                    >
-                        <p className="p-1 bg-white w-fit">{agency.name}</p>
-                        <Button
-                            type="secondary"
-                            height="h-8"
-                            width="w-32"
-                            onClick={() =>
-                                updateOverLayContent(OVERLAY_CONTENTS.PHOTOS)
-                            }
-                            classNames="border-2 text-sm absolute bottom-4 left-1/2 -translate-x-2/4"
-                        >
+    const propertyInfo = (
+        <div className="px-3 md:px-0">
+            <p className="font-medium pt-5 md:text-lg">{propertyFullAddress}</p>
+            <IconContext.Provider
+                value={{
+                    size: "1rem",
+                    className: "stroke-black fill-gray-500",
+                }}
+            >
+                <div className="flex text-sm text-gray-500 mt-1 mb-3 md:text-base">
+                    {features.map((feature, index) => {
+                        const featureStyle = className("flex items-center", {
+                            "mr-5": index !== 3,
+                        });
+                        return (
+                            <div key={index} className={featureStyle}>
+                                {feature.icon}
+                                <p className="ml-2">{feature.content}</p>
+                            </div>
+                        );
+                    })}
+                </div>
+            </IconContext.Provider>
+        </div>
+    );
+
+    const auctionBanner = (
+        <div className="bg-neutral-900 text-white py-4 md:absolute md:w-1/3 md:right-0 md:bottom-0 px-3 md:rounded-t-md">
+            <h2 className="font-medium mb-2 md:text-[28px]">Bid at auction</h2>
+            <p className="text-xs leading-5 md:text-sm xl:text-md">
+                This is an auction. To bid on this property you must be
+                registered. Have your drivers licence or photo ID ready.
+            </p>
+        </div>
+    );
+
+    const auctionInfoList = (
+            <div className="shadow-md rounded-b-md overflow-hidden">{auctionDetails}</div>
+    );
+
+    const propertyDescription = (
+        <div className="mt-5 pb-5 shadow-md rounded-b-md px-3 md:px-0 md:shadow-none">
+            <h3 className="mb-5 font-medium md:text-2xl">{heading}</h3>
+            <p id="copyWriting" className={copyWritingStyle}>
+                {copyWriting}
+            </p>
+            {showReadButton ? (
+                <Button
+                    onClick={handleReadButtonContent}
+                    width="w-fit"
+                    classNames="text-gray-500 mt-3"
+                >
+                    {readButtonContent}
+                </Button>
+            ) : (
+                <></>
+            )}
+        </div>
+    );
+
+    const agentsAndAuctioneer = (
+        <div className="md:bg-white rounded-md">
+            <div className="mt-5 pb-3 shadow-md rounded-b-md px-3 md:pt-5 md:shadow-none md:border-b md:rounded-none">
+                <h3 className="mb-5">Listing Agent</h3>
+                <PersonList person={agents} />
+                <div>
+                    <p className="my-1 font-medium xl:text-lg">{agency.name}</p>
+                    <div className="flex items-center">
+                        <div>
                             <IconContext.Provider
                                 value={{
                                     size: "1.2rem",
-                                    className: "stroke-black",
+                                    className: "stroke-1 stroke-gray-500",
                                 }}
                             >
-                                <IoCameraOutline />
+                                <CiLocationOn />
                             </IconContext.Provider>
-                            <p className="pl-3">{photosBytes.length} Photos</p>
-                        </Button>
+                        </div>
+                        <p className="ml-3">{agencyFullAddress}</p>
                     </div>
-                    <p className="font-medium mx-3 mt-5">
-                        {propertyFullAddress}
-                    </p>
-                    <IconContext.Provider
-                        value={{
-                            size: "1rem",
-                            className: "stroke-black fill-gray-500",
-                        }}
+                </div>
+            </div>
+            <div className="mt-5 px-3 md:pb-3">
+                <h3 className="mb-5">Auctioneer</h3>
+                <PersonList person={auctioneer} />
+            </div>
+        </div>
+    );
+
+    let content;
+    const isSmallScreen = windowSize.width < 768;
+    if (isSmallScreen) {
+        content = (
+            <div className="flex flex-col">
+                {propertyInfo}
+                {auctionBanner}
+                {auctionInfoList}
+                {propertyDescription}
+                {agentsAndAuctioneer}
+            </div>
+        );
+    } else {
+        content = (
+            <div className="mx-auto flex">
+                <div className="pr-3 w-2/3">
+                    {propertyInfo}
+                    {propertyDescription}
+                </div>
+                <div className="w-1/3">
+                    {auctionInfoList}
+                    {agentsAndAuctioneer}
+                    </div>
+            </div>
+        );
+    }
+
+    return (
+        <main className="bg-neutral-100 flex-1 pb-5">
+            <div
+                className="bg-cover bg-center h-[45vh] max-h-80 relative"
+                style={{ backgroundImage: `url('${mainPhotoUrl}')` }}
+            >
+                <SectionContainer style="px-0 mx-auto flex flex-col-reverse h-full relative">
+                    <Button
+                        type="secondary"
+                        height="h-8"
+                        width="w-32"
+                        onClick={() =>
+                            updateOverLayContent(OVERLAY_CONTENTS.PHOTOS)
+                        }
+                        classNames="border-2 text-sm mb-4 mx-auto md:mx-0"
                     >
-                        <div className="flex text-sm text-gray-500 ml-3 mt-1">
-                            {features.map((feature, index) => {
-                                const featureStyle = className(
-                                    "flex items-center",
-                                    {
-                                        "mr-5": index !== 3,
-                                    }
-                                );
-                                return (
-                                    <div key={index} className={featureStyle}>
-                                        {feature.icon}
-                                        <p className="ml-2">
-                                            {feature.content}
-                                        </p>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </IconContext.Provider>
-                    <section className="mt-5 border shadow-md rounded-b-md">
-                        <div className="bg-neutral-900 text-white py-4 px-3">
-                            <h2 className="font-medium mb-2">Bid at auction</h2>
-                            <p className="text-xs leading-5">
-                                This is an auction. To bid on this property you
-                                must be registered. Have your drivers licence or
-                                photo ID ready.
-                            </p>
-                        </div>
-                        <div>{auctionDetails}</div>
-                    </section>
-                    <section className="mt-5 px-3 pb-5 shadow-md rounded-b-md">
-                        <h3 className="mb-5 font-medium">{heading}</h3>
-                        <p id="copyWriting" className={copyWritingStyle}>
-                            {copyWriting}
-                        </p>
-                        {showReadButton && (
-                            <Button
-                                onClick={handleReadButtonContent}
-                                width="w-fit"
-                                classNames="text-gray-500 mt-3"
-                            >
-                                {readButtonContent}
-                            </Button>
-                        )}
-                    </section>
-                    <section className="mt-5 px-3 pb-3 shadow-md rounded-b-md">
-                        <h3 className="mb-5">Listing Agent</h3>
-                        <PersonList person={agents} />
-                        <div>
-                            <p className="my-1 font-medium">{agency.name}</p>
-                            <div className="flex items-center">
-                                <div>
-                                    <IconContext.Provider
-                                        value={{
-                                            size: "1.2rem",
-                                            className:
-                                                "stroke-1 stroke-gray-500",
-                                        }}
-                                    >
-                                        <CiLocationOn />
-                                    </IconContext.Provider>
-                                </div>
-                                <p className="ml-3">{agencyFullAddress}</p>
-                            </div>
-                        </div>
-                    </section>
-                    <section className="mt-5 px-3">
-                        <h3 className="mb-5">Auctioneer</h3>
-                        <PersonList person={auctioneer} />
-                    </section>
-                </>
-            }
+                        <IconContext.Provider
+                            value={{
+                                size: "1.2rem",
+                                className: "stroke-black",
+                            }}
+                        >
+                            <IoCameraOutline />
+                        </IconContext.Provider>
+                        <p className="pl-3">{photosBytes.length} Photos</p>
+                    </Button>
+                    {isSmallScreen ? <></> : auctionBanner}
+                </SectionContainer>
+            </div>
+            <SectionContainer style='px-0 mx-auto'>
+                {content}
+            </SectionContainer>
+
             {overLayContent === OVERLAY_CONTENTS.PHOTOS && (
                 <IconContext.Provider
                     value={{
