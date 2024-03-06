@@ -1,22 +1,23 @@
-import { useContext, useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { IoCameraOutline } from "react-icons/io5";
-import { IconContext } from "react-icons";
-import Button from "./Button";
-import { GiHouse } from "react-icons/gi";
-import { FaBath, FaBed, FaCar } from "react-icons/fa";
-import { RxDimensions } from "react-icons/rx";
-import { FiCalendar } from "react-icons/fi";
-import { CiLocationOn } from "react-icons/ci";
-import { MdOutlinePictureAsPdf } from "react-icons/md";
-import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import className from "classnames";
-import Photos from "./Photos";
-import OverLay from "./OverLay";
-import { OverLayContentContext, WindowSizeContext } from "../App";
-import { OVERLAY_CONTENTS } from "./Constants";
-import PersonList from "./PersonList";
-import SectionContainer from "./SectionContainer";
+import { useContext, useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { IoCameraOutline } from 'react-icons/io5';
+import { IconContext } from 'react-icons';
+import Button from './Button';
+import { GiHouse } from 'react-icons/gi';
+import { FaBath, FaBed, FaCar } from 'react-icons/fa';
+import { RxDimensions } from 'react-icons/rx';
+import { FiCalendar } from 'react-icons/fi';
+import { CiLocationOn } from 'react-icons/ci';
+import { MdOutlinePictureAsPdf } from 'react-icons/md';
+import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
+import className from 'classnames';
+import Photos from './Photos';
+import OverLay from './OverLay';
+import { OverLayContentContext, WindowSizeContext } from '../App';
+import { OVERLAY_CONTENTS } from './Constants';
+import PersonList from './PersonList';
+import SectionContainer from './SectionContainer';
+import EnquiryForm from './EnquiryForm';
 
 export interface Agent {
     fullName: string;
@@ -63,23 +64,23 @@ const PROPERTYICONS: PropertyIcon = {
 
 const ReadMore = (
     <>
-        <span className="mr-2">Read More</span>
+        <span className='mr-2'>Read More</span>
         <IoIosArrowDown />
     </>
 );
 const ReadLess = (
     <>
-        <span className="mr-2">Read Less</span>
+        <span className='mr-2'>Read Less</span>
         <IoIosArrowUp />
     </>
 );
 
-const DefaultCopyWritingStyle = "max-h-24 overflow-hidden";
+const DefaultCopyWritingStyle = 'max-h-24 overflow-hidden';
 
 function Listing() {
     const windowSize = useContext(WindowSizeContext);
     const { overLayContent, updateOverLayContent } = useContext(
-        OverLayContentContext
+        OverLayContentContext,
     );
 
     const [details, setDetails] = useState<Details>();
@@ -87,13 +88,13 @@ function Listing() {
         useState<JSX.Element>(ReadMore);
     const [showReadButton, setShowReadButton] = useState<boolean>(false);
     const [copyWritingStyle, setCopyWritingStyle] = useState<string>(
-        DefaultCopyWritingStyle
+        DefaultCopyWritingStyle,
     );
     const { id } = useParams();
-    const listingNumber = id?.split("-").at(-1);
+    const listingNumber = id?.split('-').at(-1);
 
     const updateShowReadButton = () => {
-        const copyWriting = document.getElementById("copyWriting");
+        const copyWriting = document.getElementById('copyWriting');
         if (!copyWriting) {
             return;
         }
@@ -109,8 +110,8 @@ function Listing() {
         if (!target) {
             return;
         }
-        if (target.innerText == "Read More") {
-            setCopyWritingStyle("");
+        if (target.innerText == 'Read More') {
+            setCopyWritingStyle('');
             setReadButtonContent(ReadLess);
         } else {
             setCopyWritingStyle(DefaultCopyWritingStyle);
@@ -120,7 +121,7 @@ function Listing() {
 
     useEffect(() => {
         fetch(
-            `${import.meta.env.VITE_BASE_URL}/Listing/Details/${listingNumber}`
+            `${import.meta.env.VITE_BASE_URL}/Listing/Details/${listingNumber}`,
         )
             .then((res) => res.json())
             .then((data) => setDetails(data));
@@ -155,7 +156,7 @@ function Listing() {
     const mainPhotoUrl = `data:image/jpeg;base64,${photosBytes[0]}`;
 
     let propertyTypeIcon = PROPERTYICONS.HOME;
-    if (propertyType === "Land") {
+    if (propertyType === 'Land') {
         propertyTypeIcon = PROPERTYICONS.LAND;
     }
     const features = [
@@ -179,28 +180,28 @@ function Listing() {
 
     const auctionDate = new Date(auctionDateTime);
     const options: Intl.DateTimeFormatOptions = {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
         hour12: true,
-        hour: "numeric",
-        minute: "numeric",
+        hour: 'numeric',
+        minute: 'numeric',
     };
     const dateTimeStrings = auctionDate
         .toLocaleDateString(undefined, options)
-        .replace(",", "")
-        .split(" at ");
-    const time = dateTimeStrings[1].replace(" ", "");
+        .replace(',', '')
+        .split(' at ');
+    const time = dateTimeStrings[1].replace(' ', '');
     const date = dateTimeStrings[0];
-    const formattedDate = date + " - " + time.toUpperCase();
+    const formattedDate = date.concat(' - ', time.toUpperCase());
 
     const auctionInfo = [
         {
             icon: (
                 <IconContext.Provider
                     value={{
-                        size: "1.6rem",
-                        className: "stroke-gray-500",
+                        size: '1.6rem',
+                        className: 'stroke-gray-500',
                     }}
                 >
                     <FiCalendar />
@@ -212,44 +213,44 @@ function Listing() {
             icon: (
                 <IconContext.Provider
                     value={{
-                        size: "1.6rem",
-                        className: "stroke-1 stroke-gray-500",
+                        size: '1.6rem',
+                        className: 'stroke-1 stroke-gray-500',
                     }}
                 >
                     <CiLocationOn />
                 </IconContext.Provider>
             ),
             content: propertyFullAddress,
-            note: "ONSITE AND ONLINE",
+            note: 'ONSITE AND ONLINE',
         },
         {
             icon: (
                 <IconContext.Provider
                     value={{
-                        size: "1.6rem",
-                        className: "fill-gray-500",
+                        size: '1.6rem',
+                        className: 'fill-gray-500',
                     }}
                 >
                     <MdOutlinePictureAsPdf />
                 </IconContext.Provider>
             ),
-            content: ["REIQ Auction Conditions", "Building Report"],
+            content: ['REIQ Auction Conditions', 'Building Report'],
         },
     ];
 
     const auctionDetails = auctionInfo.map((info, index) => {
-        let content = <p className="mb-0.5">{info.content}</p>;
-        if (typeof info.content === "object") {
+        let content = <p className='mb-0.5'>{info.content}</p>;
+        if (typeof info.content === 'object') {
             const contents = info.content as string[];
             content = (
                 <ul>
                     {contents.map((item) => {
                         return (
-                            <li key={item} className="md:text-sm">
-                                -{" "}
+                            <li key={item} className='md:text-sm'>
+                                -{' '}
                                 <Link
-                                    to=""
-                                    className="hover:border-b border-green-500"
+                                    to=''
+                                    className='hover:border-b border-green-500'
                                 >
                                     {item}
                                 </Link>
@@ -262,13 +263,13 @@ function Listing() {
         return (
             <div
                 key={index}
-                className="flex items-center py-4 bg-white px-3 border-b last-of-type:border-none"
+                className='flex items-center py-4 bg-white px-3 border-b last-of-type:border-none'
             >
                 <div>{info.icon}</div>
-                <div className="ml-3">
+                <div className='ml-3'>
                     {content}
                     {info.note && (
-                        <p className="text-gray-400 text-xxs">{info.note}</p>
+                        <p className='text-gray-400 text-xxs'>{info.note}</p>
                     )}
                 </div>
             </div>
@@ -276,23 +277,23 @@ function Listing() {
     });
 
     const propertyInfo = (
-        <div className="px-3 md:px-0">
-            <p className="font-medium pt-5 md:text-lg">{propertyFullAddress}</p>
+        <div className='px-3 md:px-0'>
+            <p className='font-medium pt-5 md:text-lg'>{propertyFullAddress}</p>
             <IconContext.Provider
                 value={{
-                    size: "1rem",
-                    className: "stroke-black fill-gray-500",
+                    size: '1rem',
+                    className: 'stroke-black fill-gray-500',
                 }}
             >
-                <div className="flex text-sm text-gray-500 mt-1 mb-3 md:text-base">
+                <div className='flex text-sm text-gray-500 mt-1 mb-3 md:text-base'>
                     {features.map((feature, index) => {
-                        const featureStyle = className("flex items-center", {
-                            "mr-5": index !== 3,
+                        const featureStyle = className('flex items-center', {
+                            'mr-5': index !== 3,
                         });
                         return (
                             <div key={index} className={featureStyle}>
                                 {feature.icon}
-                                <p className="ml-2">{feature.content}</p>
+                                <p className='ml-2'>{feature.content}</p>
                             </div>
                         );
                     })}
@@ -302,9 +303,9 @@ function Listing() {
     );
 
     const auctionBanner = (
-        <div className="bg-neutral-900 text-white py-4 md:absolute md:w-1/3 md:right-0 md:bottom-0 px-3 md:rounded-t-md">
-            <h2 className="font-medium mb-2 md:text-[28px]">Bid at auction</h2>
-            <p className="text-xs leading-5 md:text-sm xl:text-md">
+        <div className='bg-neutral-900 text-white py-4 md:absolute md:w-1/3 md:right-0 md:bottom-0 px-3 md:rounded-t-md'>
+            <h2 className='font-medium mb-2 md:text-[28px]'>Bid at auction</h2>
+            <p className='text-xs leading-5 md:text-sm xl:text-md'>
                 This is an auction. To bid on this property you must be
                 registered. Have your drivers licence or photo ID ready.
             </p>
@@ -312,20 +313,22 @@ function Listing() {
     );
 
     const auctionInfoList = (
-            <div className="shadow-md rounded-b-md overflow-hidden">{auctionDetails}</div>
+        <div className='shadow-md rounded-b-md overflow-hidden'>
+            {auctionDetails}
+        </div>
     );
 
     const propertyDescription = (
-        <div className="mt-5 pb-5 shadow-md rounded-b-md px-3 md:px-0 md:shadow-none">
-            <h3 className="mb-5 font-medium md:text-2xl">{heading}</h3>
-            <p id="copyWriting" className={copyWritingStyle}>
+        <div className='mt-5 pb-5 shadow-md rounded-b-md px-3 md:px-0 md:shadow-none'>
+            <h3 className='mb-5 font-medium md:text-2xl'>{heading}</h3>
+            <p id='copyWriting' className={copyWritingStyle}>
                 {copyWriting}
             </p>
             {showReadButton ? (
                 <Button
                     onClick={handleReadButtonContent}
-                    width="w-fit"
-                    classNames="text-gray-500 mt-3"
+                    width='w-fit'
+                    classNames='text-gray-500 mt-3'
                 >
                     {readButtonContent}
                 </Button>
@@ -336,31 +339,38 @@ function Listing() {
     );
 
     const agentsAndAuctioneer = (
-        <div className="md:bg-white rounded-md">
-            <div className="mt-5 pb-3 shadow-md rounded-b-md px-3 md:pt-5 md:shadow-none md:border-b md:rounded-none">
-                <h3 className="mb-5">Listing Agent</h3>
+        <div className='md:bg-white rounded-md'>
+            <div className='mt-5 pb-3 shadow-md rounded-b-md px-3 md:pt-5 md:shadow-none md:border-b md:rounded-none'>
+                <h3 className='mb-5'>Listing Agent</h3>
                 <PersonList person={agents} />
                 <div>
-                    <p className="my-1 font-medium xl:text-lg">{agency.name}</p>
-                    <div className="flex items-center">
+                    <p className='my-1 font-medium xl:text-lg'>{agency.name}</p>
+                    <div className='flex items-center'>
                         <div>
                             <IconContext.Provider
                                 value={{
-                                    size: "1.2rem",
-                                    className: "stroke-1 stroke-gray-500",
+                                    size: '1.2rem',
+                                    className: 'stroke-1 stroke-gray-500',
                                 }}
                             >
                                 <CiLocationOn />
                             </IconContext.Provider>
                         </div>
-                        <p className="ml-3">{agencyFullAddress}</p>
+                        <p className='ml-3'>{agencyFullAddress}</p>
                     </div>
                 </div>
             </div>
-            <div className="mt-5 px-3 md:pb-3">
-                <h3 className="mb-5">Auctioneer</h3>
+            <div className='mt-5 px-3 shadow-md rounded-b-md pb-3 md:pb-3'>
+                <h3 className='mb-5'>Auctioneer</h3>
                 <PersonList person={auctioneer} />
             </div>
+        </div>
+    );
+
+    const enquiry = (
+        <div className='mx-3 mt-5'>
+            <h3 className='mb-5'>Send an enquiry to the listing agent</h3>
+            <EnquiryForm />
         </div>
     );
 
@@ -368,71 +378,69 @@ function Listing() {
     const isSmallScreen = windowSize.width < 768;
     if (isSmallScreen) {
         content = (
-            <div className="flex flex-col">
+            <div className='flex flex-col'>
                 {propertyInfo}
                 {auctionBanner}
                 {auctionInfoList}
                 {propertyDescription}
                 {agentsAndAuctioneer}
+                {enquiry}
             </div>
         );
     } else {
         content = (
-            <div className="mx-auto flex">
-                <div className="pr-3 w-2/3">
+            <div className='mx-auto flex'>
+                <div className='pr-3 w-2/3'>
                     {propertyInfo}
                     {propertyDescription}
                 </div>
-                <div className="w-1/3">
+                <div className='w-1/3'>
                     {auctionInfoList}
                     {agentsAndAuctioneer}
-                    </div>
+                </div>
             </div>
         );
     }
 
     return (
-        <main className="bg-neutral-100 flex-1 pb-5">
+        <main className='bg-neutral-100 flex-1 pb-5'>
             <div
-                className="bg-cover bg-center h-[45vh] max-h-80 relative"
+                className='bg-cover bg-center h-[45vh] max-h-80 relative'
                 style={{ backgroundImage: `url('${mainPhotoUrl}')` }}
             >
-                <SectionContainer style="px-0 mx-auto flex flex-col-reverse h-full relative">
+                <SectionContainer style='px-0 mx-auto flex flex-col-reverse h-full relative'>
                     <Button
-                        type="secondary"
-                        height="h-8"
-                        width="w-32"
+                        type='secondary'
+                        height='h-8'
+                        width='w-32'
                         onClick={() =>
                             updateOverLayContent(OVERLAY_CONTENTS.PHOTOS)
                         }
-                        classNames="border-2 text-sm mb-4 mx-auto md:mx-0"
+                        classNames='border-2 text-sm mb-4 mx-auto md:mx-0'
                     >
                         <IconContext.Provider
                             value={{
-                                size: "1.2rem",
-                                className: "stroke-black",
+                                size: '1.2rem',
+                                className: 'stroke-black',
                             }}
                         >
                             <IoCameraOutline />
                         </IconContext.Provider>
-                        <p className="pl-3">{photosBytes.length} Photos</p>
+                        <p className='pl-3'>{photosBytes.length} Photos</p>
                     </Button>
                     {isSmallScreen ? <></> : auctionBanner}
                 </SectionContainer>
             </div>
-            <SectionContainer style='px-0 mx-auto'>
-                {content}
-            </SectionContainer>
-
+            <SectionContainer style='px-0 mx-auto'>{content}</SectionContainer>
             {overLayContent === OVERLAY_CONTENTS.PHOTOS && (
                 <IconContext.Provider
                     value={{
-                        color: "white",
-                        size: "1.8rem",
-                        className: "inline",
+                        color: 'white',
+                        size: '1.8rem',
+                        className: 'inline',
                     }}
                 >
-                    <OverLay style="text-white">
+                    <OverLay style='text-white'>
                         <Photos photos={photosBytes} />
                     </OverLay>
                 </IconContext.Provider>

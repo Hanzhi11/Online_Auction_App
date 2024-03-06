@@ -1,10 +1,10 @@
-import { IoClose } from "react-icons/io5";
-import ReactDOM from "react-dom";
-import { useContext, useEffect } from "react";
-import { ELEMENT_ID } from "./Constants";
-import Button from "./Button";
-import { IconContext } from "react-icons";
-import { OverLayContentContext } from "../App";
+import { IoClose } from 'react-icons/io5';
+import ReactDOM from 'react-dom';
+import { useContext, useEffect } from 'react';
+import { ELEMENT_ID } from './Constants';
+import Button from './Button';
+import { IconContext } from 'react-icons';
+import { OverLayContentContext } from '../App';
 
 interface Props {
     children: JSX.Element;
@@ -13,31 +13,31 @@ interface Props {
 
 function OverLay(props: Props) {
     const { children, style } = props;
-    const {updateOverLayContent} = useContext(OverLayContentContext)
+    const { updateOverLayContent } = useContext(OverLayContentContext);
 
     useEffect(() => {
-        document.body.classList.add("overflow-hidden");
-        return () => document.body.classList.remove("overflow-hidden");
+        document.body.classList.add('overflow-hidden');
+        return () => document.body.classList.remove('overflow-hidden');
     }, []);
 
     return ReactDOM.createPortal(
         <div
             className={
-                "fixed inset-0 py-6 bg-indigo-900 flex flex-col overflow-auto z-9999 min-w-[280px] " +
+                'fixed inset-0 py-6 bg-indigo-900 flex flex-col overflow-auto z-9999 min-w-[280px] ' +
                 style
             }
         >
-            <div className="flex">
+            <div className='flex'>
                 <IconContext.Provider
                     value={{
-                        color: "white",
-                        size: "1.8rem",
+                        color: 'white',
+                        size: '1.8rem',
                     }}
                 >
                     <Button
                         id={ELEMENT_ID.CLOSE_OVERLAY_BUTTON}
-                        width="w-fit"
-                        classNames="ml-auto mr-3.5"
+                        width='w-fit'
+                        classNames='ml-auto mr-3.5'
                         onClick={() => updateOverLayContent('')}
                     >
                         <IoClose />
@@ -46,7 +46,7 @@ function OverLay(props: Props) {
             </div>
             {children}
         </div>,
-        document.querySelector("#overLay") as HTMLElement
+        document.querySelector('#overLay') as HTMLElement,
     );
 }
 
