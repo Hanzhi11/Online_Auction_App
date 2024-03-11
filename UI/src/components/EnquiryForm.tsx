@@ -234,8 +234,10 @@ export default function EnquiryForm() {
     const placeHolder = phoneNumber?.formatNational();
 
     let height = 284
-    let top = 41
+    let top = 0
     if (countryFieldRef.current) {
+        console.log(getComputedStyle(countryFieldRef.current).height)
+        top = countryFieldRef.current.offsetHeight + 1  // 1px is the width of box shadow of countryField
         const rect = countryFieldRef.current.getBoundingClientRect();
         const viewportHeight = document.documentElement.clientHeight;
         const distanceToBottom = Math.floor(viewportHeight - rect.bottom - 1);
