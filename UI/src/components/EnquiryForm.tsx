@@ -1,4 +1,11 @@
-import { useEffect, useRef, MouseEvent, useReducer, useState } from 'react';
+import {
+    useEffect,
+    useRef,
+    MouseEvent,
+    useReducer,
+    useState,
+    Dispatch,
+} from 'react';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import SubjectDropdown from './SubjectDropdown';
 import { ELEMENT_ID, Option } from './Constants';
@@ -90,7 +97,7 @@ function formDataReducer(formData: FormData, action: DispatchAction) {
             }
             case ACTION_TYPE.RESET_FORM: {
                 return {
-                    ...formData,
+                    ...initialFormData,
                     country: actionData.country as CountryCode,
                 };
             }
@@ -102,7 +109,7 @@ function formDataReducer(formData: FormData, action: DispatchAction) {
 const handleSubjectDropdown = (
     target: HTMLElement,
     subjectDropdown: HTMLDivElement | null,
-    subjectField: HTMLElement | null
+    subjectField: HTMLElement | null,
 ) => {
     if (!subjectDropdown) return;
     if (!subjectField) return;
@@ -132,42 +139,43 @@ const handleSubjectDropdown = (
         return;
     }
 };
-
 const handleCountryDropdown = (
     target: HTMLElement,
     countryDropdown: HTMLUListElement | null,
-    countryField: HTMLElement | null,
+    countryField: HTMLDivElement | null,
+    setOpenCountryDropdown: Dispatch<boolean>,
 ) => {
-    if (!countryDropdown) return;
     if (!countryField) return;
     const isInsideCountryField = countryField.contains(target);
-    const isInsideCountryDropdown = countryDropdown.contains(target);
-
+    
     // open country dropdown
-    if (isInsideCountryField && countryDropdown.classList.contains('hidden')) {
-        countryDropdown.classList.remove('hidden');
+    if (isInsideCountryField) {
+        const hasCountryDropdown = countryDropdown ? true : false
+        setOpenCountryDropdown(!hasCountryDropdown);
         return;
     }
 
     // hide country dropdown
-    if (!isInsideCountryDropdown) {
-        countryDropdown.scrollTop = 0;
-        countryDropdown.classList.add('hidden');
+    if (countryDropdown && !countryDropdown.contains(target)) {
+        setOpenCountryDropdown(false);
         return;
     }
 };
 
 export default function EnquiryForm() {
-    const subjectDropdownRef = useRef(null);
-    const countryDropdownRef = useRef(null);
-    const subjectFieldRef = useRef(null);
-    const countryFieldRef = useRef(null);
+    const subjectDropdownRef = useRef<HTMLDivElement | null>(null);
+    const countryDropdownRef = useRef<HTMLUListElement | null>(null);
+    const subjectFieldRef = useRef<HTMLDivElement | null>(null);
+    const countryFieldRef = useRef<HTMLDivElement | null>(null);
 
     const [formData, dispatch] = useReducer(formDataReducer, initialFormData);
     const [geoCountry, setGeoCountry] = useState<CountryCode>('US');
+    const [openCountryDropdown, setOpenCountryDropdown] =
+        useState<boolean>(false);
 
     function handleSubmit(event: MouseEvent) {
         event.preventDefault();
+        console.log('submit', formData)
         dispatch({
             type: ACTION_TYPE.RESET_FORM,
             payload: { country: geoCountry },
@@ -195,7 +203,12 @@ export default function EnquiryForm() {
             const countryField = countryFieldRef.current;
 
             handleSubjectDropdown(target, subjectDropdown, subjectField);
-            handleCountryDropdown(target, countryDropdown, countryField);
+            handleCountryDropdown(
+                target,
+                countryDropdown,
+                countryField,
+                setOpenCountryDropdown,
+            );
         };
         document.addEventListener('click', handleDropdown);
 
@@ -220,16 +233,32 @@ export default function EnquiryForm() {
     const phoneNumber = getExampleNumber(formData.country, examples);
     const placeHolder = phoneNumber?.formatNational();
 
+    let height = 284
+    let top = 41
+    if (countryFieldRef.current) {
+        const rect = countryFieldRef.current.getBoundingClientRect();
+        const viewportHeight = document.documentElement.clientHeight;
+        const distanceToBottom = Math.floor(viewportHeight - rect.bottom - 1);
+        const distanceToTop = Math.floor(rect.top - 1);
+        if (distanceToBottom > 25 && distanceToBottom < 284) {
+            height = distanceToBottom
+        } else if (distanceToBottom < 26) {
+            if (distanceToTop > 25 && distanceToTop < 284) {
+                height = distanceToTop
+                top = -height
+            } else if (distanceToTop > 283) {
+                top = -height
+            }
+        }
+    }
+
     return (
         <form className='flex flex-col gap-y-5'>
             <div>
                 <label className={labelStyle}>
                     Enquire about (please tick all that apply)
                 </label>
-                <div
-                    className='relative'
-                    ref={subjectFieldRef}
-                >
+                <div className='relative' ref={subjectFieldRef}>
                     <input
                         readOnly
                         name='subject'
@@ -325,15 +354,21 @@ export default function EnquiryForm() {
                         }
                         className='w-full border-0 ring-1 rounded-r-md ring-gray-300 focus:ring-green-500 peer-focus:ring-l-0'
                     />
-                    <CountryDropdown
-                        ref={countryDropdownRef}
-                        onChange={(data: CountryCode) =>
-                            dispatch({
-                                type: ACTION_TYPE.CHANGED_COUNTRY,
-                                payload: { country: data },
-                            })
-                        }
-                    />
+                    {openCountryDropdown && (
+                        <CountryDropdown
+                            ref={countryDropdownRef}
+                            onChange={(data: CountryCode) =>
+                                dispatch({
+                                    type: ACTION_TYPE.CHANGED_COUNTRY,
+                                    payload: { country: data },
+                                })
+                            }
+                            country={formData.country}
+                            openDropDown = {setOpenCountryDropdown}
+                            height={height}
+                            top={top}
+                        />
+                    )}
                 </div>
             </div>
             <Button height='h-10' type='primary' onClick={handleSubmit}>

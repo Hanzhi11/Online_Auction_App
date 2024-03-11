@@ -13,17 +13,21 @@ import {
     getCountryCallingCode,
     CountryCode,
 } from 'libphonenumber-js';
-import classNames from 'classnames';
 import { ELEMENT_ID } from './Constants';
+import classNames from 'classnames';
 
 interface Props {
     onChange: (value: CountryCode) => void;
+    openDropDown: (value: boolean) => void;
+    height: number;
+    top: number;
+    country: CountryCode;
 }
 
 function sortFunction(a: [CountryCode, string], b: [CountryCode, string]) {
-    if (a[1] > b[1]) return 1
-    if (a[1] < b[1]) return -1
-    return 0
+    if (a[1] > b[1]) return 1;
+    if (a[1] < b[1]) return -1;
+    return 0;
 }
 
 type Country = [CountryCode, string];
@@ -34,41 +38,23 @@ export default forwardRef<HTMLUListElement, Props>(function CountryDropdown(
     props: Props,
     ref: Ref<HTMLUListElement>,
 ) {
-    const { onChange } = props;
+    const { onChange, openDropDown, height, top } = props;
     const [searchTerm, setSearchTerm] = useState('');
 
     const countries: Country[] = useMemo(() => {
-        const countries: Country[] = []
-        const countriesRetrived = getCountries()
-        Object.entries(en).forEach(item => {
-            const code = item[0] as CountryCode
-            const name = item[1]
-            
-            if (name!== 'Åland Islands' && countriesRetrived.includes(code)){
-                countries.push([code, name])
+        const countries: Country[] = [];
+        const countriesRetrived = getCountries();
+        Object.entries(en).forEach((item) => {
+            const code = item[0] as CountryCode;
+            const name = item[1];
+
+            if (name !== 'Åland Islands' && countriesRetrived.includes(code)) {
+                countries.push([code, name]);
             }
-        })
-        countries.sort(sortFunction)
-        return countries
-    }, [])
-
-    useEffect(() => {
-        const countryDropdown = (ref as RefObject<HTMLUListElement>).current;
-        if (!countryDropdown) return;
-        if (countryDropdown) {
-            const rect = countryDropdown.getBoundingClientRect();
-            const viewportHeight = document.documentElement.clientHeight;
-            const distance = viewportHeight - rect.top;
-            console.log(distance);
-        }
-    }, [ref]);
-
-    const style = classNames(
-        'absolute bg-white overflow-y-scroll h-[284px] hidden border',
-        {
-            'top-[41px]': true,
-        },
-    );
+        });
+        countries.sort(sortFunction);
+        return countries;
+    }, []);
 
     function handleCountrySelection(event: MouseEvent<HTMLElement>) {
         const target = event.target as HTMLElement;
@@ -80,6 +66,7 @@ export default forwardRef<HTMLUListElement, Props>(function CountryDropdown(
         }
 
         onChange(liElement.id as CountryCode);
+        openDropDown(false);
     }
 
     useEffect(() => {
@@ -87,8 +74,6 @@ export default forwardRef<HTMLUListElement, Props>(function CountryDropdown(
             const countryDropdown = (ref as RefObject<HTMLUListElement>)
                 .current;
             if (!countryDropdown) return;
-            const isHidden = countryDropdown.classList.contains('hidden');
-            if (isHidden) return;
 
             const key = e.key.toUpperCase();
             if (key.match(/[A-Z]/g)) {
@@ -97,22 +82,20 @@ export default forwardRef<HTMLUListElement, Props>(function CountryDropdown(
                 });
             }
 
-            if(key === 'ENTER'){
+            if (key === 'ENTER') {
                 const greenCountry = document.querySelector(
                     `#${ELEMENT_ID.COUNTRY_DROP_DOWN} > .${backgroundColor}`,
                 );
                 if (greenCountry) {
-                    onChange(greenCountry.id as CountryCode)
-                    countryDropdown.scrollTop = 0;
-                    countryDropdown.classList.add('hidden')
+                    onChange(greenCountry.id as CountryCode);
                 }
-
+                openDropDown(false);
             }
         }
         window.addEventListener('keyup', handleKeyUp);
 
         return () => window.removeEventListener('keyup', handleKeyUp);
-    }, [ref, onChange]);
+    }, [ref, onChange, openDropDown]);
 
     useEffect(() => {
         const countryDropdown = (ref as RefObject<HTMLUListElement>).current;
@@ -143,20 +126,19 @@ export default forwardRef<HTMLUListElement, Props>(function CountryDropdown(
             target.classList.remove(backgroundColor);
         };
 
-        const handleClick = () => {
-            countryDropdown.scrollTop = 0
-            countryDropdown.classList.add('hidden')
-        }
-
         countryDropdown.addEventListener('mouseover', handleMouseOver);
         countryDropdown.addEventListener('mouseout', handleMouseOut);
-        countryDropdown.addEventListener('click', handleClick);
+
+        const greenCountry = document.querySelector(
+            `#${ELEMENT_ID.COUNTRY_DROP_DOWN} > .${backgroundColor}`,
+        );
+        if (greenCountry) {
+            countryDropdown.scrollTop = (greenCountry as HTMLElement).offsetTop
+        }
 
         return () => {
             countryDropdown.removeEventListener('mouseover', handleMouseOver);
             countryDropdown.addEventListener('mouseout', handleMouseOut);
-            countryDropdown.addEventListener('click', handleClick);
-
         };
     }, [ref]);
 
@@ -164,11 +146,13 @@ export default forwardRef<HTMLUListElement, Props>(function CountryDropdown(
         if (searchTerm.length === 0) return;
         const timeout = setTimeout(() => {
             const regex = new RegExp(`^${searchTerm}`);
-            console.log(searchTerm)
             const targetCountry = countries.find((item) =>
                 regex.test(item[1].toUpperCase()),
             );
-            
+
+            console.log('search Term', searchTerm);
+            console.log('target Country', targetCountry);
+
             const greenCountry = document.querySelector(
                 `#${ELEMENT_ID.COUNTRY_DROP_DOWN} > .${backgroundColor}`,
             );
@@ -186,14 +170,23 @@ export default forwardRef<HTMLUListElement, Props>(function CountryDropdown(
                 const countryDropdown = (ref as RefObject<HTMLUListElement>)
                     .current;
                 if (!countryDropdown) return;
-                if (countryLi.offsetTop + countryLi.offsetHeight > 281) {
+                if (countryLi.offsetTop - countryDropdown.scrollTop < 0) {
+                    countryDropdown.scrollTop = countryLi.offsetTop;
+                }
+
+                if (
+                    countryLi.offsetTop +
+                        countryLi.offsetHeight -
+                        countryLi.scrollTop >
+                    282
+                ) {
                     countryDropdown.scrollTop =
-                        countryLi.offsetTop + countryLi.offsetHeight - 281;
+                        countryLi.offsetTop + countryLi.offsetHeight - 282;
                 }
             }
 
             setSearchTerm('');
-        }, 500);
+        }, 300);
 
         return () => {
             clearTimeout(timeout);
@@ -201,17 +194,27 @@ export default forwardRef<HTMLUListElement, Props>(function CountryDropdown(
     }, [searchTerm, ref, countries]);
 
     return (
-        <ul className={style} id={ELEMENT_ID.COUNTRY_DROP_DOWN} ref={ref}>
+        <ul
+            className='absolute bg-white overflow-y-scroll border'
+            id={ELEMENT_ID.COUNTRY_DROP_DOWN}
+            ref={ref}
+            style={{ height: height, top: top }}
+        >
             {countries.map((country) => {
+                const liStyle = classNames(
+                    'flex gap-x-3 mb-1 px-3 items-center rounded-md last-of-type:mb-0',
+                    {
+                        [backgroundColor]: props.country === country[0],
+                    },
+                );
                 return (
                     <li
-                        className='flex gap-x-3 mb-1 px-3 items-center rounded-md last-of-type:mb-0'
+                        className={liStyle}
                         key={country[0]}
                         onClick={handleCountrySelection}
                         id={country[0]}
                     >
                         <img
-                            alt='United States'
                             src={`http://purecatamphetamine.github.io/country-flag-icons/3x2/${country[0]}.svg`}
                             className='h-4'
                         />
