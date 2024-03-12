@@ -68,7 +68,7 @@ export default forwardRef<HTMLUListElement, Props>(function CountryDropdown(
         setFocusedCountry(event.currentTarget.id as CountryCode);
     }
 
-    function handleMouseOut () {
+    function handleMouseOut() {
         setFocusedCountry(null);
     }
 
@@ -98,21 +98,14 @@ export default forwardRef<HTMLUListElement, Props>(function CountryDropdown(
     }, [ref, onChange, openDropDown, focusedCountry]);
 
     useEffect(() => {
-        const greenCountry = document.querySelector(
-            `#${ELEMENT_ID.COUNTRY_DROP_DOWN} > .${backgroundColor}`,
-        );
-        if (greenCountry) {
-            greenCountry.scrollIntoView(true);
-        }
-    }, []);
-
-    useEffect(() => {
         if (searchTerm.length === 0) return;
         const timeout = setTimeout(() => {
             const regex = new RegExp(`^${searchTerm}`);
             const targetCountry = countries.find((item) =>
                 regex.test(item[1].toUpperCase()),
             );
+
+            console.log(searchTerm, targetCountry);
 
             if (targetCountry) {
                 setFocusedCountry(targetCountry[0]);
@@ -135,21 +128,25 @@ export default forwardRef<HTMLUListElement, Props>(function CountryDropdown(
         const countryLi = document.querySelector(
             `#${ELEMENT_ID.COUNTRY_DROP_DOWN} > #${focusedCountry}`,
         ) as HTMLLIElement;
-        if (countryLi.offsetTop - countryDropdown.scrollTop < 0) {
-            countryLi.scrollIntoView(true);
-        }
 
-        if (
-            countryLi.offsetTop + countryLi.offsetHeight - countryLi.scrollTop >
+        if (countryLi.offsetTop - countryDropdown.scrollTop < 0) {
+            countryDropdown.scrollTop = countryLi.offsetTop;
+        } else if (
+            countryLi.offsetTop +
+                countryLi.offsetHeight -
+                countryDropdown.scrollTop >
             countryDropdown.clientHeight
         ) {
-            countryLi.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+            countryDropdown.scrollTop =
+                countryLi.offsetTop +
+                countryLi.offsetHeight -
+                countryDropdown.clientHeight;
         }
-    }, [ref, focusedCountry]);
+    }, [focusedCountry, ref]);
 
     return (
         <ul
-            className='absolute bg-white overflow-y-scroll border'
+            className='absolute bg-white overflow-y-scroll border w-full'
             id={ELEMENT_ID.COUNTRY_DROP_DOWN}
             ref={ref}
             style={{ height: height, top: top }}
@@ -172,10 +169,12 @@ export default forwardRef<HTMLUListElement, Props>(function CountryDropdown(
                     >
                         <img
                             src={`http://purecatamphetamine.github.io/country-flag-icons/3x2/${country[0]}.svg`}
-                            className='h-4'
+                            className='h-4 lg:h-3'
                         />
-                        <span>{country[1]}</span>
-                        <span>+{getCountryCallingCode(country[0])}</span>
+                        <span className='lg:text-sm'>{country[1]}</span>
+                        <span className='lg:text-sm'>
+                            +{getCountryCallingCode(country[0])}
+                        </span>
                     </li>
                 );
             })}
