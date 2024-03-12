@@ -63,12 +63,13 @@ enum ACTION_TYPE {
     CHANGED_COUNTRY = 'changed_country',
 }
 
+const initialCountry = 'US';
 const initialFormData: FormData = {
     subject: [],
     message: '',
     name: '',
     email: '',
-    country: 'US',
+    country: initialCountry,
     contactNumber: '',
 };
 
@@ -138,7 +139,7 @@ export default function EnquiryForm(props: Props) {
     const countryFieldRef = useRef<HTMLDivElement | null>(null);
 
     const [formData, dispatch] = useReducer(formDataReducer, initialFormData);
-    const [geoCountry, setGeoCountry] = useState<CountryCode>('US');
+    const [geoCountry, setGeoCountry] = useState<CountryCode>(initialCountry);
     const [openCountryDropdown, setOpenCountryDropdown] =
         useState<boolean>(false);
     const [openSubjectDropdown, setOpenSubjectDropdown] =
@@ -162,7 +163,25 @@ export default function EnquiryForm(props: Props) {
                 formData.contactNumber,
                 formData.country,
             ).number;
-            console.log(listingNumber, phoneNumber);
+            console.log(listingNumber);
+            const dataSubmited = {
+                subject: formData.subject,
+                message: formData.message,
+                name: formData.name,
+                email: formData.email,
+                contactNumber: phoneNumber,
+            };
+
+            fetch(`${import.meta.env.VITE_BASE_URL}/Enquiry/${listingNumber}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dataSubmited),
+                method: 'POST',
+            })
+                .then((res) => res.json())
+                .then((data) => console.log(data));
+
             dispatch({
                 type: ACTION_TYPE.RESET_FORM,
                 payload: { country: geoCountry },
@@ -230,12 +249,15 @@ export default function EnquiryForm(props: Props) {
                 return res.json();
             })
             .then(function (data) {
-                setGeoCountry(data.country_code);
-                dispatch({
-                    type: ACTION_TYPE.CHANGED_COUNTRY,
-                    payload: { country: data.country_code },
-                });
-            });
+                if (!data.error) {
+                    setGeoCountry(data.country_code);
+                    dispatch({
+                        type: ACTION_TYPE.CHANGED_COUNTRY,
+                        payload: { country: data.country_code },
+                    });
+                }
+            })
+            .catch((err) => console.log(err));
     }, []);
 
     useEffect(() => {
@@ -505,7 +527,7 @@ export default function EnquiryForm(props: Props) {
                     </label>
                     <div className={'relative flex bg-white rounded-md'}>
                         <div
-                            className='flex items-center px-2 border-0 ring-1 rounded-l-md ring-r-0 ring-gray-300 peer'
+                            className='min-w-fit flex items-center px-2 border-0 ring-1 rounded-l-md ring-r-0 ring-gray-300 peer'
                             ref={countryFieldRef}
                         >
                             <img
@@ -513,7 +535,9 @@ export default function EnquiryForm(props: Props) {
                                 src={`http://purecatamphetamine.github.io/country-flag-icons/3x2/${formData.country}.svg`}
                                 className='h-5 mr-1'
                             />
-                            <IoIosArrowDown />
+                            <div>
+                                <IoIosArrowDown />
+                            </div>
                         </div>
                         <input
                             type='tel'
