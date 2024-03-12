@@ -135,6 +135,8 @@ function Listing() {
         return;
     }
 
+    let content;
+    const isSmallScreen = windowSize.width < 768;
     const {
         photosBytes,
         agency,
@@ -319,7 +321,9 @@ function Listing() {
     );
 
     const propertyDescription = (
-        <div className='mt-5 pb-5 shadow-md rounded-b-md px-3 md:px-0 md:shadow-none'>
+        <div className={className('mt-5 pb-5 shadow-md rounded-b-md px-3 md:px-0 md:shadow-none', {
+            'border-b': !isSmallScreen
+        })}>
             <h3 className='mb-5 font-medium md:text-2xl'>{heading}</h3>
             <p id='copyWriting' className={copyWritingStyle}>
                 {copyWriting}
@@ -366,16 +370,16 @@ function Listing() {
             </div>
         </div>
     );
-
+    
     const enquiry = (
-        <div className='mx-3 mt-5'>
+        <div className={className('px-3 py-5', {
+            'bg-neutral-200 mt-5': !isSmallScreen
+        })}>
             <h3 className='mb-5'>Send an enquiry to the listing agent</h3>
-            <EnquiryForm />
+            <EnquiryForm listingNumber={listingNumber as string}/>
         </div>
     );
 
-    let content;
-    const isSmallScreen = windowSize.width < 768;
     if (isSmallScreen) {
         content = (
             <div className='flex flex-col'>
@@ -393,6 +397,7 @@ function Listing() {
                 <div className='pr-3 w-2/3'>
                     {propertyInfo}
                     {propertyDescription}
+                    {enquiry}
                 </div>
                 <div className='w-1/3'>
                     {auctionInfoList}

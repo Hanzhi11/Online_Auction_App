@@ -53,6 +53,7 @@ function App() {
                         <Route path='/' element={<Home />} />
                         <Route path='/listing/:id' element={<Listing />} />
                         <Route path='/pdf/:id' element={<Pdf />} />
+                        <Route path='/*' element={<Home />} />
                     </Routes>
                     {!isPdfPage && <Footer />}
                 </div>

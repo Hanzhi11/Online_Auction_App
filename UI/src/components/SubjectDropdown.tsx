@@ -54,7 +54,7 @@ export default forwardRef<HTMLDivElement, Props>(
 
         return (
             <div
-                className='bg-white border rounded-md absolute top-[41px] w-full hidden'
+                className='bg-white border rounded-md absolute top-[41px] w-full'
                 ref={ref}
             >
                 <ul>

@@ -4,7 +4,8 @@ import {
     MouseEvent,
     useReducer,
     useState,
-    Dispatch,
+    ChangeEvent,
+    useCallback,
 } from 'react';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import SubjectDropdown from './SubjectDropdown';
@@ -13,7 +14,19 @@ import Button from './Button';
 import en from 'react-phone-number-input/locale/en';
 import CountryDropdown from './CountryDropdown';
 import examples from 'libphonenumber-js/mobile/examples';
-import { getExampleNumber, CountryCode, E164Number } from 'libphonenumber-js';
+import {
+    getExampleNumber,
+    CountryCode,
+    E164Number,
+    AsYouType,
+    isPossiblePhoneNumber,
+    parsePhoneNumber,
+} from 'libphonenumber-js';
+import classNames from 'classnames';
+
+interface Props {
+    listingNumber: string
+}
 
 interface FormData {
     subject: Option[];
@@ -21,13 +34,24 @@ interface FormData {
     name: string;
     email: string;
     country: CountryCode;
-    contactNumber: E164Number | undefined;
+    contactNumber: string | E164Number;
 }
 
 interface DispatchAction {
     type: string;
     payload?: Partial<FormData>;
 }
+
+enum REQUIRED_FORM_FIELD {
+    SUBJECT = 'subject',
+    NAME = 'name',
+    EMAIL = 'email',
+    CONTACT_NUMBER = 'contactNumber',
+}
+
+type FieldError = {
+    [key in REQUIRED_FORM_FIELD]?: string;
+};
 
 enum ACTION_TYPE {
     CHANGED_SUBJECT = 'changed_subject',
@@ -106,63 +130,8 @@ function formDataReducer(formData: FormData, action: DispatchAction) {
     return formData;
 }
 
-const handleSubjectDropdown = (
-    target: HTMLElement,
-    subjectDropdown: HTMLDivElement | null,
-    subjectField: HTMLElement | null,
-) => {
-    if (!subjectDropdown) return;
-    if (!subjectField) return;
-
-    const isInsideSubjectField = subjectField.contains(target);
-    const isInsideSubjectDropdown = subjectDropdown.contains(target);
-    const ArrowUp = document.getElementById(
-        ELEMENT_ID.SUBJECT_ARROW_UP,
-    ) as HTMLElement;
-    const ArrowDown = document.getElementById(
-        ELEMENT_ID.SUBJECT_ARROW_DOWN,
-    ) as HTMLElement;
-
-    // open subject dropdown
-    if (isInsideSubjectField && subjectDropdown.classList.contains('hidden')) {
-        subjectDropdown.classList.remove('hidden');
-        ArrowUp.classList.remove('hidden');
-        ArrowDown.classList.add('hidden');
-        return;
-    }
-
-    // hide subject dropdown
-    if (!isInsideSubjectDropdown) {
-        subjectDropdown.classList.add('hidden');
-        ArrowUp.classList.add('hidden');
-        ArrowDown.classList.remove('hidden');
-        return;
-    }
-};
-const handleCountryDropdown = (
-    target: HTMLElement,
-    countryDropdown: HTMLUListElement | null,
-    countryField: HTMLDivElement | null,
-    setOpenCountryDropdown: Dispatch<boolean>,
-) => {
-    if (!countryField) return;
-    const isInsideCountryField = countryField.contains(target);
-    
-    // open country dropdown
-    if (isInsideCountryField) {
-        const hasCountryDropdown = countryDropdown ? true : false
-        setOpenCountryDropdown(!hasCountryDropdown);
-        return;
-    }
-
-    // hide country dropdown
-    if (countryDropdown && !countryDropdown.contains(target)) {
-        setOpenCountryDropdown(false);
-        return;
-    }
-};
-
-export default function EnquiryForm() {
+export default function EnquiryForm(props: Props) {
+    const {listingNumber} = props
     const subjectDropdownRef = useRef<HTMLDivElement | null>(null);
     const countryDropdownRef = useRef<HTMLUListElement | null>(null);
     const subjectFieldRef = useRef<HTMLDivElement | null>(null);
@@ -172,15 +141,82 @@ export default function EnquiryForm() {
     const [geoCountry, setGeoCountry] = useState<CountryCode>('US');
     const [openCountryDropdown, setOpenCountryDropdown] =
         useState<boolean>(false);
+    const [openSubjectDropdown, setOpenSubjectDropdown] =
+        useState<boolean>(false);
+    const [fieldError, setFieldError] = useState<FieldError>({});
 
     function handleSubmit(event: MouseEvent) {
         event.preventDefault();
-        console.log('submit', formData)
-        dispatch({
-            type: ACTION_TYPE.RESET_FORM,
-            payload: { country: geoCountry },
-        });
+
+        const error: FieldError = {...fieldError}
+        Object.values(REQUIRED_FORM_FIELD).forEach(field => {
+            if (error[field]) return
+            const newFieldError = validateRequiredField(field, false)
+            if (newFieldError && newFieldError[field]) {
+                error[field] = newFieldError[field]
+            }
+        })
+
+        if (Object.entries(error).length === 0) {
+            const phoneNumber: E164Number = parsePhoneNumber(formData.contactNumber, formData.country).number
+            console.log(listingNumber, phoneNumber)
+            dispatch({
+                type: ACTION_TYPE.RESET_FORM,
+                payload: { country: geoCountry },
+            });
+        } else {
+            setFieldError(error)
+        }
     }
+
+    const validateRequiredField = useCallback(
+        (fieldName: REQUIRED_FORM_FIELD, updateState: boolean = true) => {
+            const isEmpty = formData[fieldName].length === 0 ? true: false;
+            const newError: FieldError = fieldError ? {
+                ...fieldError,
+            }: {};
+            if (!isEmpty) {
+                let regex: RegExp;
+                let isPossibleNumber: boolean;
+                switch (fieldName) {
+                    case REQUIRED_FORM_FIELD.SUBJECT:
+                        delete newError[REQUIRED_FORM_FIELD.SUBJECT];
+                        break;
+                    case REQUIRED_FORM_FIELD.NAME:
+                        delete newError[REQUIRED_FORM_FIELD.NAME];
+                        break;
+                    case REQUIRED_FORM_FIELD.EMAIL:
+                        regex =
+                            /^([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+$/g;
+                        if (!formData.email.match(regex)) {
+                            newError[REQUIRED_FORM_FIELD.EMAIL] = 'Invalid Email.';
+                        } else {
+                            delete newError[REQUIRED_FORM_FIELD.EMAIL];
+                        }
+                        break;
+                    case REQUIRED_FORM_FIELD.CONTACT_NUMBER:
+                        isPossibleNumber = isPossiblePhoneNumber(
+                            formData.contactNumber,
+                            formData.country,
+                        );
+                        if (!isPossibleNumber) {
+                            newError[REQUIRED_FORM_FIELD.CONTACT_NUMBER] =
+                                'Invalid contact number.';
+                        } else {
+                            delete newError[REQUIRED_FORM_FIELD.CONTACT_NUMBER];
+                        }
+                }
+            } else {
+                newError[fieldName] = 'The field is required.';
+            }
+            if (updateState) {
+                setFieldError(newError);
+            } else {
+                return newError
+            }
+        },
+        [fieldError, formData],
+    );
 
     useEffect(() => {
         fetch('https://ipapi.co/json')
@@ -194,62 +230,136 @@ export default function EnquiryForm() {
                     payload: { country: data.country_code },
                 });
             });
+    }, []);
 
+    useEffect(() => {
         const handleDropdown = (event: Event) => {
             const target = event.target as HTMLElement;
-            const subjectDropdown = subjectDropdownRef.current;
             const subjectField = subjectFieldRef.current;
-            const countryDropdown = countryDropdownRef.current;
-            const countryField = countryFieldRef.current;
 
-            handleSubjectDropdown(target, subjectDropdown, subjectField);
-            handleCountryDropdown(
-                target,
-                countryDropdown,
-                countryField,
-                setOpenCountryDropdown,
-            );
+            if (subjectField) {
+                let open = false;
+                const isInsideSubjectField = subjectField.contains(target);
+                const subjectDropdown = subjectDropdownRef.current;
+
+                if (subjectDropdown) {
+                    const isInsideSubjectDropdown =
+                        subjectDropdown.contains(target);
+                    if (isInsideSubjectDropdown) {
+                        open = true;
+                    } else {
+                        open = false;
+                        validateRequiredField(REQUIRED_FORM_FIELD.SUBJECT);
+                    }
+                } else {
+                    open = isInsideSubjectField;
+                }
+
+                setOpenSubjectDropdown(open);
+            }
+
+            const countryField = countryFieldRef.current;
+            if (countryField) {
+                let open = false;
+                const isInsideCountryField = countryField.contains(target);
+
+                if (isInsideCountryField) {
+                    const countryDropdown = countryDropdownRef.current;
+                    const hasCountryDropdown = countryDropdown ? true : false;
+                    open = !hasCountryDropdown;
+                }
+                setOpenCountryDropdown(open);
+            }
         };
         document.addEventListener('click', handleDropdown);
 
         return () => {
             document.removeEventListener('click', handleDropdown);
         };
-    }, []);
+    }, [validateRequiredField]);
 
-    const handleUpdateSelection = (data: Option[]) => {
+    const handleSubjectChange = (data: Option[]) => {
         dispatch({
             type: ACTION_TYPE.CHANGED_SUBJECT,
             payload: { subject: data },
         });
     };
 
-    const labelStyle = 'block leading-6 text-gray-900 mb-2';
+    const handleRequiredTextInputChange = (
+        e: ChangeEvent<HTMLInputElement>,
+        fieldName: REQUIRED_FORM_FIELD,
+    ) => {
+        const value = e.target.value;
+        if (value.length > 0 && fieldError[fieldName]) {
+            delete fieldError[fieldName];
+        }
+        switch (fieldName) {
+            case REQUIRED_FORM_FIELD.NAME:
+                dispatch({
+                    type: ACTION_TYPE.CHANGED_NAME,
+                    payload: { name: value },
+                });
+                break;
+            case REQUIRED_FORM_FIELD.EMAIL:
+                dispatch({
+                    type: ACTION_TYPE.CHANGED_EMAIL,
+                    payload: { email: value },
+                });
+                break;
+            case REQUIRED_FORM_FIELD.CONTACT_NUMBER:
+                dispatch({
+                    type: ACTION_TYPE.CHANGED_CONTACT_NUMBER,
+                    payload: { contactNumber: value },
+                });
+                break;
+        }
+    };
+
+    const handleContactNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
+        let value = e.target.value;
+        const regex = /^\(\d+$/;
+        const found = value.match(regex);
+        if (found) {
+            value = value.slice(1, -1);
+        }
+        dispatch({
+            type: ACTION_TYPE.CHANGED_CONTACT_NUMBER,
+            payload: {
+                contactNumber: new AsYouType(formData.country).input(value),
+            },
+        });
+    };
+
+    const labelStyle = 'block leading-6 text-gray-900 mb-2 md:text-sm';
+    const labelStyleRequired = labelStyle.concat(
+        ' ',
+        'after:content-["*"] after:ml-0.5',
+    );
     const baseStyle =
         'w-full border-0 bg-white ring-1 ring-gray-300 rounded-md focus:ring-green-500';
     const inputStyle = baseStyle.concat(' ', 'h-10');
     const textAreaStyle = baseStyle.concat(' ', 'h-36');
+    const errorStyle = 'text-xs text-red-600 mt-2 md:text-sm'
 
     const phoneNumber = getExampleNumber(formData.country, examples);
     const placeHolder = phoneNumber?.formatNational();
 
-    let height = 284
-    let top = 0
+    let height = 284;
+    let top = 0;
     if (countryFieldRef.current) {
-        console.log(getComputedStyle(countryFieldRef.current).height)
-        top = countryFieldRef.current.offsetHeight + 1  // 1px is the width of box shadow of countryField
+        top = countryFieldRef.current.offsetHeight + 1; // 1px is the width of box shadow of countryField
         const rect = countryFieldRef.current.getBoundingClientRect();
         const viewportHeight = document.documentElement.clientHeight;
         const distanceToBottom = Math.floor(viewportHeight - rect.bottom - 1);
         const distanceToTop = Math.floor(rect.top - 1);
         if (distanceToBottom > 25 && distanceToBottom < 284) {
-            height = distanceToBottom
+            height = distanceToBottom;
         } else if (distanceToBottom < 26) {
             if (distanceToTop > 25 && distanceToTop < 284) {
-                height = distanceToTop
-                top = -height
+                height = distanceToTop;
+                top = -height;
             } else if (distanceToTop > 283) {
-                top = -height
+                top = -height;
             }
         }
     }
@@ -257,36 +367,55 @@ export default function EnquiryForm() {
     return (
         <form className='flex flex-col gap-y-5'>
             <div>
-                <label className={labelStyle}>
+                <label
+                    className={classNames(labelStyleRequired, {
+                        'after:text-red-600': Object.keys(
+                            fieldError,
+                        ).includes(REQUIRED_FORM_FIELD.SUBJECT),
+                    })}
+                >
                     Enquire about (please tick all that apply)
                 </label>
-                <div className='relative' ref={subjectFieldRef}>
-                    <input
-                        readOnly
-                        name='subject'
-                        className={inputStyle.concat(' ', 'pr-11')}
-                        value={
-                            formData.subject.length > 0
-                                ? formData.subject
-                                      .map((item: Option) => item.content)
-                                      .join(', ')
-                                : ''
-                        }
-                    />
-                    <div className='absolute right-0 top-1/2 -translate-y-1/2 px-3'>
-                        <IoIosArrowUp
-                            id={ELEMENT_ID.SUBJECT_ARROW_UP}
-                            className='hidden'
+                <div className='relative'>
+                    <div ref={subjectFieldRef}>
+                        <input
+                            readOnly
+                            name='subject'
+                            className={inputStyle.concat(' ', 'pr-11')}
+                            value={
+                                formData.subject.length > 0
+                                    ? formData.subject
+                                          .map((item: Option) => item.content)
+                                          .join(', ')
+                                    : ''
+                            }
                         />
-                        <IoIosArrowDown id={ELEMENT_ID.SUBJECT_ARROW_DOWN} />
+                        <div className='absolute right-0 top-1/2 -translate-y-1/2 px-3'>
+                            {openSubjectDropdown ? (
+                                <IoIosArrowUp
+                                    id={ELEMENT_ID.SUBJECT_ARROW_UP}
+                                />
+                            ) : (
+                                <IoIosArrowDown
+                                    id={ELEMENT_ID.SUBJECT_ARROW_DOWN}
+                                />
+                            )}
+                        </div>
                     </div>
-                    <SubjectDropdown
-                        options={subjectOptions}
-                        selectedOptions={formData.subject}
-                        updateSelection={handleUpdateSelection}
-                        ref={subjectDropdownRef}
-                    />
+                    {openSubjectDropdown && (
+                        <SubjectDropdown
+                            options={subjectOptions}
+                            selectedOptions={formData.subject}
+                            updateSelection={handleSubjectChange}
+                            ref={subjectDropdownRef}
+                        />
+                    )}
                 </div>
+                {Object.keys(fieldError).includes(REQUIRED_FORM_FIELD.SUBJECT) && (
+                    <p className={errorStyle}>
+                        {fieldError.subject}
+                    </p>
+                )}
             </div>
             <div>
                 <label className={labelStyle}>Message</label>
@@ -303,35 +432,65 @@ export default function EnquiryForm() {
                 ></textarea>
             </div>
             <div>
-                <label className={labelStyle}>Name</label>
+                <label
+                    className={classNames(labelStyleRequired, {
+                        'after:text-red-600': Object.keys(
+                            fieldError,
+                        ).includes(REQUIRED_FORM_FIELD.NAME),
+                    })}
+                >
+                    Name
+                </label>
                 <input
                     name='name'
                     className={inputStyle}
                     value={formData.name}
                     onChange={(e) =>
-                        dispatch({
-                            type: ACTION_TYPE.CHANGED_NAME,
-                            payload: { name: e.target.value },
-                        })
+                        handleRequiredTextInputChange(e, REQUIRED_FORM_FIELD.NAME)
                     }
+                    onBlur={() => validateRequiredField(REQUIRED_FORM_FIELD.NAME)}
                 />
+                {Object.keys(fieldError).includes(REQUIRED_FORM_FIELD.NAME) && (
+                    <p className={errorStyle}>
+                        {fieldError.name}
+                    </p>
+                )}
             </div>
             <div>
-                <label className={labelStyle}>Email</label>
+                <label
+                    className={classNames(labelStyleRequired, {
+                        'after:text-red-600': Object.keys(
+                            fieldError,
+                        ).includes(REQUIRED_FORM_FIELD.EMAIL),
+                    })}
+                >
+                    Email
+                </label>
                 <input
                     name='email'
                     className={inputStyle}
                     value={formData.email}
                     onChange={(e) =>
-                        dispatch({
-                            type: ACTION_TYPE.CHANGED_EMAIL,
-                            payload: { email: e.target.value },
-                        })
+                        handleRequiredTextInputChange(e, REQUIRED_FORM_FIELD.EMAIL)
                     }
+                    onBlur={() => validateRequiredField(REQUIRED_FORM_FIELD.EMAIL)}
                 />
+                {Object.keys(fieldError).includes(REQUIRED_FORM_FIELD.EMAIL) && (
+                    <p className={errorStyle}>
+                        {fieldError.email}
+                    </p>
+                )}
             </div>
             <div>
-                <label className={labelStyle}>Contact Number</label>
+                <label
+                    className={classNames(labelStyleRequired, {
+                        'after:text-red-600': Object.keys(
+                            fieldError,
+                        ).includes(REQUIRED_FORM_FIELD.CONTACT_NUMBER),
+                    })}
+                >
+                    Contact Number
+                </label>
                 <div className={'relative flex bg-white rounded-md'}>
                     <div
                         className='flex items-center px-2 border-0 ring-1 rounded-l-md ring-r-0 ring-gray-300 peer'
@@ -348,11 +507,9 @@ export default function EnquiryForm() {
                         type='tel'
                         value={formData.contactNumber}
                         placeholder={placeHolder}
-                        onChange={(e) =>
-                            dispatch({
-                                type: ACTION_TYPE.CHANGED_CONTACT_NUMBER,
-                                payload: { contactNumber: e.target.value },
-                            })
+                        onChange={handleContactNumberChange}
+                        onBlur={() =>
+                            validateRequiredField(REQUIRED_FORM_FIELD.CONTACT_NUMBER)
                         }
                         className='w-full border-0 ring-1 rounded-r-md ring-gray-300 focus:ring-green-500 peer-focus:ring-l-0'
                     />
@@ -366,12 +523,19 @@ export default function EnquiryForm() {
                                 })
                             }
                             country={formData.country}
-                            openDropDown = {setOpenCountryDropdown}
+                            openDropDown={setOpenCountryDropdown}
                             height={height}
                             top={top}
                         />
                     )}
                 </div>
+                {Object.keys(fieldError).includes(
+                    REQUIRED_FORM_FIELD.CONTACT_NUMBER,
+                ) && (
+                    <p className={errorStyle}>
+                        {fieldError.contactNumber}
+                    </p>
+                )}
             </div>
             <Button height='h-10' type='primary' onClick={handleSubmit}>
                 Send
