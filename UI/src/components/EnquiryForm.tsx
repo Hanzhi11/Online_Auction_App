@@ -25,7 +25,7 @@ import {
 import classNames from 'classnames';
 
 interface Props {
-    listingNumber: string
+    listingNumber: string;
 }
 
 interface FormData {
@@ -131,7 +131,7 @@ function formDataReducer(formData: FormData, action: DispatchAction) {
 }
 
 export default function EnquiryForm(props: Props) {
-    const {listingNumber} = props
+    const { listingNumber } = props;
     const subjectDropdownRef = useRef<HTMLDivElement | null>(null);
     const countryDropdownRef = useRef<HTMLUListElement | null>(null);
     const subjectFieldRef = useRef<HTMLDivElement | null>(null);
@@ -148,33 +148,38 @@ export default function EnquiryForm(props: Props) {
     function handleSubmit(event: MouseEvent) {
         event.preventDefault();
 
-        const error: FieldError = {...fieldError}
-        Object.values(REQUIRED_FORM_FIELD).forEach(field => {
-            if (error[field]) return
-            const newFieldError = validateRequiredField(field, false)
+        const error: FieldError = { ...fieldError };
+        Object.values(REQUIRED_FORM_FIELD).forEach((field) => {
+            if (error[field]) return;
+            const newFieldError = validateRequiredField(field, false);
             if (newFieldError && newFieldError[field]) {
-                error[field] = newFieldError[field]
+                error[field] = newFieldError[field];
             }
-        })
+        });
 
         if (Object.entries(error).length === 0) {
-            const phoneNumber: E164Number = parsePhoneNumber(formData.contactNumber, formData.country).number
-            console.log(listingNumber, phoneNumber)
+            const phoneNumber: E164Number = parsePhoneNumber(
+                formData.contactNumber,
+                formData.country,
+            ).number;
+            console.log(listingNumber, phoneNumber);
             dispatch({
                 type: ACTION_TYPE.RESET_FORM,
                 payload: { country: geoCountry },
             });
         } else {
-            setFieldError(error)
+            setFieldError(error);
         }
     }
 
     const validateRequiredField = useCallback(
         (fieldName: REQUIRED_FORM_FIELD, updateState: boolean = true) => {
-            const isEmpty = formData[fieldName].length === 0 ? true: false;
-            const newError: FieldError = fieldError ? {
-                ...fieldError,
-            }: {};
+            const isEmpty = formData[fieldName].length === 0 ? true : false;
+            const newError: FieldError = fieldError
+                ? {
+                      ...fieldError,
+                  }
+                : {};
             if (!isEmpty) {
                 let regex: RegExp;
                 let isPossibleNumber: boolean;
@@ -189,7 +194,8 @@ export default function EnquiryForm(props: Props) {
                         regex =
                             /^([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+$/g;
                         if (!formData.email.match(regex)) {
-                            newError[REQUIRED_FORM_FIELD.EMAIL] = 'Invalid Email.';
+                            newError[REQUIRED_FORM_FIELD.EMAIL] =
+                                'Invalid Email.';
                         } else {
                             delete newError[REQUIRED_FORM_FIELD.EMAIL];
                         }
@@ -212,7 +218,7 @@ export default function EnquiryForm(props: Props) {
             if (updateState) {
                 setFieldError(newError);
             } else {
-                return newError
+                return newError;
             }
         },
         [fieldError, formData],
@@ -330,7 +336,8 @@ export default function EnquiryForm(props: Props) {
         });
     };
 
-    const labelStyle = 'block leading-6 text-gray-900 mb-2 md:text-sm';
+    const labelStyle =
+        'block leading-6 text-gray-900 mb-2 md:text-sm lg:text-base';
     const labelStyleRequired = labelStyle.concat(
         ' ',
         'after:content-["*"] after:ml-0.5',
@@ -339,7 +346,7 @@ export default function EnquiryForm(props: Props) {
         'w-full border-0 bg-white ring-1 ring-gray-300 rounded-md focus:ring-green-500';
     const inputStyle = baseStyle.concat(' ', 'h-10');
     const textAreaStyle = baseStyle.concat(' ', 'h-36');
-    const errorStyle = 'text-xs text-red-600 mt-2 md:text-sm'
+    const errorStyle = 'text-xs text-red-600 mt-2 md:text-sm';
 
     const phoneNumber = getExampleNumber(formData.country, examples);
     const placeHolder = phoneNumber?.formatNational();
@@ -369,9 +376,9 @@ export default function EnquiryForm(props: Props) {
             <div>
                 <label
                     className={classNames(labelStyleRequired, {
-                        'after:text-red-600': Object.keys(
-                            fieldError,
-                        ).includes(REQUIRED_FORM_FIELD.SUBJECT),
+                        'after:text-red-600': Object.keys(fieldError).includes(
+                            REQUIRED_FORM_FIELD.SUBJECT,
+                        ),
                     })}
                 >
                     Enquire about (please tick all that apply)
@@ -411,11 +418,9 @@ export default function EnquiryForm(props: Props) {
                         />
                     )}
                 </div>
-                {Object.keys(fieldError).includes(REQUIRED_FORM_FIELD.SUBJECT) && (
-                    <p className={errorStyle}>
-                        {fieldError.subject}
-                    </p>
-                )}
+                {Object.keys(fieldError).includes(
+                    REQUIRED_FORM_FIELD.SUBJECT,
+                ) && <p className={errorStyle}>{fieldError.subject}</p>}
             </div>
             <div>
                 <label className={labelStyle}>Message</label>
@@ -434,9 +439,9 @@ export default function EnquiryForm(props: Props) {
             <div>
                 <label
                     className={classNames(labelStyleRequired, {
-                        'after:text-red-600': Object.keys(
-                            fieldError,
-                        ).includes(REQUIRED_FORM_FIELD.NAME),
+                        'after:text-red-600': Object.keys(fieldError).includes(
+                            REQUIRED_FORM_FIELD.NAME,
+                        ),
                     })}
                 >
                     Name
@@ -446,96 +451,104 @@ export default function EnquiryForm(props: Props) {
                     className={inputStyle}
                     value={formData.name}
                     onChange={(e) =>
-                        handleRequiredTextInputChange(e, REQUIRED_FORM_FIELD.NAME)
+                        handleRequiredTextInputChange(
+                            e,
+                            REQUIRED_FORM_FIELD.NAME,
+                        )
                     }
-                    onBlur={() => validateRequiredField(REQUIRED_FORM_FIELD.NAME)}
+                    onBlur={() =>
+                        validateRequiredField(REQUIRED_FORM_FIELD.NAME)
+                    }
                 />
                 {Object.keys(fieldError).includes(REQUIRED_FORM_FIELD.NAME) && (
-                    <p className={errorStyle}>
-                        {fieldError.name}
-                    </p>
+                    <p className={errorStyle}>{fieldError.name}</p>
                 )}
             </div>
-            <div>
-                <label
-                    className={classNames(labelStyleRequired, {
-                        'after:text-red-600': Object.keys(
-                            fieldError,
-                        ).includes(REQUIRED_FORM_FIELD.EMAIL),
-                    })}
-                >
-                    Email
-                </label>
-                <input
-                    name='email'
-                    className={inputStyle}
-                    value={formData.email}
-                    onChange={(e) =>
-                        handleRequiredTextInputChange(e, REQUIRED_FORM_FIELD.EMAIL)
-                    }
-                    onBlur={() => validateRequiredField(REQUIRED_FORM_FIELD.EMAIL)}
-                />
-                {Object.keys(fieldError).includes(REQUIRED_FORM_FIELD.EMAIL) && (
-                    <p className={errorStyle}>
-                        {fieldError.email}
-                    </p>
-                )}
-            </div>
-            <div>
-                <label
-                    className={classNames(labelStyleRequired, {
-                        'after:text-red-600': Object.keys(
-                            fieldError,
-                        ).includes(REQUIRED_FORM_FIELD.CONTACT_NUMBER),
-                    })}
-                >
-                    Contact Number
-                </label>
-                <div className={'relative flex bg-white rounded-md'}>
-                    <div
-                        className='flex items-center px-2 border-0 ring-1 rounded-l-md ring-r-0 ring-gray-300 peer'
-                        ref={countryFieldRef}
+            <div className='grid grid-rows-2 gap-5 lg:grid-cols-5 lg:grid-rows-1'>
+                <div className='lg:col-span-3'>
+                    <label
+                        className={classNames(labelStyleRequired, {
+                            'after:text-red-600': Object.keys(
+                                fieldError,
+                            ).includes(REQUIRED_FORM_FIELD.EMAIL),
+                        })}
                     >
-                        <img
-                            alt={en[formData.country]}
-                            src={`http://purecatamphetamine.github.io/country-flag-icons/3x2/${formData.country}.svg`}
-                            className='h-5 mr-1'
-                        />
-                        <IoIosArrowDown />
-                    </div>
+                        Email
+                    </label>
                     <input
-                        type='tel'
-                        value={formData.contactNumber}
-                        placeholder={placeHolder}
-                        onChange={handleContactNumberChange}
-                        onBlur={() =>
-                            validateRequiredField(REQUIRED_FORM_FIELD.CONTACT_NUMBER)
+                        name='email'
+                        className={inputStyle}
+                        value={formData.email}
+                        onChange={(e) =>
+                            handleRequiredTextInputChange(
+                                e,
+                                REQUIRED_FORM_FIELD.EMAIL,
+                            )
                         }
-                        className='w-full border-0 ring-1 rounded-r-md ring-gray-300 focus:ring-green-500 peer-focus:ring-l-0'
+                        onBlur={() =>
+                            validateRequiredField(REQUIRED_FORM_FIELD.EMAIL)
+                        }
                     />
-                    {openCountryDropdown && (
-                        <CountryDropdown
-                            ref={countryDropdownRef}
-                            onChange={(data: CountryCode) =>
-                                dispatch({
-                                    type: ACTION_TYPE.CHANGED_COUNTRY,
-                                    payload: { country: data },
-                                })
+                    {Object.keys(fieldError).includes(
+                        REQUIRED_FORM_FIELD.EMAIL,
+                    ) && <p className={errorStyle}>{fieldError.email}</p>}
+                </div>
+                <div className='lg:col-span-2'>
+                    <label
+                        className={classNames(labelStyleRequired, {
+                            'after:text-red-600': Object.keys(
+                                fieldError,
+                            ).includes(REQUIRED_FORM_FIELD.CONTACT_NUMBER),
+                        })}
+                    >
+                        Contact Number
+                    </label>
+                    <div className={'relative flex bg-white rounded-md'}>
+                        <div
+                            className='flex items-center px-2 border-0 ring-1 rounded-l-md ring-r-0 ring-gray-300 peer'
+                            ref={countryFieldRef}
+                        >
+                            <img
+                                alt={en[formData.country]}
+                                src={`http://purecatamphetamine.github.io/country-flag-icons/3x2/${formData.country}.svg`}
+                                className='h-5 mr-1'
+                            />
+                            <IoIosArrowDown />
+                        </div>
+                        <input
+                            type='tel'
+                            value={formData.contactNumber}
+                            placeholder={placeHolder}
+                            onChange={handleContactNumberChange}
+                            onBlur={() =>
+                                validateRequiredField(
+                                    REQUIRED_FORM_FIELD.CONTACT_NUMBER,
+                                )
                             }
-                            country={formData.country}
-                            openDropDown={setOpenCountryDropdown}
-                            height={height}
-                            top={top}
+                            className='w-full border-0 ring-1 rounded-r-md ring-gray-300 focus:ring-green-500 peer-focus:ring-l-0'
                         />
+                        {openCountryDropdown && (
+                            <CountryDropdown
+                                ref={countryDropdownRef}
+                                onChange={(data: CountryCode) =>
+                                    dispatch({
+                                        type: ACTION_TYPE.CHANGED_COUNTRY,
+                                        payload: { country: data },
+                                    })
+                                }
+                                country={formData.country}
+                                openDropDown={setOpenCountryDropdown}
+                                height={height}
+                                top={top}
+                            />
+                        )}
+                    </div>
+                    {Object.keys(fieldError).includes(
+                        REQUIRED_FORM_FIELD.CONTACT_NUMBER,
+                    ) && (
+                        <p className={errorStyle}>{fieldError.contactNumber}</p>
                     )}
                 </div>
-                {Object.keys(fieldError).includes(
-                    REQUIRED_FORM_FIELD.CONTACT_NUMBER,
-                ) && (
-                    <p className={errorStyle}>
-                        {fieldError.contactNumber}
-                    </p>
-                )}
             </div>
             <Button height='h-10' type='primary' onClick={handleSubmit}>
                 Send
