@@ -188,13 +188,16 @@ export default function EnquiryForm(props: Props) {
     }
 
     const validateRequiredField = useCallback(
-        (fieldName: REQUIRED_FORM_FIELD, updateState: boolean = true) => {
-            const isEmpty = formData[fieldName].length === 0 ? true : false;
+        (fieldName: REQUIRED_FORM_FIELD, updateState: boolean = true, data?:string | Option[], checkEmptyOnly: boolean = false) => {
+            const testData = data === undefined ? formData[fieldName] : data
+            const isEmpty = testData.length === 0 ? true : false;
+
             const newError: FieldError = fieldError
                 ? {
                       ...fieldError,
                   }
                 : {};
+
             if (!isEmpty) {
                 let regex: RegExp;
                 let isPossibleNumber: boolean;
@@ -208,7 +211,7 @@ export default function EnquiryForm(props: Props) {
                     case REQUIRED_FORM_FIELD.EMAIL:
                         regex =
                             /^([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+$/g;
-                        if (!formData.email.match(regex)) {
+                        if (!formData.email.match(regex) && !checkEmptyOnly) {
                             newError[REQUIRED_FORM_FIELD.EMAIL] =
                                 'Invalid Email.';
                         } else {
@@ -220,7 +223,7 @@ export default function EnquiryForm(props: Props) {
                             formData.contactNumber,
                             formData.country,
                         );
-                        if (!isPossibleNumber) {
+                        if (!isPossibleNumber && !checkEmptyOnly) {
                             newError[REQUIRED_FORM_FIELD.CONTACT_NUMBER] =
                                 'Invalid contact number.';
                         } else {
@@ -302,6 +305,7 @@ export default function EnquiryForm(props: Props) {
             type: ACTION_TYPE.CHANGED_SUBJECT,
             payload: { subject: data },
         });
+        validateRequiredField(REQUIRED_FORM_FIELD.SUBJECT, true, data)
     };
 
     const handleRequiredTextInputChange = (
@@ -309,9 +313,6 @@ export default function EnquiryForm(props: Props) {
         fieldName: REQUIRED_FORM_FIELD,
     ) => {
         const value = e.target.value;
-        if (value.length > 0 && fieldError[fieldName]) {
-            delete fieldError[fieldName];
-        }
         switch (fieldName) {
             case REQUIRED_FORM_FIELD.NAME:
                 dispatch({
@@ -332,6 +333,7 @@ export default function EnquiryForm(props: Props) {
                 });
                 break;
         }
+        validateRequiredField(fieldName, true, value, true)
     };
 
     const handleContactNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -341,12 +343,14 @@ export default function EnquiryForm(props: Props) {
         if (found) {
             value = value.slice(1, -1);
         }
+        const number = new AsYouType(formData.country).input(value)
         dispatch({
             type: ACTION_TYPE.CHANGED_CONTACT_NUMBER,
             payload: {
-                contactNumber: new AsYouType(formData.country).input(value),
+                contactNumber: number,
             },
         });
+        validateRequiredField(REQUIRED_FORM_FIELD.CONTACT_NUMBER, true, number, true)
     };
 
     const baseStyle =
@@ -428,7 +432,7 @@ export default function EnquiryForm(props: Props) {
                     }
                 />
             </FormField>
-            <div className='grid grid-rows-2 gap-5 lg:grid-cols-5 lg:grid-rows-1'>
+            <div className='grid grid-flow-row gap-5 lg:grid-cols-5'>
                 <FormField
                     className='lg:col-span-3'
                     labelContent='Email'
