@@ -10,8 +10,7 @@ interface Props {
 const labelBaseStyle =
     'block leading-6 text-gray-900 mb-2 md:text-sm lg:text-base';
 
-const labelStyleRequired = labelBaseStyle.concat(
-    ' ',
+const labelStyleRequired = classNames(labelBaseStyle,
     'after:content-["*"] after:ml-0.5',
 );
 
