@@ -2,7 +2,7 @@ import { GiHouse } from 'react-icons/gi';
 import { MdHelp } from 'react-icons/md';
 import className from 'classnames';
 import Button from './Button';
-import { ELEMENT_ID } from './Constants';
+import { ELEMENT_ID } from '../shared/Constants';
 import { Link } from 'react-router-dom';
 import { OverLayContentContext, WindowSizeContext } from '../App';
 import { useContext } from 'react';

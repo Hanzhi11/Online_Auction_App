@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from 'react';
 import OverLay from './OverLay';
 import className from 'classnames';
 import NavBar from './NavBar';
-import { ELEMENT_ID, OVERLAY_CONTENTS } from './Constants';
+import { ELEMENT_ID, OVERLAY_CONTENTS } from '../shared/Constants';
 import Logo from './Logo';
 import SectionContainer from './SectionContainer';
 import { useLocation } from 'react-router-dom';

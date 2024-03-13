@@ -9,7 +9,7 @@ import {
 } from 'react';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import SubjectDropdown from './SubjectDropdown';
-import { ELEMENT_ID, Option } from './Constants';
+import { ELEMENT_ID, Option } from '../shared/Constants';
 import Button from './Button';
 import en from 'react-phone-number-input/locale/en';
 import CountryDropdown from './CountryDropdown';
@@ -23,6 +23,7 @@ import {
     parsePhoneNumber,
 } from 'libphonenumber-js';
 import classNames from 'classnames';
+import { scrollCountryDropdown } from '../shared/Utils';
 
 interface Props {
     listingNumber: string;
@@ -63,7 +64,7 @@ enum ACTION_TYPE {
     CHANGED_COUNTRY = 'changed_country',
 }
 
-const initialCountry = 'US';
+export const initialCountry = 'AU';
 const initialFormData: FormData = {
     subject: [],
     message: '',
@@ -123,7 +124,6 @@ function formDataReducer(formData: FormData, action: DispatchAction) {
             case ACTION_TYPE.RESET_FORM: {
                 return {
                     ...initialFormData,
-                    country: actionData.country as CountryCode,
                 };
             }
         }
@@ -139,9 +139,6 @@ export default function EnquiryForm(props: Props) {
     const countryFieldRef = useRef<HTMLDivElement | null>(null);
 
     const [formData, dispatch] = useReducer(formDataReducer, initialFormData);
-    const [geoCountry, setGeoCountry] = useState<CountryCode>(initialCountry);
-    const [openCountryDropdown, setOpenCountryDropdown] =
-        useState<boolean>(false);
     const [openSubjectDropdown, setOpenSubjectDropdown] =
         useState<boolean>(false);
     const [fieldError, setFieldError] = useState<FieldError>({});
@@ -184,7 +181,6 @@ export default function EnquiryForm(props: Props) {
 
             dispatch({
                 type: ACTION_TYPE.RESET_FORM,
-                payload: { country: geoCountry },
             });
         } else {
             setFieldError(error);
@@ -244,67 +240,62 @@ export default function EnquiryForm(props: Props) {
     );
 
     useEffect(() => {
-        fetch('https://ipapi.co/json')
-            .then(function (res) {
-                return res.json();
-            })
-            .then(function (data) {
-                if (!data.error) {
-                    setGeoCountry(data.country_code);
-                    dispatch({
-                        type: ACTION_TYPE.CHANGED_COUNTRY,
-                        payload: { country: data.country_code },
-                    });
-                }
-            })
-            .catch((err) => console.log(err));
-    }, []);
+        const handleSubjectDropdown = (target: HTMLElement) => {
+            const subjectField = subjectFieldRef.current as HTMLDivElement;
 
-    useEffect(() => {
+            let open = false;
+            const isInsideSubjectField = subjectField.contains(target);
+            const subjectDropdown = subjectDropdownRef.current;
+
+            if (subjectDropdown) {
+                const isInsideSubjectDropdown =
+                    subjectDropdown.contains(target);
+                if (isInsideSubjectDropdown) {
+                    open = true;
+                } else {
+                    open = false;
+                    validateRequiredField(REQUIRED_FORM_FIELD.SUBJECT);
+                }
+            } else {
+                open = isInsideSubjectField;
+            }
+
+            setOpenSubjectDropdown(open);
+        };
+
+        const handleCountryDropdown = (target: HTMLElement) => {
+            const countryField = countryFieldRef.current as HTMLDivElement;
+            const countryDropdown =
+                countryDropdownRef.current as HTMLUListElement;
+
+            let open = false;
+
+            const isInsideCountryField = countryField.contains(target);
+            if (isInsideCountryField) {
+                open = countryDropdown.classList.contains('hidden')
+                    ? true
+                    : false;
+            }
+
+            if (open) {
+                countryDropdown.classList.remove('hidden');
+                scrollCountryDropdown(formData.country, countryDropdown);
+            } else {
+                countryDropdownRef.current?.classList.add('hidden');
+            }
+        };
+
         const handleDropdown = (event: Event) => {
             const target = event.target as HTMLElement;
-            const subjectField = subjectFieldRef.current;
-
-            if (subjectField) {
-                let open = false;
-                const isInsideSubjectField = subjectField.contains(target);
-                const subjectDropdown = subjectDropdownRef.current;
-
-                if (subjectDropdown) {
-                    const isInsideSubjectDropdown =
-                        subjectDropdown.contains(target);
-                    if (isInsideSubjectDropdown) {
-                        open = true;
-                    } else {
-                        open = false;
-                        validateRequiredField(REQUIRED_FORM_FIELD.SUBJECT);
-                    }
-                } else {
-                    open = isInsideSubjectField;
-                }
-
-                setOpenSubjectDropdown(open);
-            }
-
-            const countryField = countryFieldRef.current;
-            if (countryField) {
-                let open = false;
-                const isInsideCountryField = countryField.contains(target);
-
-                if (isInsideCountryField) {
-                    const countryDropdown = countryDropdownRef.current;
-                    const hasCountryDropdown = countryDropdown ? true : false;
-                    open = !hasCountryDropdown;
-                }
-                setOpenCountryDropdown(open);
-            }
+            handleSubjectDropdown(target);
+            handleCountryDropdown(target);
         };
         document.addEventListener('click', handleDropdown);
 
         return () => {
             document.removeEventListener('click', handleDropdown);
         };
-    }, [validateRequiredField]);
+    }, [formData.country, validateRequiredField]);
 
     const handleSubjectChange = (data: Option[]) => {
         dispatch({
@@ -372,26 +363,6 @@ export default function EnquiryForm(props: Props) {
 
     const phoneNumber = getExampleNumber(formData.country, examples);
     const placeHolder = phoneNumber?.formatNational();
-
-    let height = 284;
-    let top = 0;
-    if (countryFieldRef.current) {
-        top = countryFieldRef.current.offsetHeight + 1; // 1px is the width of box shadow of countryField
-        const rect = countryFieldRef.current.getBoundingClientRect();
-        const viewportHeight = document.documentElement.clientHeight;
-        const distanceToBottom = Math.floor(viewportHeight - rect.bottom - 1);
-        const distanceToTop = Math.floor(rect.top - 1);
-        if (distanceToBottom > 25 && distanceToBottom < 284) {
-            height = distanceToBottom;
-        } else if (distanceToBottom < 26) {
-            if (distanceToTop > 25 && distanceToTop < 284) {
-                height = distanceToTop;
-                top = -height;
-            } else if (distanceToTop > 283) {
-                top = -height;
-            }
-        }
-    }
 
     return (
         <form className='flex flex-col gap-y-5'>
@@ -551,21 +522,16 @@ export default function EnquiryForm(props: Props) {
                             }
                             className='w-full border-0 ring-1 rounded-r-md ring-gray-300 focus:ring-green-500 peer-focus:ring-l-0'
                         />
-                        {openCountryDropdown && (
-                            <CountryDropdown
-                                ref={countryDropdownRef}
-                                onChange={(data: CountryCode) =>
-                                    dispatch({
-                                        type: ACTION_TYPE.CHANGED_COUNTRY,
-                                        payload: { country: data },
-                                    })
-                                }
-                                country={formData.country}
-                                openDropDown={setOpenCountryDropdown}
-                                height={height}
-                                top={top}
-                            />
-                        )}
+                        <CountryDropdown
+                            ref={countryDropdownRef}
+                            onChange={(data: CountryCode) =>
+                                dispatch({
+                                    type: ACTION_TYPE.CHANGED_COUNTRY,
+                                    payload: { country: data },
+                                })
+                            }
+                            country={formData.country}
+                        />
                     </div>
                     {Object.keys(fieldError).includes(
                         REQUIRED_FORM_FIELD.CONTACT_NUMBER,

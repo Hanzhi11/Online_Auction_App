@@ -1,7 +1,7 @@
 import { IoClose } from 'react-icons/io5';
 import ReactDOM from 'react-dom';
 import { useContext, useEffect } from 'react';
-import { ELEMENT_ID } from './Constants';
+import { ELEMENT_ID } from '../shared/Constants';
 import Button from './Button';
 import { IconContext } from 'react-icons';
 import { OverLayContentContext } from '../App';

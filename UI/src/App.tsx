@@ -47,7 +47,7 @@ function App() {
             <OverLayContentContext.Provider
                 value={{ overLayContent, updateOverLayContent }}
             >
-                <div className='min-h-screen min-w-[280px] flex flex-col'>
+                <div className='min-h-screen min-w-[280px] flex flex-col overflow-hidden'>
                     {!isPdfPage && <Header />}
                     <Routes>
                         <Route path='/' element={<Home />} />

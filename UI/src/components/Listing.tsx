@@ -14,7 +14,7 @@ import className from 'classnames';
 import Photos from './Photos';
 import OverLay from './OverLay';
 import { OverLayContentContext, WindowSizeContext } from '../App';
-import { OVERLAY_CONTENTS } from './Constants';
+import { OVERLAY_CONTENTS } from '../shared/Constants';
 import PersonList from './PersonList';
 import SectionContainer from './SectionContainer';
 import EnquiryForm from './EnquiryForm';
@@ -321,9 +321,14 @@ function Listing() {
     );
 
     const propertyDescription = (
-        <div className={className('mt-5 pb-5 shadow-md rounded-b-md px-3 md:px-0 md:shadow-none', {
-            'border-b': !isSmallScreen
-        })}>
+        <div
+            className={className(
+                'mt-5 pb-5 shadow-md rounded-b-md px-3 md:px-0 md:shadow-none',
+                {
+                    'border-b': !isSmallScreen,
+                },
+            )}
+        >
             <h3 className='mb-5 font-medium md:text-2xl'>{heading}</h3>
             <p id='copyWriting' className={copyWritingStyle}>
                 {copyWriting}
@@ -370,13 +375,15 @@ function Listing() {
             </div>
         </div>
     );
-    
+
     const enquiry = (
-        <div className={className('px-3 py-5', {
-            'bg-neutral-200 mt-5': !isSmallScreen
-        })}>
+        <div
+            className={className('px-3 py-5', {
+                'bg-neutral-200 mt-5': !isSmallScreen,
+            })}
+        >
             <h3 className='mb-5'>Send an enquiry to the listing agent</h3>
-            <EnquiryForm listingNumber={listingNumber as string}/>
+            <EnquiryForm listingNumber={listingNumber as string} />
         </div>
     );
 

@@ -13,14 +13,12 @@ import {
     getCountryCallingCode,
     CountryCode,
 } from 'libphonenumber-js';
-import { ELEMENT_ID } from './Constants';
+import { ELEMENT_ID } from '../shared/Constants';
 import classNames from 'classnames';
+import { scrollCountryDropdown } from '../shared/Utils';
 
 interface Props {
     onChange: (value: CountryCode) => void;
-    openDropDown: (value: boolean) => void;
-    height: number;
-    top: number;
     country: CountryCode;
 }
 
@@ -38,7 +36,7 @@ export default forwardRef<HTMLUListElement, Props>(function CountryDropdown(
     props: Props,
     ref: Ref<HTMLUListElement>,
 ) {
-    const { onChange, openDropDown, height, top } = props;
+    const { onChange } = props;
     const [searchTerm, setSearchTerm] = useState('');
     const [focusedCountry, setFocusedCountry] = useState<CountryCode | null>(
         props.country,
@@ -61,7 +59,9 @@ export default forwardRef<HTMLUListElement, Props>(function CountryDropdown(
 
     function handleCountrySelection(event: MouseEvent<HTMLElement>) {
         onChange(event.currentTarget.id as CountryCode);
-        openDropDown(false);
+        const countryDropdown = (ref as RefObject<HTMLUListElement>)
+            .current as HTMLUListElement;
+        countryDropdown.classList.add('hidden');
     }
 
     function handleMouseOver(event: MouseEvent<HTMLElement>) {
@@ -69,33 +69,38 @@ export default forwardRef<HTMLUListElement, Props>(function CountryDropdown(
     }
 
     function handleMouseOut() {
-        setFocusedCountry(null);
+        const countryDropdown = (ref as RefObject<HTMLUListElement>)
+            .current as HTMLUListElement;
+        const isHidden = countryDropdown.classList.contains('hidden');
+        if (!isHidden) setFocusedCountry(null);
     }
 
     useEffect(() => {
         function handleKeyUp(e: KeyboardEvent) {
             const countryDropdown = (ref as RefObject<HTMLUListElement>)
-                .current;
-            if (!countryDropdown) return;
+                .current as HTMLUListElement;
+            if (countryDropdown.classList.contains('hidden')) return;
 
             const key = e.key.toUpperCase();
-            if (key.match(/[A-Z]/g)) {
-                setSearchTerm((searchTerm) => {
-                    return searchTerm.concat(key);
-                });
-            }
 
             if (key === 'ENTER') {
                 if (focusedCountry) {
                     onChange(focusedCountry);
+                } else {
+                    setFocusedCountry(props.country);
                 }
-                openDropDown(false);
+
+                countryDropdown.classList.add('hidden');
+            } else if (key.match(/[A-Z]/) && key.length === 1) {
+                setSearchTerm((searchTerm) => {
+                    return searchTerm.concat(key);
+                });
             }
         }
         window.addEventListener('keyup', handleKeyUp);
 
         return () => window.removeEventListener('keyup', handleKeyUp);
-    }, [ref, onChange, openDropDown, focusedCountry]);
+    }, [ref, onChange, focusedCountry, props.country]);
 
     useEffect(() => {
         if (searchTerm.length === 0) return;
@@ -122,38 +127,28 @@ export default forwardRef<HTMLUListElement, Props>(function CountryDropdown(
     }, [searchTerm, ref, countries]);
 
     useEffect(() => {
-        const countryDropdown = (ref as RefObject<HTMLUListElement>).current;
-        if (!countryDropdown || !focusedCountry) return;
-
-        const countryLi = document.querySelector(
-            `#${ELEMENT_ID.COUNTRY_DROP_DOWN} > #${focusedCountry}`,
-        ) as HTMLLIElement;
-
-        if (countryLi.offsetTop - countryDropdown.scrollTop < 0) {
-            countryDropdown.scrollTop = countryLi.offsetTop;
-        } else if (
-            countryLi.offsetTop +
-                countryLi.offsetHeight -
-                countryDropdown.scrollTop >
-            countryDropdown.clientHeight
-        ) {
-            countryDropdown.scrollTop =
-                countryLi.offsetTop +
-                countryLi.offsetHeight -
-                countryDropdown.clientHeight;
-        }
+        const countryDropdown = (ref as RefObject<HTMLUListElement>)
+            .current as HTMLUListElement;
+        if (!focusedCountry) return;
+        scrollCountryDropdown(focusedCountry, countryDropdown);
     }, [focusedCountry, ref]);
 
+    const height = 284;
+    const top = -height - 1; // 1px is the width of box shadow of countryField
+
+    // using 'hidden' to hide the dropdown rather then using state
+    // because the wrapped country name will result in a wrong offsetTop to the li elements afterwards
+    // after the initial render
     return (
         <ul
-            className='absolute bg-white overflow-y-scroll border w-full'
+            className='absolute bg-white overflow-y-scroll border w-full hidden'
             id={ELEMENT_ID.COUNTRY_DROP_DOWN}
             ref={ref}
             style={{ height: height, top: top }}
         >
             {countries.map((country) => {
                 const liStyle = classNames(
-                    'flex gap-x-3 mb-1 px-3 items-center rounded-md last-of-type:mb-0',
+                    'flex items-center gap-x-3 mb-1 px-3 rounded-md last-of-type:mb-0',
                     {
                         [backgroundColor]: country[0] === focusedCountry,
                     },
@@ -171,10 +166,10 @@ export default forwardRef<HTMLUListElement, Props>(function CountryDropdown(
                             src={`http://purecatamphetamine.github.io/country-flag-icons/3x2/${country[0]}.svg`}
                             className='h-4 lg:h-3'
                         />
-                        <span className='lg:text-sm'>{country[1]}</span>
-                        <span className='lg:text-sm'>
+                        <p className='lg:text-sm'>{country[1]}</p>
+                        <p className='lg:text-sm'>
                             +{getCountryCallingCode(country[0])}
-                        </span>
+                        </p>
                     </li>
                 );
             })}

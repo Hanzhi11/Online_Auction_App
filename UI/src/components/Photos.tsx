@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import Button from './Button';
 import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
 import { WindowSizeContext } from '../App';
-import { ELEMENT_ID } from './Constants';
+import { ELEMENT_ID } from '../shared/Constants';
 
 interface Props {
     photos: string[];
