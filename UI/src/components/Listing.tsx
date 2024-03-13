@@ -10,7 +10,7 @@ import { FiCalendar } from 'react-icons/fi';
 import { CiLocationOn } from 'react-icons/ci';
 import { MdOutlinePictureAsPdf } from 'react-icons/md';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
-import className from 'classnames';
+import classNames from 'classnames';
 import Photos from './Photos';
 import OverLay from './OverLay';
 import { OverLayContentContext, WindowSizeContext } from '../App';
@@ -289,7 +289,7 @@ function Listing() {
             >
                 <div className='flex text-sm text-gray-500 mt-1 mb-3 md:text-base'>
                     {features.map((feature, index) => {
-                        const featureStyle = className('flex items-center', {
+                        const featureStyle = classNames('flex items-center', {
                             'mr-5': index !== 3,
                         });
                         return (
@@ -322,7 +322,7 @@ function Listing() {
 
     const propertyDescription = (
         <div
-            className={className(
+            className={classNames(
                 'mt-5 pb-5 shadow-md rounded-b-md px-3 md:px-0 md:shadow-none',
                 {
                     'border-b': !isSmallScreen,
@@ -337,7 +337,7 @@ function Listing() {
                 <Button
                     onClick={handleReadButtonContent}
                     width='w-fit'
-                    classNames='text-gray-500 mt-3'
+                    className='text-gray-500 mt-3'
                 >
                     {readButtonContent}
                 </Button>
@@ -378,7 +378,7 @@ function Listing() {
 
     const enquiry = (
         <div
-            className={className('px-3 py-5', {
+            className={classNames('px-3 py-5', {
                 'bg-neutral-200 mt-5': !isSmallScreen,
             })}
         >
@@ -420,7 +420,7 @@ function Listing() {
                 className='bg-cover bg-center h-[45vh] max-h-80 relative'
                 style={{ backgroundImage: `url('${mainPhotoUrl}')` }}
             >
-                <SectionContainer style='px-0 mx-auto flex flex-col-reverse h-full relative'>
+                <SectionContainer className='px-0 mx-auto flex flex-col-reverse h-full relative'>
                     <Button
                         type='secondary'
                         height='h-8'
@@ -428,7 +428,7 @@ function Listing() {
                         onClick={() =>
                             updateOverLayContent(OVERLAY_CONTENTS.PHOTOS)
                         }
-                        classNames='border-2 text-sm mb-4 mx-auto md:mx-0'
+                        className='border-2 text-sm mb-4 mx-auto md:mx-0'
                     >
                         <IconContext.Provider
                             value={{
@@ -443,7 +443,7 @@ function Listing() {
                     {isSmallScreen ? <></> : auctionBanner}
                 </SectionContainer>
             </div>
-            <SectionContainer style='px-0 mx-auto'>{content}</SectionContainer>
+            <SectionContainer className='px-0 mx-auto'>{content}</SectionContainer>
             {overLayContent === OVERLAY_CONTENTS.PHOTOS && (
                 <IconContext.Provider
                     value={{
@@ -452,7 +452,7 @@ function Listing() {
                         className: 'inline',
                     }}
                 >
-                    <OverLay style='text-white'>
+                    <OverLay className='text-white'>
                         <Photos photos={photosBytes} />
                     </OverLay>
                 </IconContext.Provider>

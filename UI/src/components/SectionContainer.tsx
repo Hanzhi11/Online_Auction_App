@@ -1,19 +1,19 @@
-import className from 'classnames';
+import classNames from 'classnames';
 
 interface Props {
     children: JSX.Element | JSX.Element[];
     header?: string;
-    style?: string;
+    className?: string;
 }
 
 function SectionContainer(props: Props) {
-    const { header, style } = props;
-    const styles = className(
+    const { header, className } = props;
+    const styles = classNames(
         'w-full md:w-[720px] md:px-0 lg:w-[940px] xl:w-[1140px]',
         {
             'mx-auto mt-3 md:mt-9': header,
         },
-        style,
+        className,
     );
     return (
         <section className={styles}>

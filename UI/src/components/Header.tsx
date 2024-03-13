@@ -2,7 +2,7 @@ import { IconContext } from 'react-icons';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { useContext, useEffect, useState } from 'react';
 import OverLay from './OverLay';
-import className from 'classnames';
+import classNames from 'classnames';
 import NavBar from './NavBar';
 import { ELEMENT_ID, OVERLAY_CONTENTS } from '../shared/Constants';
 import Logo from './Logo';
@@ -58,11 +58,11 @@ function Header() {
 
     const isSmallScreen = windowSize.width < 768;
 
-    const topStyle = className('bg-indigo-900 h-20 flex justify-center', {
+    const topStyle = classNames('bg-indigo-900 h-20 flex justify-center', {
         'bg-opacity-70': isTransparent,
     });
 
-    const bottomStyle = className('bg-green-500 h-8', {
+    const bottomStyle = classNames('bg-green-500 h-8', {
         'bg-opacity-90 saturate-75': isTransparent,
     });
 
@@ -75,7 +75,7 @@ function Header() {
                 <Button
                     id={ELEMENT_ID.NAV_OPEN_BUTTON}
                     onClick={() => updateOverLayContent(OVERLAY_CONTENTS.NAV)}
-                    classNames='md:hidden'
+                    className='md:hidden'
                     width='w-fit'
                 >
                     <GiHamburgerMenu />
@@ -88,7 +88,7 @@ function Header() {
         content = <></>;
     }
 
-    const headerStyle = className('w-full top-0 z-9999', {
+    const headerStyle = classNames('w-full top-0 z-9999', {
         fixed: isHomePage,
         sticky: !isHomePage,
     });
@@ -97,7 +97,7 @@ function Header() {
         <div>
             <header className={headerStyle} id={ELEMENT_ID.HEADER}>
                 <div className={topStyle}>
-                    <SectionContainer style='flex justify-between px-7'>
+                    <SectionContainer className='flex justify-between px-7'>
                         <Logo />
                         {content}
                     </SectionContainer>

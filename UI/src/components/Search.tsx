@@ -3,7 +3,7 @@ import { IoIosArrowForward } from 'react-icons/io';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useState } from 'react';
-import className from 'classnames';
+import classNames from 'classnames';
 import SectionContainer from './SectionContainer';
 import Button from './Button';
 
@@ -43,7 +43,7 @@ function Search() {
     );
     const [startDate, setStartDate] = useState<StartDate>(null);
 
-    const sharedInputStyle = className(
+    const sharedInputStyle = classNames(
         'bg-stone-200 border-0 rounded-md bg-focus:ring-2 focus:ring-inset focus:ring-green-500',
     );
 
@@ -80,7 +80,7 @@ function Search() {
                 className: 'inline stroke-[20]',
             }}
         >
-            <SectionContainer header='Property Search' style='px-7'>
+            <SectionContainer header='Property Search' className='px-7'>
                 <form className='flex flex-col md:h-10 md:flex-row'>
                     <input
                         type='text'
@@ -189,7 +189,7 @@ function Search() {
                     <Button
                         height='h-10'
                         type='primary'
-                        classNames='self-end md:ml-6 md:w-10 md:rounded-full'
+                        className='self-end md:ml-6 md:w-10 md:rounded-full'
                         onClick={handleSubmit}
                     >
                         <span className='md:hidden'>Search</span>

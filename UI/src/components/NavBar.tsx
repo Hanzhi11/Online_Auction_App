@@ -1,6 +1,6 @@
 import { GiHouse } from 'react-icons/gi';
 import { MdHelp } from 'react-icons/md';
-import className from 'classnames';
+import classNames from 'classnames';
 import Button from './Button';
 import { ELEMENT_ID } from '../shared/Constants';
 import { Link } from 'react-router-dom';
@@ -17,12 +17,12 @@ function NavBar() {
 
     const isColumnDisplay = overLayContent !== '' || isSmallScreen;
 
-    const navStyle = className('font-light text-white items-center flex', {
+    const navStyle = classNames('font-light text-white items-center flex', {
         'flex-col space-y-8 text-3xl pt-5 m-auto': isColumnDisplay,
         'space-x-4 text-sm': !isColumnDisplay,
     });
 
-    const linkStyle = className('leading-9 cursor-pointer flex items-center', {
+    const linkStyle = classNames('leading-9 cursor-pointer flex items-center', {
         'hover:border-b border-green-500': !isColumnDisplay,
     });
 

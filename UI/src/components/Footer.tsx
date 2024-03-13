@@ -4,7 +4,7 @@ import SectionContainer from './SectionContainer';
 function Footer() {
     return (
         <footer className='mt-auto flex justify-center bg-green-500 text-white'>
-            <SectionContainer style='items-center py-7 lg:grid lg:grid-cols-2 px-7'>
+            <SectionContainer className='items-center py-7 lg:grid lg:grid-cols-2 px-7'>
                 <section>
                     <Logo />
                     <p className='my-2.5 text-sm'>

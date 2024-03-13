@@ -109,14 +109,14 @@ function Auctions() {
         <IconContext.Provider
             value={{ size: '1.2rem', className: 'stroke-[20]' }}
         >
-            <SectionContainer header='Upcoming Auctions' style='px-7'>
+            <SectionContainer header='Upcoming Auctions' className='px-7'>
                 <div className='grid grid-cols-1 justify-items-center gap-y-4 md:grid-cols-2 md:gap-x-6 lg:grid-cols-3'>
                     {content}
                 </div>
                 <Button
                     height='h-10'
                     type='primary'
-                    classNames='mx-auto my-5 md:w-10 md:rounded-full'
+                    className='mx-auto my-5 md:w-10 md:rounded-full'
                     onClick={() => {}}
                 >
                     <span className='md:hidden'>More</span>

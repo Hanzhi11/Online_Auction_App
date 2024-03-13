@@ -126,7 +126,6 @@ function Photos(props: Props) {
     };
 
     const handlePhotoChange = (event: React.MouseEvent<HTMLElement>) => {
-        console.log(event.target);
         const target = event.target as HTMLElement;
         let button: HTMLElement | null = target;
         if (button.tagName !== 'BUTTON') {
@@ -167,7 +166,7 @@ function Photos(props: Props) {
                         height='h-10'
                         width='w-10'
                         onClick={handlePhotoChange}
-                        classNames='bg-indigo-900 rounded-full bg-opacity-50 absolute left-5 top-1/2 -translate-y-2/4'
+                        className='bg-indigo-900 rounded-full bg-opacity-50 absolute left-5 top-1/2 -translate-y-2/4'
                     >
                         <IoIosArrowBack />
                     </Button>
@@ -184,7 +183,7 @@ function Photos(props: Props) {
                         height='h-10'
                         width='w-10'
                         onClick={handlePhotoChange}
-                        classNames='bg-indigo-900 rounded-full bg-opacity-50 absolute right-5 top-1/2 -translate-y-2/4'
+                        className='bg-indigo-900 rounded-full bg-opacity-50 absolute right-5 top-1/2 -translate-y-2/4'
                     >
                         <IoIosArrowForward />
                     </Button>
@@ -202,7 +201,7 @@ function Photos(props: Props) {
                         height='h-16'
                         width='w-7'
                         onClick={handlePhotoBarScroll}
-                        classNames='z-10 bg-indigo-900 rounded-none absolute left-0'
+                        className='z-10 bg-indigo-900 rounded-none absolute left-0'
                     >
                         <IoIosArrowBack />
                     </Button>
@@ -236,7 +235,7 @@ function Photos(props: Props) {
                         height='h-16'
                         width='w-7'
                         onClick={handlePhotoBarScroll}
-                        classNames='z-10 bg-indigo-900 rounded-none'
+                        className='z-10 bg-indigo-900 rounded-none'
                     >
                         <IoIosArrowForward />
                     </Button>

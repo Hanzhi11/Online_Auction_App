@@ -5,14 +5,15 @@ import { ELEMENT_ID } from '../shared/Constants';
 import Button from './Button';
 import { IconContext } from 'react-icons';
 import { OverLayContentContext } from '../App';
+import classNames from 'classnames';
 
 interface Props {
     children: JSX.Element;
-    style?: string;
+    className?: string;
 }
 
 function OverLay(props: Props) {
-    const { children, style } = props;
+    const { children, className } = props;
     const { updateOverLayContent } = useContext(OverLayContentContext);
 
     useEffect(() => {
@@ -22,10 +23,10 @@ function OverLay(props: Props) {
 
     return ReactDOM.createPortal(
         <div
-            className={
-                'fixed inset-0 py-6 bg-indigo-900 flex flex-col overflow-auto z-9999 min-w-[280px] ' +
-                style
-            }
+            className={classNames(
+                'fixed inset-0 py-6 bg-indigo-900 flex flex-col overflow-auto z-9999 min-w-[280px]',
+                className,
+            )}
         >
             <div className='flex'>
                 <IconContext.Provider
@@ -37,7 +38,7 @@ function OverLay(props: Props) {
                     <Button
                         id={ELEMENT_ID.CLOSE_OVERLAY_BUTTON}
                         width='w-fit'
-                        classNames='ml-auto mr-3.5'
+                        className='ml-auto mr-3.5'
                         onClick={() => updateOverLayContent('')}
                     >
                         <IoClose />

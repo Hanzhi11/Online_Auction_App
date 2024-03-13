@@ -1,4 +1,4 @@
-import className from 'classnames';
+import classNames from 'classnames';
 
 interface Props {
     type?: string;
@@ -7,13 +7,13 @@ interface Props {
     width?: string;
     onClick: (event: React.MouseEvent<HTMLElement>) => void;
     id?: string;
-    classNames?: string;
+    className?: string;
 }
 
 function Button(props: Props) {
-    const { type, children, height, onClick, width, id, classNames } = props;
+    const { type, children, height, onClick, width, id, className } = props;
     const buttonWidth = width ? width : 'w-full';
-    const style = className(
+    const style = classNames(
         'rounded cursor-pointer',
         'flex justify-center items-center',
         height,
@@ -26,7 +26,7 @@ function Button(props: Props) {
             'text-indigo-900': type === 'secondary',
             'hover:bg-slate-200': type === 'secondary',
         },
-        classNames,
+        className,
     );
     return (
         <button id={id} className={style} onClick={onClick}>
