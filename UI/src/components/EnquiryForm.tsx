@@ -22,8 +22,8 @@ import {
     isPossiblePhoneNumber,
     parsePhoneNumber,
 } from 'libphonenumber-js';
-import classNames from 'classnames';
 import { scrollCountryDropdown } from '../shared/Utils';
+import FormField from './FormField';
 
 interface Props {
     listingNumber: string;
@@ -349,33 +349,20 @@ export default function EnquiryForm(props: Props) {
         });
     };
 
-    const labelStyle =
-        'block leading-6 text-gray-900 mb-2 md:text-sm lg:text-base';
-    const labelStyleRequired = labelStyle.concat(
-        ' ',
-        'after:content-["*"] after:ml-0.5',
-    );
     const baseStyle =
         'w-full border-0 bg-white ring-1 ring-gray-300 rounded-md focus:ring-green-500';
     const inputStyle = baseStyle.concat(' ', 'h-10');
     const textAreaStyle = baseStyle.concat(' ', 'h-36');
-    const errorStyle = 'text-xs text-red-600 mt-2 md:text-sm';
 
     const phoneNumber = getExampleNumber(formData.country, examples);
     const placeHolder = phoneNumber?.formatNational();
 
     return (
         <form className='flex flex-col gap-y-5'>
-            <div>
-                <label
-                    className={classNames(labelStyleRequired, {
-                        'after:text-red-600': Object.keys(fieldError).includes(
-                            REQUIRED_FORM_FIELD.SUBJECT,
-                        ),
-                    })}
-                >
-                    Enquire about (please tick all that apply)
-                </label>
+            <FormField
+                labelContent='Enquire about (please tick all that apply)'
+                errorMessage={fieldError.subject}
+            >
                 <div className='relative'>
                     <div ref={subjectFieldRef}>
                         <input
@@ -411,12 +398,8 @@ export default function EnquiryForm(props: Props) {
                         />
                     )}
                 </div>
-                {Object.keys(fieldError).includes(
-                    REQUIRED_FORM_FIELD.SUBJECT,
-                ) && <p className={errorStyle}>{fieldError.subject}</p>}
-            </div>
-            <div>
-                <label className={labelStyle}>Message</label>
+            </FormField>
+            <FormField labelContent='Message' isRequired={false}>
                 <textarea
                     name='message'
                     className={textAreaStyle}
@@ -428,17 +411,8 @@ export default function EnquiryForm(props: Props) {
                         })
                     }
                 ></textarea>
-            </div>
-            <div>
-                <label
-                    className={classNames(labelStyleRequired, {
-                        'after:text-red-600': Object.keys(fieldError).includes(
-                            REQUIRED_FORM_FIELD.NAME,
-                        ),
-                    })}
-                >
-                    Name
-                </label>
+            </FormField>
+            <FormField labelContent='Name' errorMessage={fieldError.name}>
                 <input
                     name='name'
                     className={inputStyle}
@@ -453,21 +427,13 @@ export default function EnquiryForm(props: Props) {
                         validateRequiredField(REQUIRED_FORM_FIELD.NAME)
                     }
                 />
-                {Object.keys(fieldError).includes(REQUIRED_FORM_FIELD.NAME) && (
-                    <p className={errorStyle}>{fieldError.name}</p>
-                )}
-            </div>
+            </FormField>
             <div className='grid grid-rows-2 gap-5 lg:grid-cols-5 lg:grid-rows-1'>
-                <div className='lg:col-span-3'>
-                    <label
-                        className={classNames(labelStyleRequired, {
-                            'after:text-red-600': Object.keys(
-                                fieldError,
-                            ).includes(REQUIRED_FORM_FIELD.EMAIL),
-                        })}
-                    >
-                        Email
-                    </label>
+                <FormField
+                    className='lg:col-span-3'
+                    labelContent='Email'
+                    errorMessage={fieldError.email}
+                >
                     <input
                         name='email'
                         className={inputStyle}
@@ -482,20 +448,12 @@ export default function EnquiryForm(props: Props) {
                             validateRequiredField(REQUIRED_FORM_FIELD.EMAIL)
                         }
                     />
-                    {Object.keys(fieldError).includes(
-                        REQUIRED_FORM_FIELD.EMAIL,
-                    ) && <p className={errorStyle}>{fieldError.email}</p>}
-                </div>
-                <div className='lg:col-span-2'>
-                    <label
-                        className={classNames(labelStyleRequired, {
-                            'after:text-red-600': Object.keys(
-                                fieldError,
-                            ).includes(REQUIRED_FORM_FIELD.CONTACT_NUMBER),
-                        })}
-                    >
-                        Contact Number
-                    </label>
+                </FormField>
+                <FormField
+                    className='lg:col-span-2'
+                    labelContent='Contact Number'
+                    errorMessage={fieldError.contactNumber}
+                >
                     <div className={'relative flex bg-white rounded-md'}>
                         <div
                             className='min-w-fit flex items-center px-2 border-0 ring-1 rounded-l-md ring-r-0 ring-gray-300 peer'
@@ -533,12 +491,7 @@ export default function EnquiryForm(props: Props) {
                             country={formData.country}
                         />
                     </div>
-                    {Object.keys(fieldError).includes(
-                        REQUIRED_FORM_FIELD.CONTACT_NUMBER,
-                    ) && (
-                        <p className={errorStyle}>{fieldError.contactNumber}</p>
-                    )}
-                </div>
+                </FormField>
             </div>
             <Button height='h-10' type='primary' onClick={handleSubmit}>
                 Send
