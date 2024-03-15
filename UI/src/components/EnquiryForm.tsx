@@ -121,12 +121,11 @@ function formDataReducer(formData: FormData, action: DispatchAction) {
                     country: actionData.country as CountryCode,
                 };
             }
-            case ACTION_TYPE.RESET_FORM: {
-                return {
-                    ...initialFormData,
-                };
-            }
         }
+    } else if (action.type === ACTION_TYPE.RESET_FORM) {
+        return {
+            ...initialFormData,
+        };
     }
     return formData;
 }
@@ -160,36 +159,51 @@ export default function EnquiryForm(props: Props) {
                 formData.contactNumber,
                 formData.country,
             ).number;
-            console.log(listingNumber);
+            const subject = formData.subject.map((item) => item.content);
             const dataSubmited = {
-                subject: formData.subject,
+                subject: subject,
                 message: formData.message,
                 name: formData.name,
                 email: formData.email,
                 contactNumber: phoneNumber,
             };
 
-            fetch(`${import.meta.env.VITE_BASE_URL}/Enquiry/${listingNumber}`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(dataSubmited),
-                method: 'POST',
-            })
-                .then((res) => res.json())
-                .then((data) => console.log(data));
+            const body = JSON.stringify(dataSubmited);
 
-            dispatch({
-                type: ACTION_TYPE.RESET_FORM,
-            });
+            fetch(
+                `${import.meta.env.VITE_BASE_URL}/Enquiry/Send/${listingNumber}`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: body,
+                    mode: 'cors',
+                },
+            )
+                .then((res) => {
+                    if (res.ok) {
+                        dispatch({
+                            type: ACTION_TYPE.RESET_FORM,
+                        });
+                    } else {
+                        console.log(res);
+                    }
+                })
+                .catch((err) => console.log(err));
         } else {
             setFieldError(error);
         }
     }
 
     const validateRequiredField = useCallback(
-        (fieldName: REQUIRED_FORM_FIELD, updateState: boolean = true, data?:string | Option[], checkEmptyOnly: boolean = false) => {
-            const testData = data === undefined ? formData[fieldName] : data
+        (
+            fieldName: REQUIRED_FORM_FIELD,
+            updateState: boolean = true,
+            data?: string | Option[],
+            checkEmptyOnly: boolean = false,
+        ) => {
+            const testData = data === undefined ? formData[fieldName] : data;
             const isEmpty = testData.length === 0 ? true : false;
 
             const newError: FieldError = fieldError
@@ -305,7 +319,7 @@ export default function EnquiryForm(props: Props) {
             type: ACTION_TYPE.CHANGED_SUBJECT,
             payload: { subject: data },
         });
-        validateRequiredField(REQUIRED_FORM_FIELD.SUBJECT, true, data)
+        validateRequiredField(REQUIRED_FORM_FIELD.SUBJECT, true, data);
     };
 
     const handleRequiredTextInputChange = (
@@ -333,7 +347,7 @@ export default function EnquiryForm(props: Props) {
                 });
                 break;
         }
-        validateRequiredField(fieldName, true, value, true)
+        validateRequiredField(fieldName, true, value, true);
     };
 
     const handleContactNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -343,14 +357,19 @@ export default function EnquiryForm(props: Props) {
         if (found) {
             value = value.slice(1, -1);
         }
-        const number = new AsYouType(formData.country).input(value)
+        const number = new AsYouType(formData.country).input(value);
         dispatch({
             type: ACTION_TYPE.CHANGED_CONTACT_NUMBER,
             payload: {
                 contactNumber: number,
             },
         });
-        validateRequiredField(REQUIRED_FORM_FIELD.CONTACT_NUMBER, true, number, true)
+        validateRequiredField(
+            REQUIRED_FORM_FIELD.CONTACT_NUMBER,
+            true,
+            number,
+            true,
+        );
     };
 
     const baseStyle =
