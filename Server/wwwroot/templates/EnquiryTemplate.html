@@ -1,0 +1,41 @@
+<body style="font-size: 16px; color: black">
+    <p>Hi {{AgentName}},</p>
+    <p>
+        {{Enquiry.Name}} would like to know the following information about the
+        property at {{Address}}.
+    </p>
+    <ul style="padding: 0 20px">
+        {% for subject in Enquiry.Subject%}
+        <li>{{subject}}</li>
+        {% endfor%}
+    </ul>
+    <p>Kindly find {{Enquiry.Name}}'s contact details below:</p>
+    <div style="padding: 0 20px">
+        <div>
+            <img
+                src="cid:[phone]"
+                alt="Contact Number"
+                style="height: 15px; width: 15px; vertical-align: middle"
+            />
+            <span>:</span>
+            <span style="margin-left: 10px">{{Enquiry.ContactNumber}}</span>
+        </div>
+        <div>
+            <img
+                src="cid:[email]"
+                alt="Email"
+                style="height: 15px; width: 15px; vertical-align: middle"
+            />
+            <span>:</span>
+            <span style="margin-left: 10px">{{Enquiry.Email}}</span>
+        </div>
+    </div>
+    {% if Enquiry.Message.size > 0 %}
+    <p>{{Enquiry.Name}} also left a message for you.</p>
+    <p style="padding: 10px; background-color: lightgrey; margin-left: 20px; max-width: 500px;">
+        {{Enquiry.Message}}
+    </p>
+    {% endif %}
+    <p>Good luck to your business.</p>
+    <p>BidNow</p>
+</body>

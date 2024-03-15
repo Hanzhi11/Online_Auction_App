@@ -13,7 +13,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: AllowedSpecificOrigin,
                       policy =>
                       {
-                          policy.WithOrigins("http://localhost:5173");
+                          policy.WithOrigins("http://localhost:5173")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
                       });
 });
 
@@ -24,14 +26,15 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
 
+
 var app = builder.Build();
 
-if (!app.Environment.IsProduction())
-{
-    using var scope = app.Services.CreateScope();
-    var services = scope.ServiceProvider;
-    SeedData.Initialze(services, app.Environment);
-}
+// if (!app.Environment.IsProduction())
+// {
+//     using var scope = app.Services.CreateScope();
+//     var services = scope.ServiceProvider;
+//     SeedData.Initialze(services, app.Environment);
+// }
 
 
 // Configure the HTTP request pipeline.
