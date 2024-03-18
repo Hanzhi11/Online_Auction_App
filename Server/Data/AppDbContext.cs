@@ -18,6 +18,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Listing> Listing { get; set; }
     public DbSet<ListingAgent> ListingAgent { get; set; }
     public DbSet<Photo> Photo { get; set; }
+    public DbSet<Enquiry> Enquiry { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
