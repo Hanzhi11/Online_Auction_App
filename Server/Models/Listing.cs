@@ -48,6 +48,8 @@ public class Listing(
 
     public ICollection<Photo>? Photos { get; }
 
+    public ICollection<Enquiry>? Enquiries {get;}
+
     public ListingInfoViewModel GetInformation()
     {
         string agencyName = "";

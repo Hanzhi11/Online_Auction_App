@@ -75,10 +75,10 @@ const initialFormData: FormData = {
 };
 
 const subjectOptions = [
-    { id: '1', content: 'Book Inspection' },
-    { id: '2', content: 'Contract of Sale' },
-    { id: '3', content: 'Rates and Fees' },
-    { id: '4', content: 'Further Information' },
+    { id: 1, content: 'Book Inspection' },
+    { id: 2, content: 'Contract of Sale' },
+    { id: 3, content: 'Rates and Fees' },
+    { id: 4, content: 'Further Information' },
 ];
 
 function formDataReducer(formData: FormData, action: DispatchAction) {
@@ -159,9 +159,9 @@ export default function EnquiryForm(props: Props) {
                 formData.contactNumber,
                 formData.country,
             ).number;
-            const subject = formData.subject.map((item) => item.content);
+            const subject = formData.subject.map((item) => item.id);
             const dataSubmited = {
-                subject: subject,
+                subjects: subject,
                 message: formData.message,
                 name: formData.name,
                 email: formData.email,

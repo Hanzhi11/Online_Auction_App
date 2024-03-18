@@ -30,6 +30,6 @@ export enum OVERLAY_CONTENTS {
 }
 
 export interface Option {
-    id: string;
+    id: number;
     content: string;
 }

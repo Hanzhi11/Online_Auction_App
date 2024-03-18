@@ -25,14 +25,14 @@ export default forwardRef<HTMLDivElement, Props>(function SubjectDropdown(
         const subjectIndex =
             selectedOptions.length > 0
                 ? selectedOptions.findIndex(
-                      (item) => item.id === (liElement as HTMLLIElement).id,
+                      (item) => item.id.toString() === (liElement as HTMLLIElement).id,
                   )
                 : -1;
 
         const newSubjects = [...selectedOptions];
         if (subjectIndex === -1) {
             const subject = options.find(
-                (option) => option.id === (liElement as HTMLLIElement).id,
+                (option) => option.id.toString() === (liElement as HTMLLIElement).id,
             ) as Option;
             newSubjects.push(subject);
         } else {
@@ -62,7 +62,7 @@ export default forwardRef<HTMLDivElement, Props>(function SubjectDropdown(
                     return (
                         <li
                             key={option.id}
-                            id={option.id}
+                            id={option.id.toString()}
                             className='test'
                             onClick={handleOptionSelection}
                         >

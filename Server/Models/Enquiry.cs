@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Models;
@@ -10,7 +11,7 @@ public enum Subject
     FurtherInformation
 }
 
-public class Enquiry(List<Subject> subjects, string message, string name, string email, string contactNumber, Guid listingId)
+public class Enquiry(List<Subject> subjects, string message, string name, string email, string contactNumber)
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
@@ -20,6 +21,7 @@ public class Enquiry(List<Subject> subjects, string message, string name, string
     public string Email { get; set; } = email;
     public string ContactNumber { get; set; } = contactNumber;
 
-    public Guid ListingId {get;set;} = listingId;
-    public Listing? Listing {get;set;}
+    [Required()]
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
+    public Listing? Listing { get; set; }
 }

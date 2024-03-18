@@ -32,7 +32,7 @@ public class EmailService(IConfiguration iConfig, IWebHostEnvironment env)
         str.Close();
         return template;
     }
-    public void SendEnquiryEmail(List<ListingAgent> listingAgents, string address, EnquiryViewModel enquiry)
+    public void SendEnquiryEmail(List<ListingAgent> listingAgents, string address, Enquiry enquiry)
     {
         string htmlTemplate = RetrieveTemplate(TemplateType.Enquiry);
 
@@ -58,7 +58,7 @@ public class EmailService(IConfiguration iConfig, IWebHostEnvironment env)
                 message.Subject = $"Listing Enquiry: {address}";
                 var model = new { AgentName = listingAgent.Agent!.FirstName, Address = address, Enquiry = enquiry };
                 TemplateOptions options = new();
-                options.MemberAccessStrategy.Register<EnquiryViewModel>();
+                options.MemberAccessStrategy.Register<Enquiry>();
                 TemplateContext context = new(model, options);
                 htmlTemplate = template.Render(context);
                 BodyBuilder builder = new();

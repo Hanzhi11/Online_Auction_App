@@ -5,8 +5,16 @@
         property at {{Address}}.
     </p>
     <ul style="padding: 0 20px">
-        {% for subject in Enquiry.Subject%}
-        <li>{{subject}}</li>
+        {% for subject in Enquiry.Subjects%}
+        {% if subject == 1 %}
+        <li>Book Inspection</li>
+        {% elsif subject == 2%}
+        <li>Contract of Sale</li>
+        {% elsif subject == 3%}
+        <li>Rates and Fees</li>
+        {% elsif subject == 4%}
+        <li>Further Information</li>
+        {% endif %}
         {% endfor%}
     </ul>
     <p>Kindly find {{Enquiry.Name}}'s contact details below:</p>
