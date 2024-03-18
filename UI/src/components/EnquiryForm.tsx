@@ -65,21 +65,29 @@ enum ACTION_TYPE {
 }
 
 export const initialCountry = 'AU';
-const initialFormData: FormData = {
-    subject: [],
-    message: '',
-    name: '',
-    email: '',
-    country: initialCountry,
-    contactNumber: '',
-};
-
 const subjectOptions = [
     { id: 1, content: 'Book Inspection' },
     { id: 2, content: 'Contract of Sale' },
     { id: 3, content: 'Rates and Fees' },
     { id: 4, content: 'Further Information' },
 ];
+
+const initialFormData: FormData = {
+    subject: [subjectOptions[0],subjectOptions[1],subjectOptions[2],subjectOptions[3]],
+    message: 'Lorem',
+    name: 'Test',
+    email: 'test@test.com',
+    country: initialCountry,
+    contactNumber: '+61412341234',
+};
+// const initialFormData: FormData = {
+//     subject: [],
+//     message: '',
+//     name: '',
+//     email: '',
+//     country: initialCountry,
+//     contactNumber: '',
+// };
 
 function formDataReducer(formData: FormData, action: DispatchAction) {
     const actionData = action.payload;
@@ -187,7 +195,7 @@ export default function EnquiryForm(props: Props) {
                             type: ACTION_TYPE.RESET_FORM,
                         });
                     } else {
-                        console.log(res);
+                        throw new Error('Failed to send the enquiry.');
                     }
                 })
                 .catch((err) => console.log(err));

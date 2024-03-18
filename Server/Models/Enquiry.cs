@@ -5,10 +5,10 @@ namespace Server.Models;
 
 public enum Subject
 {
-    BookInspection,
-    ContractOfSale,
-    RatesAndFees,
-    FurtherInformation
+    Book_Inspection = 1,
+    Contract_of_Sale = 2,
+    Rates_and_Fees = 3,
+    Further_Information = 4
 }
 
 public class Enquiry(List<Subject> subjects, string message, string name, string email, string contactNumber)

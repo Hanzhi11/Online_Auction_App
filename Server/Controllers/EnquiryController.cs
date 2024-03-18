@@ -20,7 +20,7 @@ public class EnquiryController(AppDbContext context, IConfiguration iConfig, IWe
     }
 
     [HttpPost]
-    public IActionResult Send(int? id, [FromBody] Enquiry request)
+    public IActionResult Send(int? id, [FromBody] Enquiry enquiry)
     {
         if (id == null)
         {
@@ -44,12 +44,12 @@ public class EnquiryController(AppDbContext context, IConfiguration iConfig, IWe
         try
         {
             EmailService emailService = new(_config, _env);
-            emailService.SendEnquiryEmail(listingAgents, address, request);
-            request.Listing = listing;
-            _context.Enquiry.Add(request);
+            emailService.SendEnquiryEmail(listingAgents, address, enquiry);
+            enquiry.Listing = listing;
+            _context.Enquiry.Add(enquiry);
             _context.SaveChanges();
 
-            return Ok("Enquiry send out.");
+            return Created();
         }
         catch (Exception error)
         {

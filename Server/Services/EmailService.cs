@@ -19,7 +19,10 @@ public class EmailService(IConfiguration iConfig, IWebHostEnvironment env)
 
     public string RetrieveTemplate(TemplateType templateType)
     {
-        string templatesPath = _config.GetSection("Path").GetSection("Templates").Value!;
+        string? templatesPath = _config.GetSection("Path").GetSection("Templates").Value;
+        if (templatesPath == null || templatesPath.Length == 0) {
+            throw new SystemException("Templates path was not founded in EmailService.");
+        }
         string fileName = templateType switch
         {
             TemplateType.Enquiry => "EnquiryTemplate.html",
@@ -37,11 +40,23 @@ public class EmailService(IConfiguration iConfig, IWebHostEnvironment env)
         string htmlTemplate = RetrieveTemplate(TemplateType.Enquiry);
 
         FluidParser parser = new();
-        string fromEmail = _config.GetSection("EmailService").GetSection("From").Value!;
+        string? fromEmail = _config.GetSection("EmailService").GetSection("From").Value;
+        if (fromEmail == null || fromEmail.Length == 0) {
+            throw new SystemException("From email was not founded in EmailService.");
+        }
+        string? appPassword = _config.GetSection("EmailService").GetSection("AppPassword").Value;
+        if (appPassword == null || appPassword.Length == 0) {
+            throw new SystemException("App password was not founded in EmailService.");
+        }
 
         if (parser.TryParse(htmlTemplate, out IFluidTemplate template, out string error))
         {
             List<MimeMessage> messages = [];
+            List<string> subjects = [..enquiry.Subjects.Select(s => s.ToString().Replace("_", " "))];
+
+            var model = new { Address = address, enquiry.Name, enquiry.Email, enquiry.ContactNumber, enquiry.Message, Subjects = subjects };
+            TemplateContext context = new(model);
+            htmlTemplate = template.Render(context);
 
             foreach (ListingAgent listingAgent in listingAgents)
             {
@@ -56,30 +71,27 @@ public class EmailService(IConfiguration iConfig, IWebHostEnvironment env)
                     message.To.Add(new MailboxAddress(listingAgent.Agent!.FirstName, listingAgent.Agent!.Email));
                 }
                 message.Subject = $"Listing Enquiry: {address}";
-                var model = new { AgentName = listingAgent.Agent!.FirstName, Address = address, Enquiry = enquiry };
-                TemplateOptions options = new();
-                options.MemberAccessStrategy.Register<Enquiry>();
-                TemplateContext context = new(model, options);
-                htmlTemplate = template.Render(context);
+
                 BodyBuilder builder = new();
                 MimeEntity phoneImage = builder.LinkedResources.Add("./wwwroot/telephone.png");
                 MimeEntity emailImage = builder.LinkedResources.Add("./wwwroot/mail.png");
                 phoneImage.ContentId = MimeUtils.GenerateMessageId();
                 emailImage.ContentId = MimeUtils.GenerateMessageId();
-                builder.HtmlBody = htmlTemplate.Replace("[phone]", phoneImage.ContentId).Replace("[email]", emailImage.ContentId);
+                builder.HtmlBody = htmlTemplate
+                .Replace("[phone]", phoneImage.ContentId)
+                .Replace("[email]", emailImage.ContentId)
+                .Replace("[AgentName]", listingAgent.Agent!.FirstName);
                 message.Body = builder.ToMessageBody();
                 messages.Add(message);
             }
 
-            using SmtpClient client = new();
-            client.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-            client.Authenticate(fromEmail, _config.GetSection("EmailService").GetSection("AppPassword").Value!);
-            foreach (MimeMessage message in messages)
+            Parallel.ForEach(messages, message =>
             {
-                string response = client.Send(message);
-                Console.WriteLine(response);
-            }
-            client.Disconnect(true);
+                using SmtpClient client = new();
+                client.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+                client.Authenticate(fromEmail, appPassword);
+                client.Send(message);
+            });
         }
         else
         {

@@ -1,23 +1,15 @@
 <body style="font-size: 16px; color: black">
-    <p>Hi {{AgentName}},</p>
+    <p>Hi [AgentName],</p>
     <p>
-        {{Enquiry.Name}} would like to know the following information about the
+        {{Name}} would like to know the following information about the
         property at {{Address}}.
     </p>
     <ul style="padding: 0 20px">
-        {% for subject in Enquiry.Subjects%}
-        {% if subject == 1 %}
-        <li>Book Inspection</li>
-        {% elsif subject == 2%}
-        <li>Contract of Sale</li>
-        {% elsif subject == 3%}
-        <li>Rates and Fees</li>
-        {% elsif subject == 4%}
-        <li>Further Information</li>
-        {% endif %}
+        {% for subject in Subjects%}
+        <li>{{subject}}</li>
         {% endfor%}
     </ul>
-    <p>Kindly find {{Enquiry.Name}}'s contact details below:</p>
+    <p>Kindly find {{Name}}'s contact details below:</p>
     <div style="padding: 0 20px">
         <div>
             <img
@@ -26,7 +18,7 @@
                 style="height: 15px; width: 15px; vertical-align: middle"
             />
             <span>:</span>
-            <span style="margin-left: 10px">{{Enquiry.ContactNumber}}</span>
+            <span style="margin-left: 10px">{{ContactNumber}}</span>
         </div>
         <div>
             <img
@@ -35,13 +27,13 @@
                 style="height: 15px; width: 15px; vertical-align: middle"
             />
             <span>:</span>
-            <span style="margin-left: 10px">{{Enquiry.Email}}</span>
+            <span style="margin-left: 10px">{{Email}}</span>
         </div>
     </div>
-    {% if Enquiry.Message.size > 0 %}
-    <p>{{Enquiry.Name}} also left a message for you.</p>
+    {% if Message.size > 0 %}
+    <p>{{Name}} also left a message for you.</p>
     <p style="padding: 10px; background-color: lightgrey; margin-left: 20px; max-width: 500px;">
-        {{Enquiry.Message}}
+        {{Message}}
     </p>
     {% endif %}
     <p>Good luck to your business.</p>

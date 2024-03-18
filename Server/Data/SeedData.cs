@@ -41,37 +41,48 @@ public static class SeedData
             string postCode2 = postCodes[1];
             string postCode3 = postCodes[2];
 
+            Address agencyAddress1 = new("1", "Agency Avenue", "Zhongjie Gongsi", postCode3);
+            Address agencyAddress2 = new("2", "Agency Avenue", "Zhongjie Gongsi", postCode3);
+            Address houseAddress1 = new("28", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1);
+            Address houseAddress2 = new("15", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1);
+            Address houseAddress3 = new("15", "Hehua Street", "Wanhuayuan Hehuayuan", postCode2);
+            Address houseAddress4 = new("5", "Hehua Street", "Wanhuayuan Hehuayuan", postCode2);
+            Address houseAddress5 = new("6", "Hehua Street", "Wanhuayuan Hehuayuan", postCode2);
+            Address townhouseAddress1 = new("14", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1)
+            {
+                UnitNumber = "1"
+            };
+            Address townhouseAddress2 = new("14", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1)
+            {
+                UnitNumber = "2"
+            };
+            Address unitAddress1 = new("24", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1)
+            {
+                UnitNumber = "301"
+            };
+            Address unitAddress2 = new("24", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1)
+            {
+                UnitNumber = "102"
+            };
+
+
             context.Address.AddRange(
-                new Address("28", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1),
-                new Address("14", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1)
-                {
-                    UnitNumber = "1"
-                },
-                new Address("14", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1)
-                {
-                    UnitNumber = "2"
-                },
-                new Address("24", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1)
-                {
-                    UnitNumber = "301"
-                },
-                new Address("24", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1)
-                {
-                    UnitNumber = "102"
-                },
-                new Address("15", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1),
-                new Address("15", "Hehua Street", "Wanhuayuan Hehuayuan", postCode2),
-                new Address("5", "Hehua Street", "Wanhuayuan Hehuayuan", postCode2),
-                new Address("6", "Hehua Street", "Wanhuayuan Hehuayuan", postCode2),
-                new Address("1", "Agency Avenue", "Zhongjie Gongsi", postCode3),
-                new Address("2", "Agency Avenue", "Zhongjie Gongsi", postCode3)
+                houseAddress1,
+                houseAddress2,
+                houseAddress3,
+                houseAddress4,
+                houseAddress5,
+                townhouseAddress1,
+                townhouseAddress2,
+                unitAddress1,
+                unitAddress2,
+                agencyAddress1,
+                agencyAddress2
             );
 
-            context.SaveChanges();
-
-            List<Address> agencyAddresses = [.. context.Address.Where(a => a.Street == "Agency Avenue")];
-            List<Agency> agencies = agencyAddresses.Select(a => new Agency("Bid Now " + a.StreetNumber + " Agency", a.Id)).ToList();
-            context.Agency.AddRange(agencies);
+            Agency agency1 = new("Bid Now " + agencyAddress1.StreetNumber + " Agency", agencyAddress1.Id);
+            Agency agency2 = new("Bid Now " + agencyAddress2.StreetNumber + " Agency", agencyAddress2.Id);
+            context.Agency.AddRange(agency1, agency2);
 
             string portrait1 = "Data/Assets/portrait1.jpeg";
             string portrait2 = "Data/Assets/portrait2.jpeg";
@@ -96,7 +107,7 @@ public static class SeedData
                 LastName = "May",
                 Mobile = "0412341234",
                 Email = "MayMay@bidnow.com.au",
-                Agency = agencies[0],
+                Agency = agency1,
                 PortraitBytes = portraits[0]
             };
             Agent agent2 = new("David")
@@ -104,14 +115,15 @@ public static class SeedData
                 LastName = "David",
                 Mobile = "0443214321",
                 Email = "DavidDavid@bidnow.com.au",
-                Agency = agencies[1],
+                Agency = agency2,
                 PortraitBytes = portraits[1]
             };
             Agent agent3 = new("Sammy")
             {
                 LastName = "Agent",
                 Mobile = "0499999999",
-                Email = "SammyAgent@bidnow.com.au"
+                Email = "SammyAgent@bidnow.com.au",
+                Agency = agency1
             };
             Auctioneer auctioneer1 = new("Joe")
             {
@@ -136,12 +148,6 @@ public static class SeedData
                 auctioneer2
             );
 
-            context.SaveChanges();
-
-            Guid addressId = context.Address.OrderByDescending(a => a.StreetNumber).FirstOrDefault()!.Id;
-
-            Guid auctioneerId = context.Auctioneer
-            .FirstOrDefault(pr => pr.FirstName == "Joe")!.Id;
             DateTime auctionDateTime = DateTime.SpecifyKind(new DateTime(2024, 3, 23, 14, 30, 0), DateTimeKind.Local).ToUniversalTime();
             string heading = "Exquisite Luxury Awaits: Discover Your Dream Two-Storey Home Today!";
             string copyWriting = "Nestled in the heart of Wanhuayuan Hehuayuan, this magnificent two-storey luxury residence epitomizes grandeur and sophistication. Boasting meticulous craftsmanship and timeless design, every corner of this opulent abode exudes luxury.";
@@ -153,25 +159,16 @@ public static class SeedData
                 3,
                 2,
                 auctionDateTime,
-                addressId,
+                houseAddress1.Id,
                 PropertyType.House,
-                agencies[0].Id,
-                auctioneerId
+                agency1.Id,
+                auctioneer1.Id
                 );
             context.Listing.Add(listing);
-            context.SaveChanges();
 
-            Guid listingId = context.Listing.FirstOrDefault()!.Id;
-            Guid agentId = context.Agent
-                .FirstOrDefault(pr => pr.FirstName == "May")!.Id;
-            ListingAgent listingAgent = new(listingId, agentId);
-            context.ListingAgent.Add(listingAgent);
-
-            Guid agentId2 = context.Agent.FirstOrDefault(p => p.FirstName == "Sammy")!.Id;
-            ListingAgent listingAgent2 = new(listingId, agentId2);
-            context.ListingAgent.Add(listingAgent2);
-
-            context.SaveChanges();
+            ListingAgent listingAgent1 = new(listing.Id, agent1.Id);
+            ListingAgent listingAgent2 = new(listing.Id, agent3.Id);
+            context.ListingAgent.AddRange(listingAgent1, listingAgent2);
 
             ImageDownloader imageDownloader = new ImageDownloader();
             byte[][] imageBytesArray = await imageDownloader.DownloadImagesAsync(HouseOutURLs.Concat(HouseInURLs));
@@ -183,7 +180,7 @@ public static class SeedData
                     string name = $"house{i + 1}";
                     Photo photo = new(name, imageBytesArray[i])
                     {
-                        Listing = context.Listing.FirstOrDefault()
+                        Listing = listing
                     };
                     context.Photo.Add(photo);
                 }
