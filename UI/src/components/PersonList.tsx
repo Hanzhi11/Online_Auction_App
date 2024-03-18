@@ -28,7 +28,7 @@ function PersonList(props: Props) {
                 alt='portrait'
             />
         );
-        if (person.portraitBytes.length === 0) {
+        if (!person.portraitBytes || person.portraitBytes.length === 0) {
             portrait = (
                 <div className='flex h-full border border-green-500 rounded-full'>
                     <span className='m-auto text-lg'>

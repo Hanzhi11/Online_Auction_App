@@ -44,7 +44,7 @@ public class Listing(
     public Agency? Agency { get; set; }
 
     public Guid AuctioneerId { get; set; } = auctioneerId;
-    public Person? Auctioneer { get; set; }
+    public Auctioneer? Auctioneer { get; set; }
 
     public ICollection<Photo>? Photos { get; }
 

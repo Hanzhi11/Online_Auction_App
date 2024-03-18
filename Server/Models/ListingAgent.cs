@@ -10,5 +10,5 @@ public class ListingAgent(Guid listingId, Guid agentId)
     public Guid ListingId { get; set; } = listingId;
     public Listing? Listing { get; set; }
     public Guid AgentId { get; set; } = agentId;
-    public Person? Agent { get; set; }
+    public Agent? Agent { get; set; }
 }

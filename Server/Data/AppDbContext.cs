@@ -13,6 +13,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Address> Address { get; set; }
     public DbSet<Agency> Agency { get; set; }
     public DbSet<Person> Person { get; set; }
+    public DbSet<Agent> Agent { get; set; }
+    public DbSet<Auctioneer> Auctioneer { get; set; }
     public DbSet<Listing> Listing { get; set; }
     public DbSet<ListingAgent> ListingAgent { get; set; }
     public DbSet<Photo> Photo { get; set; }

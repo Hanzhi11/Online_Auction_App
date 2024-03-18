@@ -73,9 +73,6 @@ public static class SeedData
             List<Agency> agencies = agencyAddresses.Select(a => new Agency("Bid Now " + a.StreetNumber + " Agency", a.Id)).ToList();
             context.Agency.AddRange(agencies);
 
-            Role agent = Role.Agent;
-            Role auctioneer = Role.Auctioneer;
-
             string portrait1 = "Data/Assets/portrait1.jpeg";
             string portrait2 = "Data/Assets/portrait2.jpeg";
             string portrait3 = "Data/Assets/portrait3.jpeg";
@@ -94,81 +91,88 @@ public static class SeedData
                 portraits.Add(photoBytes);
             }
 
-            Person person1 = new("May", "May", portraits[0])
+            Agent agent1 = new("May")
             {
-                Role = agent,
+                LastName = "May",
                 Mobile = "0412341234",
                 Email = "MayMay@bidnow.com.au",
                 Agency = agencies[0],
+                PortraitBytes = portraits[0]
             };
-            Person person2 = new("David", "David", portraits[1])
+            Agent agent2 = new("David")
             {
-                Role = agent,
+                LastName = "David",
                 Mobile = "0443214321",
                 Email = "DavidDavid@bidnow.com.au",
-                Agency = agencies[1]
+                Agency = agencies[1],
+                PortraitBytes = portraits[1]
             };
-            Person person3 = new("Joe", "Joe", portraits[3])
+            Agent agent3 = new("Sammy")
             {
-                Role = auctioneer,
-                LicenceNumber = "12345678"
-            };
-            Person person4 = new("June", "June", portraits[2])
-            {
-                Role = auctioneer,
-                LicenceNumber = "87654321"
-            };
-            Person person5 = new("Sammy", "Agent", []){
-                Role = agent,
+                LastName = "Agent",
                 Mobile = "0499999999",
                 Email = "SammyAgent@bidnow.com.au"
             };
+            Auctioneer auctioneer1 = new("Joe")
+            {
+                LastName = "Joe",
+                LicenceNumber = "12345678",
+                PortraitBytes = portraits[3]
+            };
+            Auctioneer auctioneer2 = new("June")
+            {
+                LastName = "June",
+                LicenceNumber = "87654321",
+                PortraitBytes = portraits[2]
+            };
 
-            context.Person.AddRange(
-                person1,
-                person2,
-                person3,
-                person4,
-                person5
+            context.Agent.AddRange(
+                agent1,
+                agent2,
+                agent3
+            );
+            context.Auctioneer.AddRange(
+                auctioneer1,
+                auctioneer2
             );
 
             context.SaveChanges();
 
             Guid addressId = context.Address.OrderByDescending(a => a.StreetNumber).FirstOrDefault()!.Id;
 
-            Guid auctioneerId = context.Person
+            Guid auctioneerId = context.Auctioneer
             .FirstOrDefault(pr => pr.FirstName == "Joe")!.Id;
             DateTime auctionDateTime = DateTime.SpecifyKind(new DateTime(2024, 3, 23, 14, 30, 0), DateTimeKind.Local).ToUniversalTime();
             string heading = "Exquisite Luxury Awaits: Discover Your Dream Two-Storey Home Today!";
             string copyWriting = "Nestled in the heart of Wanhuayuan Hehuayuan, this magnificent two-storey luxury residence epitomizes grandeur and sophistication. Boasting meticulous craftsmanship and timeless design, every corner of this opulent abode exudes luxury.";
 
             Listing listing = new(
-                heading, 
-                copyWriting, 
+                heading,
+                copyWriting,
                 4,
                 3,
                 2,
-                auctionDateTime, 
-                addressId, 
-                PropertyType.House, 
-                agencies[0].Id, 
+                auctionDateTime,
+                addressId,
+                PropertyType.House,
+                agencies[0].Id,
                 auctioneerId
                 );
             context.Listing.Add(listing);
             context.SaveChanges();
 
             Guid listingId = context.Listing.FirstOrDefault()!.Id;
-            Guid agentId = context.Person
+            Guid agentId = context.Agent
                 .FirstOrDefault(pr => pr.FirstName == "May")!.Id;
             ListingAgent listingAgent = new(listingId, agentId);
             context.ListingAgent.Add(listingAgent);
 
-            Guid agentId2 = context.Person.FirstOrDefault(p => p.FirstName == "Sammy")!.Id;
+            Guid agentId2 = context.Agent.FirstOrDefault(p => p.FirstName == "Sammy")!.Id;
             ListingAgent listingAgent2 = new(listingId, agentId2);
             context.ListingAgent.Add(listingAgent2);
 
             context.SaveChanges();
-            
+
             ImageDownloader imageDownloader = new ImageDownloader();
             byte[][] imageBytesArray = await imageDownloader.DownloadImagesAsync(HouseOutURLs.Concat(HouseInURLs));
 
