@@ -6,6 +6,7 @@ import {
     useState,
     ChangeEvent,
     useCallback,
+    useContext,
 } from 'react';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import SubjectDropdown from './SubjectDropdown';
@@ -25,6 +26,7 @@ import {
 import { scrollCountryDropdown } from '../shared/Utils';
 import FormField from './FormField';
 import classNames from 'classnames';
+import {NotificationContext} from '../App'
 
 interface Props {
     listingNumber: string;
@@ -157,6 +159,8 @@ export default function EnquiryForm(props: Props) {
     const [fieldError, setFieldError] = useState<FieldError>({});
     const [waitForResponse, setWaitForResponse] = useState<boolean>(false);
 
+    const { setNotificationContent } = useContext(NotificationContext);
+
     function handleSubmit(event: MouseEvent) {
         event.preventDefault();
         setWaitForResponse(true);
@@ -203,7 +207,9 @@ export default function EnquiryForm(props: Props) {
                             type: ACTION_TYPE.RESET_FORM,
                         });
                         setWaitForResponse(false);
+                        setNotificationContent('Your enquiry was sent to the agent.')
                     } else {
+                        setNotificationContent('Fail to send your enquiry. Please try again.')
                         throw new Error('Failed to send the enquiry.');
                     }
                 })

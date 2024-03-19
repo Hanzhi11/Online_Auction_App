@@ -47,7 +47,7 @@ function OverLay(props: Props) {
             </div>
             {children}
         </div>,
-        document.querySelector('#overLay') as HTMLElement,
+        document.getElementById(ELEMENT_ID.OVERLAY) as HTMLElement,
     );
 }
 

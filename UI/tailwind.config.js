@@ -33,6 +33,9 @@ export default {
         fontFamily: {
             sans: ['Poppins', 'Arial', 'sans-serif'],
         },
+        transitionDuration: {
+            2000: '2000ms'
+        }
     },
     plugins: [formsPlugin],
     important: true,

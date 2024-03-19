@@ -14,6 +14,8 @@ export enum ELEMENT_ID {
     SUBJECT_ARROW_DOWN = 'subjectArrowDown',
     COUNTRY_ARROW_DOWN = 'countryArrowDown',
     COUNTRY_BUTTON = 'countryButton',
+    OVERLAY = 'overLay',
+    NOTIFICATION_BANNER = 'notificationBanner'
 }
 
 export enum STATE {
