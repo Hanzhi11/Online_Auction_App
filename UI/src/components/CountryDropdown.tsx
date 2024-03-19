@@ -65,7 +65,10 @@ export default forwardRef<HTMLUListElement, Props>(function CountryDropdown(
     }
 
     function handleMouseOver(event: MouseEvent<HTMLElement>) {
-        setFocusedCountry(event.currentTarget.id as CountryCode);
+        const countryDropdown = (ref as RefObject<HTMLUListElement>)
+            .current as HTMLUListElement;
+        const isHidden = countryDropdown.classList.contains('hidden');
+        if (!isHidden) setFocusedCountry(event.currentTarget.id as CountryCode);
     }
 
     function handleMouseOut() {
@@ -82,6 +85,7 @@ export default forwardRef<HTMLUListElement, Props>(function CountryDropdown(
             if (countryDropdown.classList.contains('hidden')) return;
 
             const key = e.key.toUpperCase();
+            console.log('key', key);
 
             if (key === 'ENTER') {
                 if (focusedCountry) {
@@ -134,7 +138,7 @@ export default forwardRef<HTMLUListElement, Props>(function CountryDropdown(
     }, [focusedCountry, ref]);
 
     const height = 284;
-    const top = -height - 1; // 1px is the width of box shadow of countryField
+    const top = -height;
 
     // using 'hidden' to hide the dropdown rather then using state
     // because the wrapped country name will result in a wrong offsetTop to the li elements afterwards

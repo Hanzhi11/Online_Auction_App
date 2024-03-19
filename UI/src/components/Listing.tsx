@@ -378,7 +378,7 @@ function Listing() {
 
     const enquiry = (
         <div
-            className={classNames('px-3 py-5', {
+            className={classNames('px-3 py-5 rounded-md', {
                 'bg-neutral-200 mt-5': !isSmallScreen,
             })}
         >

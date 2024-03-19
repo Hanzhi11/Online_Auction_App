@@ -12,6 +12,8 @@ export enum ELEMENT_ID {
     COUNTRY_DROP_DOWN = 'countryDropdown',
     SUBJECT_ARROW_UP = 'subjectArrowUp',
     SUBJECT_ARROW_DOWN = 'subjectArrowDown',
+    COUNTRY_ARROW_DOWN = 'countryArrowDown',
+    COUNTRY_BUTTON = 'countryButton',
 }
 
 export enum STATE {
