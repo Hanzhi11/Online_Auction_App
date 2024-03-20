@@ -25,14 +25,17 @@ export default forwardRef<HTMLDivElement, Props>(function SubjectDropdown(
         const subjectIndex =
             selectedOptions.length > 0
                 ? selectedOptions.findIndex(
-                      (item) => item.id.toString() === (liElement as HTMLLIElement).id,
+                      (item) =>
+                          item.id.toString() ===
+                          (liElement as HTMLLIElement).id,
                   )
                 : -1;
 
         const newSubjects = [...selectedOptions];
         if (subjectIndex === -1) {
             const subject = options.find(
-                (option) => option.id.toString() === (liElement as HTMLLIElement).id,
+                (option) =>
+                    option.id.toString() === (liElement as HTMLLIElement).id,
             ) as Option;
             newSubjects.push(subject);
         } else {
@@ -57,32 +60,31 @@ export default forwardRef<HTMLDivElement, Props>(function SubjectDropdown(
             className='bg-white border rounded-md absolute top-[41px] w-full'
             ref={ref}
         >
-            <ul>
+            <menu>
                 {options.map((option) => {
                     return (
                         <li
                             key={option.id}
                             id={option.id.toString()}
-                            className='test'
+                            className='hover:bg-green-500 hover:text-white cursor-pointer py-1 rounded-md px-3 group flex items-center'
                             onClick={handleOptionSelection}
                         >
+                            <input
+                                readOnly
+                                name={`checkbox${option.id}`}
+                                type='checkbox'
+                                className='h-5 w-5 cursor-pointer appearance-none rounded-md border-0 ring-1 ring-offset-0 ring-gray-400 group-hover:ring-white checked:ring-green-500 checked:bg-green-500'
+                                checked={isChecked(option)}
+                            />
                             <label
-                                className='flex items-center px-3 py-1 cursor-pointer rounded-md hover:bg-green-500 hover:text-white group'
-                                htmlFor={`checkbox${option.id}`}
+                                className='mx-3 cursor-pointer'
                             >
-                                <input
-                                    readOnly
-                                    name={`checkbox${option.id}`}
-                                    type='checkbox'
-                                    className='peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border-0 ring-1 ring-offset-0 ring-gray-400 group-hover:ring-white checked:ring-green-500 checked:bg-green-500'
-                                    checked={isChecked(option)}
-                                />
-                                <span className='ml-3'>{option.content}</span>
+                                {option.content}
                             </label>
                         </li>
                     );
                 })}
-            </ul>
+            </menu>
         </div>
     );
 });

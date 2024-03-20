@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import SectionContainer from './SectionContainer';
 import { IconContext } from 'react-icons';
 import { FaPlus } from 'react-icons/fa6';
 import { Link } from 'react-router-dom';
 import Button from './Button';
+import classNames from 'classnames';
+import SectionContainer from './SectionContainer';
 
 interface ListingInfo {
     address: string;
@@ -40,6 +41,7 @@ function Auctions() {
             hour: 'numeric',
             minute: 'numeric',
         };
+
         const dateTimeStrings = auctionDate
             .toLocaleDateString(undefined, options)
             .replace(',', '')
@@ -56,39 +58,44 @@ function Auctions() {
             'ml-auto cursor-pointer border-b border-transparent hover:border-green-500 self-center';
 
         return (
-            <div
+            <figure
                 className='group relative h-52 w-[315px] overflow-hidden rounded-md bg-cover text-white transition-width duration-0 ease-in-out md:w-[345px] lg:w-[294px] xl:w-[360px] xl:duration-500'
                 style={{
                     backgroundImage: `url('${listingInfo.photoDataURL}')`,
                 }}
                 key={index}
             >
-                <header
-                    className={
-                        'h-10 truncate bg-indigo-900 bg-opacity-70 px-5 py-2.5 text-sm ' +
-                        defaultOpacityTransition
-                    }
+                <figcaption
+                    className={classNames(
+                        'h-10 truncate bg-indigo-900 bg-opacity-70 px-5 py-2.5 text-sm',
+                        defaultOpacityTransition,
+                    )}
                 >
                     {address}
-                </header>
+                </figcaption>
                 <span
-                    className={
-                        'absolute bottom-2.5 right-2 bg-white px-2 py-1 font-medium text-black ' +
-                        defaultOpacityTransition
-                    }
+                    className={classNames(
+                        'absolute bottom-2.5 right-2 bg-white px-2 py-1 font-medium text-black',
+                        defaultOpacityTransition,
+                    )}
                 >
                     {listingInfo.agencyName}
                 </span>
                 <div
-                    className={
-                        'absolute inset-0 grid h-full grid-cols-2 grid-rows-6 bg-indigo-900 bg-opacity-70 p-5 pb-12 text-sm font-medium ' +
-                        overLayOpacityTransition
-                    }
+                    className={classNames(
+                        'absolute inset-0 grid h-full grid-cols-2 grid-rows-6 bg-indigo-900 bg-opacity-70 p-5 pb-12 text-sm font-medium',
+                        overLayOpacityTransition,
+                    )}
                 >
                     <p className='col-span-2 row-span-2 self-start text-green-500'>
                         {address}
                     </p>
-                    <p className='col-span-2'>{formattedDate}</p>
+                    <time
+                        className='col-span-2'
+                        dateTime={auctionDate.toISOString()}
+                    >
+                        {formattedDate}
+                    </time>
                     <p className='col-span-2 text-green-500'>
                         {listingInfo.agencyName}
                     </p>
@@ -97,33 +104,33 @@ function Auctions() {
                         VIEW
                     </Link>
                     <p>Register to BID</p>
-                    <a className={'text-green-500'.concat(' ', anchorStyle)}>
+                    <a className={classNames('text-green-500', anchorStyle)}>
                         OPEN
                     </a>
                 </div>
-            </div>
+            </figure>
         );
     });
 
     return (
-        <IconContext.Provider
-            value={{ size: '1.2rem', className: 'stroke-[20]' }}
-        >
-            <SectionContainer header='Upcoming Auctions' className='px-7'>
-                <div className='grid grid-cols-1 justify-items-center gap-y-4 md:grid-cols-2 md:gap-x-6 lg:grid-cols-3'>
-                    {content}
-                </div>
-                <Button
-                    height='h-10'
-                    type='primary'
-                    className='mx-auto my-5 md:w-10 md:rounded-full'
-                    onClick={() => {}}
+        <SectionContainer header='Upcoming Auctions' className='px-3 md:px-0'>
+            <div className='grid grid-cols-1 justify-items-center gap-y-4 md:grid-cols-2 md:gap-x-6 lg:grid-cols-3'>
+                {content}
+            </div>
+            <Button
+                height='h-10'
+                primary
+                className='mx-auto my-5 md:w-10 md:rounded-full'
+                onClick={() => {}}
+            >
+                <span className='md:hidden'>More</span>
+                <IconContext.Provider
+                    value={{ size: '1.2rem', className: 'stroke-[20]' }}
                 >
-                    <span className='md:hidden'>More</span>
                     <FaPlus className='hidden md:block' />
-                </Button>
-            </SectionContainer>
-        </IconContext.Provider>
+                </IconContext.Provider>
+            </Button>
+        </SectionContainer>
     );
 }
 

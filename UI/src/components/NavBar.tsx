@@ -79,7 +79,8 @@ function NavBar() {
                     <Button
                         id={id}
                         key={text}
-                        type={type}
+                        primary={type === 'primary'}
+                        secondary={type === 'secondary'}
                         height={buttonHeight}
                         width={buttonWidth}
                         onClick={onClick}

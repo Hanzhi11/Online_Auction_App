@@ -144,7 +144,7 @@ export default forwardRef<HTMLUListElement, Props>(function CountryDropdown(
     // because the wrapped country name will result in a wrong offsetTop to the li elements afterwards
     // after the initial render
     return (
-        <ul
+        <menu
             className='absolute bg-white overflow-y-scroll border w-full hidden'
             id={ELEMENT_ID.COUNTRY_DROP_DOWN}
             ref={ref}
@@ -177,6 +177,6 @@ export default forwardRef<HTMLUListElement, Props>(function CountryDropdown(
                     </li>
                 );
             })}
-        </ul>
+        </menu>
     );
 });

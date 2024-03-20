@@ -1,7 +1,6 @@
 import {
     useEffect,
     useRef,
-    MouseEvent,
     useReducer,
     useState,
     ChangeEvent,
@@ -26,7 +25,7 @@ import {
 import { scrollCountryDropdown } from '../shared/Utils';
 import FormField from './FormField';
 import classNames from 'classnames';
-import {NotificationContext} from '../App'
+import { NotificationContext } from '../App';
 
 interface Props {
     listingNumber: string;
@@ -161,8 +160,7 @@ export default function EnquiryForm(props: Props) {
 
     const { setNotificationContent } = useContext(NotificationContext);
 
-    function handleSubmit(event: MouseEvent) {
-        event.preventDefault();
+    function handleSubmit() {
         setWaitForResponse(true);
 
         const error: FieldError = { ...fieldError };
@@ -207,9 +205,13 @@ export default function EnquiryForm(props: Props) {
                             type: ACTION_TYPE.RESET_FORM,
                         });
                         setWaitForResponse(false);
-                        setNotificationContent('Your enquiry was sent to the agent.')
+                        setNotificationContent(
+                            'Your enquiry was sent to the agent.',
+                        );
                     } else {
-                        setNotificationContent('Fail to send your enquiry. Please try again.')
+                        setNotificationContent(
+                            'Fail to send your enquiry. Please try again.',
+                        );
                         throw new Error('Failed to send the enquiry.');
                     }
                 })
@@ -340,7 +342,6 @@ export default function EnquiryForm(props: Props) {
         const countryButton = countryButtonRef.current as HTMLButtonElement;
         const preventDefault = function (event: KeyboardEvent) {
             const key = event.key.toUpperCase();
-            console.log(1, key)
             if (key === 'ENTER') event.preventDefault();
         };
         countryButton.addEventListener('keydown', preventDefault);
@@ -450,8 +451,7 @@ export default function EnquiryForm(props: Props) {
                         <Button
                             width='w-10'
                             disabled={waitForResponse}
-                            onClick={(e) => {
-                                e.preventDefault();
+                            onClick={() => {
                                 setOpenSubjectDropdown(!openSubjectDropdown);
                             }}
                         >
@@ -492,6 +492,7 @@ export default function EnquiryForm(props: Props) {
             </FormField>
             <FormField labelContent='Name' errorMessage={fieldError.name}>
                 <input
+                    type='text'
                     name='name'
                     className={inputStyle}
                     value={formData.name}
@@ -540,8 +541,7 @@ export default function EnquiryForm(props: Props) {
                             ref={countryButtonRef}
                             width='min-w-fit'
                             className='flex items-center px-2 border-[1px] rounded-l-md rounded-r-none border-r-0 border-gray-300 peer focus-visible:outline-0 focus:border-green-500 focus:border-r-[1px]'
-                            onClick={(e) => {
-                                e.preventDefault();
+                            onClick={() => {
                                 const countryDropdown =
                                     countryDropdownRef.current as HTMLUListElement;
                                 countryDropdown.classList.toggle('hidden');
@@ -589,7 +589,7 @@ export default function EnquiryForm(props: Props) {
             </div>
             <Button
                 height='h-10'
-                type='primary'
+                primary
                 onClick={handleSubmit}
                 disabled={waitForResponse}
             >

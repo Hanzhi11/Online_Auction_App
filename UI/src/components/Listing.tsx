@@ -209,7 +209,11 @@ function Listing() {
                     <FiCalendar />
                 </IconContext.Provider>
             ),
-            content: formattedDate,
+            content: (
+                <time className='mb-0.5' dateTime={auctionDate.toISOString()}>
+                    {formattedDate}
+                </time>
+            ),
         },
         {
             icon: (
@@ -222,7 +226,9 @@ function Listing() {
                     <CiLocationOn />
                 </IconContext.Provider>
             ),
-            content: propertyFullAddress,
+            content: (
+                <address className='not-italic'>{propertyFullAddress}</address>
+            ),
             note: 'ONSITE AND ONLINE',
         },
         {
@@ -241,12 +247,13 @@ function Listing() {
     ];
 
     const auctionDetails = auctionInfo.map((info, index) => {
-        let content = <p className='mb-0.5'>{info.content}</p>;
-        if (typeof info.content === 'object') {
-            const contents = info.content as string[];
+        let content = Array.isArray(info.content)
+            ? [...info.content]
+            : info.content;
+        if (Array.isArray(content)) {
             content = (
                 <ul>
-                    {contents.map((item) => {
+                    {content.map((item) => {
                         return (
                             <li key={item} className='md:text-sm'>
                                 -{' '}
@@ -265,13 +272,13 @@ function Listing() {
         return (
             <div
                 key={index}
-                className='flex items-center py-4 bg-white px-3 border-b last-of-type:border-none'
+                className='flex items-center py-4 bg-white border-b last-of-type:border-none px-3'
             >
                 <div>{info.icon}</div>
                 <div className='ml-3'>
                     {content}
                     {info.note && (
-                        <p className='text-gray-400 text-xxs'>{info.note}</p>
+                        <small className='text-gray-400'>{info.note}</small>
                     )}
                 </div>
             </div>
@@ -279,15 +286,17 @@ function Listing() {
     });
 
     const propertyInfo = (
-        <div className='px-3 md:px-0'>
-            <p className='font-medium pt-5 md:text-lg'>{propertyFullAddress}</p>
+        <>
+            <p className='font-medium pt-5 md:text-lg px-3 md:px-0'>
+                {propertyFullAddress}
+            </p>
             <IconContext.Provider
                 value={{
                     size: '1rem',
                     className: 'stroke-black fill-gray-500',
                 }}
             >
-                <div className='flex text-sm text-gray-500 mt-1 mb-3 md:text-base'>
+                <div className='flex text-sm text-gray-500 mt-1 mb-3 md:text-base px-3 md:px-0'>
                     {features.map((feature, index) => {
                         const featureStyle = classNames('flex items-center', {
                             'mr-5': index !== 3,
@@ -301,17 +310,17 @@ function Listing() {
                     })}
                 </div>
             </IconContext.Provider>
-        </div>
+        </>
     );
 
     const auctionBanner = (
-        <div className='bg-neutral-900 text-white py-4 md:absolute md:w-1/3 md:right-0 md:bottom-0 px-3 md:rounded-t-md'>
+        <hgroup className='bg-neutral-900 text-white py-4 md:absolute md:w-1/3 md:right-0 md:bottom-0 md:rounded-t-md px-3'>
             <h2 className='font-medium mb-2 md:text-[28px]'>Bid at auction</h2>
             <p className='text-xs leading-5 md:text-sm xl:text-md'>
                 This is an auction. To bid on this property you must be
                 registered. Have your drivers licence or photo ID ready.
             </p>
-        </div>
+        </hgroup>
     );
 
     const auctionInfoList = (
@@ -321,9 +330,9 @@ function Listing() {
     );
 
     const propertyDescription = (
-        <div
+        <article
             className={classNames(
-                'mt-5 pb-5 shadow-md rounded-b-md px-3 md:px-0 md:shadow-none',
+                'mt-5 pb-5 shadow-md rounded-b-md md:shadow-none px-3 md:px-0',
                 {
                     'border-b': !isSmallScreen,
                 },
@@ -333,7 +342,7 @@ function Listing() {
             <p id='copyWriting' className={copyWritingStyle}>
                 {copyWriting}
             </p>
-            {showReadButton ? (
+            {showReadButton && (
                 <Button
                     onClick={handleReadButtonContent}
                     width='w-fit'
@@ -341,15 +350,13 @@ function Listing() {
                 >
                     {readButtonContent}
                 </Button>
-            ) : (
-                <></>
             )}
-        </div>
+        </article>
     );
 
     const agentsAndAuctioneer = (
-        <div className='md:bg-white rounded-md'>
-            <div className='mt-5 pb-3 shadow-md rounded-b-md px-3 md:pt-5 md:shadow-none md:border-b md:rounded-none'>
+        <div className='md:bg-white rounded-md mt-5'>
+            <div className='pb-3 shadow-md rounded-b-md md:pt-5 md:shadow-none md:border-b md:rounded-none px-3'>
                 <h3 className='mb-5'>Listing Agent</h3>
                 <PersonList person={agents} />
                 <div>
@@ -369,7 +376,7 @@ function Listing() {
                     </div>
                 </div>
             </div>
-            <div className='mt-5 px-3 shadow-md rounded-b-md pb-3 md:pb-3'>
+            <div className='pt-5 shadow-md rounded-b-md px-3'>
                 <h3 className='mb-5'>Auctioneer</h3>
                 <PersonList person={auctioneer} />
             </div>
@@ -378,7 +385,7 @@ function Listing() {
 
     const enquiry = (
         <div
-            className={classNames('px-3 py-5 rounded-md', {
+            className={classNames('py-5 rounded-md px-3', {
                 'bg-neutral-200 mt-5': !isSmallScreen,
             })}
         >
@@ -389,14 +396,14 @@ function Listing() {
 
     if (isSmallScreen) {
         content = (
-            <div className='flex flex-col'>
+            <>
                 {propertyInfo}
                 {auctionBanner}
                 {auctionInfoList}
                 {propertyDescription}
                 {agentsAndAuctioneer}
                 {enquiry}
-            </div>
+            </>
         );
     } else {
         content = (
@@ -415,14 +422,14 @@ function Listing() {
     }
 
     return (
-        <main className='bg-neutral-100 flex-1 pb-5'>
+        <main className='bg-neutral-100 flex-1 md:pb-5'>
             <div
                 className='bg-cover bg-center h-[45vh] max-h-80 relative'
                 style={{ backgroundImage: `url('${mainPhotoUrl}')` }}
             >
-                <SectionContainer className='px-0 mx-auto flex flex-col-reverse h-full relative'>
+                <SectionContainer className='flex flex-col-reverse h-full relative'>
                     <Button
-                        type='secondary'
+                        secondary
                         height='h-8'
                         width='w-32'
                         onClick={() =>
@@ -443,7 +450,7 @@ function Listing() {
                     {isSmallScreen ? <></> : auctionBanner}
                 </SectionContainer>
             </div>
-            <SectionContainer className='px-0 mx-auto'>{content}</SectionContainer>
+            <SectionContainer className=''>{content}</SectionContainer>
             {overLayContent === OVERLAY_CONTENTS.PHOTOS && (
                 <IconContext.Provider
                     value={{

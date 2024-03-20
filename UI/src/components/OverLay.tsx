@@ -28,23 +28,21 @@ function OverLay(props: Props) {
                 className,
             )}
         >
-            <div className='flex'>
+            <Button
+                id={ELEMENT_ID.CLOSE_OVERLAY_BUTTON}
+                width='w-fit'
+                className='ml-auto mr-3.5'
+                onClick={() => updateOverLayContent('')}
+            >
                 <IconContext.Provider
                     value={{
                         color: 'white',
                         size: '1.8rem',
                     }}
                 >
-                    <Button
-                        id={ELEMENT_ID.CLOSE_OVERLAY_BUTTON}
-                        width='w-fit'
-                        className='ml-auto mr-3.5'
-                        onClick={() => updateOverLayContent('')}
-                    >
-                        <IoClose />
-                    </Button>
+                    <IoClose />
                 </IconContext.Provider>
-            </div>
+            </Button>
             {children}
         </div>,
         document.getElementById(ELEMENT_ID.OVERLAY) as HTMLElement,

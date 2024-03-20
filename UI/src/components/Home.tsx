@@ -3,10 +3,10 @@ import Auctions from './Auctions';
 
 function Home() {
     return (
-        <main>
+        <>
             <Search />
             <Auctions />
-        </main>
+        </>
     );
 }
 

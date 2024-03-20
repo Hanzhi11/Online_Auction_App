@@ -21,25 +21,21 @@ function Header() {
     );
 
     const [offset, setOffset] = useState(0);
-    const [isTransparent, setIsTransparent] = useState(false);
-    const [runnerHeight, setRunnerHeight] = useState(0);
+    const [isTransparent, setIsTransparent] = useState(isHomePage);
 
     useEffect(() => {
         const homeRunner = document.getElementById(
             ELEMENT_ID.HOME_RUNNER,
         ) as HTMLElement;
 
+        if(!isHomePage) {
+            setOffset(0)
+        }
+
         if (!homeRunner) {
             setIsTransparent(false);
             window.onscroll = null;
             return;
-        }
-
-        if (!homeRunner.onload) {
-            homeRunner.onload = () => {
-                const height = homeRunner.getBoundingClientRect().height;
-                setRunnerHeight(height);
-            };
         }
 
         if (!window.onscroll) {
@@ -54,7 +50,7 @@ function Header() {
             newIsTransparent = true;
         }
         setIsTransparent(newIsTransparent);
-    }, [offset, windowSize, location.pathname, runnerHeight]);
+    }, [offset, windowSize, isHomePage]);
 
     const isSmallScreen = windowSize.width < 768;
 
@@ -93,11 +89,15 @@ function Header() {
         sticky: !isHomePage,
     });
 
+    function handleOnLoad (e: React.SyntheticEvent<HTMLImageElement, Event>) {
+        setIsTransparent((e.target as HTMLImageElement).offsetHeight - offset > 112)
+    }
+
     return (
         <div>
             <header className={headerStyle} id={ELEMENT_ID.HEADER}>
                 <div className={topStyle}>
-                    <SectionContainer className='flex justify-between px-7'>
+                    <SectionContainer className='flex justify-between px-3 md:px-0'>
                         <Logo />
                         {content}
                     </SectionContainer>
@@ -109,6 +109,7 @@ function Header() {
                     src='/runner.jpeg'
                     className='max-h-[25vh] min-h-[7rem] w-full object-cover'
                     id={ELEMENT_ID.HOME_RUNNER}
+                    onLoad={handleOnLoad}
                 />
             )}
         </div>

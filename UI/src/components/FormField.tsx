@@ -14,7 +14,7 @@ const labelStyleRequired = classNames(labelBaseStyle,
     'after:content-["*"] after:ml-0.5',
 );
 
-const errorStyle = 'text-xs text-red-600 mt-2 md:text-sm';
+const errorStyle = 'text-red-600 mt-2';
 
 export default function FormField(props: Props) {
     const { className, labelContent, children, isRequired = true, errorMessage } =
@@ -32,7 +32,7 @@ export default function FormField(props: Props) {
                 {labelContent}
             </label>
             {children}
-            {errorMessage && <p className={errorStyle}>{errorMessage}</p>}
+            {errorMessage && <small className={errorStyle}>{errorMessage}</small>}
         </div>
     );
 }

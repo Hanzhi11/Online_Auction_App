@@ -2,6 +2,7 @@ import { MdEmail } from 'react-icons/md';
 import { Agent, Auctioneer } from './Listing';
 import { FaPhone } from 'react-icons/fa6';
 import { AiFillSafetyCertificate } from 'react-icons/ai';
+import classNames from 'classnames';
 
 interface Props {
     person: Agent[] | Auctioneer;
@@ -59,7 +60,9 @@ function PersonList(props: Props) {
         return (
             <div
                 key={index}
-                className='flex items-center bg-white rounded-r-md rounded-l-[48px] mb-3 overflow-hidden'
+                className={classNames('flex items-center bg-white rounded-r-md rounded-l-[48px] overflow-hidden', {
+                    'mb-3': index !== personList.length - 1
+                })}
             >
                 <div className='w-24 h-24 min-w-24 rounded-full overflow-hidden mr-5 md:w-14 md:h-14 md:min-w-14 lg:w-16 lg:h-16 lg:min-w-16 xl:w-24 xl:h-24 xl:min-w-24'>
                     {portrait}
@@ -100,7 +103,8 @@ function PersonList(props: Props) {
             </div>
         );
     });
-    return <div>{content}</div>;
+
+    return <div className='pb-3'>{content}</div>;
 }
 
 export default PersonList;

@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { forwardRef, Ref } from 'react';
 
 interface Props {
-    type?: string;
+    type?: 'submit' | 'reset' | 'button' | undefined;
     children: string | JSX.Element | JSX.Element[];
     height?: string;
     width?: string;
@@ -10,6 +10,8 @@ interface Props {
     id?: string;
     className?: string;
     disabled?: boolean;
+    primary?: boolean;
+    secondary?: boolean;
 }
 
 export default forwardRef<HTMLButtonElement, Props>(function Button(
@@ -17,7 +19,6 @@ export default forwardRef<HTMLButtonElement, Props>(function Button(
     ref: Ref<HTMLButtonElement>,
 ) {
     const {
-        type,
         children,
         height,
         onClick,
@@ -25,6 +26,9 @@ export default forwardRef<HTMLButtonElement, Props>(function Button(
         id,
         className,
         disabled = false,
+        type = 'button',
+        primary,
+        secondary
     } = props;
     const buttonWidth = width ? width : 'w-full';
     const style = classNames(
@@ -34,8 +38,8 @@ export default forwardRef<HTMLButtonElement, Props>(function Button(
         buttonWidth,
         {
             'enabled:bg-green-500 disabled:bg-neutral-300 enabled:hover:bg-green-600 enabled:text-white disabled:text-black':
-                type === 'primary',
-            'bg-white text-indigo-900 hover:bg-slate-200': type === 'secondary',
+                primary,
+            'bg-white text-indigo-900 hover:bg-slate-200': secondary,
         },
         className,
     );
@@ -46,6 +50,7 @@ export default forwardRef<HTMLButtonElement, Props>(function Button(
             onClick={onClick}
             disabled={disabled}
             ref={ref}
+            type={type}
         >
             {children}
         </button>

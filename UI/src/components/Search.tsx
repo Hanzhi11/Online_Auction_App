@@ -4,8 +4,8 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useState } from 'react';
 import classNames from 'classnames';
-import SectionContainer from './SectionContainer';
 import Button from './Button';
+import SectionContainer from './SectionContainer';
 
 type StartDate = Date | null;
 
@@ -80,8 +80,8 @@ function Search() {
                 className: 'inline stroke-[20]',
             }}
         >
-            <SectionContainer header='Property Search' className='px-7'>
-                <form className='flex flex-col md:h-10 md:flex-row'>
+            <SectionContainer header='Property Search' className='px-3 md:px-0'>
+                <search className='flex flex-col md:h-10 md:flex-row'>
                     <input
                         type='text'
                         placeholder='Suburb or Postcode'
@@ -89,7 +89,7 @@ function Search() {
                         value={address}
                         onChange={handleOnChange}
                         className={
-                            'flex-1 mb-4 pl-2 leading-10 md:w-4/12 md:mr-6 md:mb-0 ' +
+                            'flex-1 mb-4 pl-2 md:w-4/12 md:mr-6 md:mb-0 ' +
                             sharedInputStyle
                         }
                     />
@@ -188,14 +188,14 @@ function Search() {
                     />
                     <Button
                         height='h-10'
-                        type='primary'
+                        primary
                         className='self-end md:ml-6 md:w-10 md:rounded-full'
                         onClick={handleSubmit}
                     >
                         <span className='md:hidden'>Search</span>
                         <IoIosArrowForward className='hidden md:block' />
                     </Button>
-                </form>
+                </search>
             </SectionContainer>
         </IconContext.Provider>
     );

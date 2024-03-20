@@ -9,9 +9,9 @@ interface Props {
 function SectionContainer(props: Props) {
     const { header, className } = props;
     const styles = classNames(
-        'w-full md:w-[720px] md:px-0 lg:w-[940px] xl:w-[1140px]',
+        'w-full mx-auto md:w-11/12 lg:w-[940px] xl:w-[1140px]',
         {
-            'mx-auto mt-3 md:mt-9': header,
+            'mt-3 md:mt-9': header,
         },
         className,
     );

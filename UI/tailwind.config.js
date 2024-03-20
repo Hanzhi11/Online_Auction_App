@@ -29,13 +29,13 @@ export default {
             fontSize: {
                 xxs: '0.65rem',
             },
+            fontFamily: {
+                sans: ['Poppins', 'Arial', 'sans-serif'],
+            },
+            transitionDuration: {
+                2000: '2000ms'
+            }
         },
-        fontFamily: {
-            sans: ['Poppins', 'Arial', 'sans-serif'],
-        },
-        transitionDuration: {
-            2000: '2000ms'
-        }
     },
     plugins: [formsPlugin],
     important: true,
