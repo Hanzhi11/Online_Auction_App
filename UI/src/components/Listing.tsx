@@ -32,6 +32,11 @@ export interface Auctioneer {
     portraitBytes: string;
 }
 
+interface Document {
+    documentType: string;
+    location: string;
+}
+
 interface Details {
     address: string;
     agency: {
@@ -48,6 +53,7 @@ interface Details {
     heading: string;
     photosBytes: string[];
     propertyType: string;
+    documents: Document[];
 }
 
 interface PropertyIcon {
@@ -150,6 +156,7 @@ function Listing() {
         auctioneer,
         heading,
         copyWriting,
+        documents,
     } = details;
 
     const propertyFullAddress = address;
@@ -242,7 +249,9 @@ function Listing() {
                     <MdOutlinePictureAsPdf />
                 </IconContext.Provider>
             ),
-            content: ['REIQ Auction Conditions', 'Building Report'],
+            content: [
+                ...documents
+            ],
         },
     ];
 
@@ -253,15 +262,16 @@ function Listing() {
         if (Array.isArray(content)) {
             content = (
                 <ul>
-                    {content.map((item) => {
+                    {content.map((item, index) => {
                         return (
-                            <li key={item} className='md:text-sm'>
-                                -{' '}
+                            <li key={index} className='md:text-sm flex'>
+                                <span>-</span>
                                 <Link
-                                    to=''
-                                    className='hover:border-b border-green-500'
+                                    to={'/' + item.location}
+                                    className='border-b border-transparent hover:border-green-500 ml-1'
+                                    target='_blank'
                                 >
-                                    {item}
+                                    {item.documentType.replaceAll("_", " ")}
                                 </Link>
                             </li>
                         );
