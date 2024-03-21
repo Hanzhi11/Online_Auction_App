@@ -15,4 +15,6 @@ public class ListingDetailsViewModel()
     public AgencyViewModel? Agency { get; set; }
     public AuctioneerViewModel? Auctioneer { get; set; }
     public List<byte[]>? PhotosBytes { get; set;}
+
+    public List<DocumentViewModel>? Documents {get;set;}
 }

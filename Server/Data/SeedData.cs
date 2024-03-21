@@ -196,9 +196,9 @@ public static class SeedData
                 document1,
                 document2
             );
-            ListingResource listingResource1 = new(listing.Id, document1.Id);
-            ListingResource listingResource2 = new(listing.Id, document2.Id);
-            context.ListingResource.AddRange(listingResource1, listingResource2);
+            ListingDocument listingDocument1 = new(listing.Id, document1.Id);
+            ListingDocument listingDocument2 = new(listing.Id, document2.Id);
+            context.ListingDocument.AddRange(listingDocument1, listingDocument2);
 
             context.SaveChanges();
         }

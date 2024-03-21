@@ -48,6 +48,8 @@ public class Listing(
 
     public ICollection<Photo>? Photos { get; }
 
+    public ICollection<ListingDocument>? ListingDocuments {get;}
+
     public ICollection<Enquiry>? Enquiries {get;}
 
     public ListingInfoViewModel GetInformation()
@@ -114,6 +116,16 @@ public class Listing(
             photosBytes = Photos!.OrderBy(p => p.DateTimeCreated).Select(p => p.Bytes).ToList();
         }
 
+        List<DocumentViewModel> documents = [];
+        if (ListingDocuments!.Count != 0)
+        {
+            foreach (ListingDocument ListingDocument in ListingDocuments)
+            {
+                DocumentViewModel document = new(ListingDocument.Document!.DocumentType, ListingDocument.Document.Location);
+                documents.Add(document);
+            }
+        }
+
         ListingDetailsViewModel details = new()
         {
             Heading = Heading,
@@ -127,7 +139,8 @@ public class Listing(
             Agents = agents,
             Agency = agency,
             Auctioneer = auctioneer,
-            PhotosBytes = photosBytes
+            PhotosBytes = photosBytes,
+            Documents = documents
         };
 
         return details;
