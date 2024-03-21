@@ -27,7 +27,7 @@ function Auctions() {
         const address = listingInfo.address;
 
         const routeFrag =
-            address.split(', ').at(-1)?.replace(' ', '+') +
+            address.split(', ').at(-1)?.replaceAll(' ', '+') +
             '-' +
             listingInfo.listingNumber;
 
