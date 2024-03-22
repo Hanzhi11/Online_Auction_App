@@ -1,16 +1,9 @@
-import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 function Pdf() {
     const { id } = useParams();
-    const [url, setUrl] = useState(`/${id}`);
 
-    useEffect(() => {
-        if (id) {
-            document.title = id;
-        }
-        setUrl(`/${id}`);
-    }, [id]);
+    const url = `${import.meta.env.VITE_BASE_URL}/Pdf/Get/${id}`
 
     return <iframe src={url} className='h-screen w-screen'></iframe>;
 }
