@@ -55,7 +55,7 @@ public class ListingController(AppDbContext context) : ControllerBase
         .Include(l => l.Auctioneer)
         .Include(l => l.Photos)
         .Include(l => l.ListingDocuments)!
-        .ThenInclude(lr => lr.Document)
+        .ThenInclude(lr => lr.Resource)
         .FirstOrDefault();
 
         if (listing == null)

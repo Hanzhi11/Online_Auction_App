@@ -21,7 +21,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Enquiry> Enquiry { get; set; }
     public DbSet<Resource> Resource { get; set; }
     public DbSet<Document> Document { get; set; }
-    public DbSet<ListingResource> ListingResource { get; set; }
     public DbSet<ListingDocument> ListingDocument { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

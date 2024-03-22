@@ -121,7 +121,7 @@ public class Listing(
         {
             foreach (ListingDocument ListingDocument in ListingDocuments)
             {
-                DocumentViewModel document = new(ListingDocument.Document!.DocumentType, ListingDocument.Document.Location);
+                DocumentViewModel document = new(ListingDocument.Resource!.DocumentType, ListingDocument.Resource.Location);
                 documents.Add(document);
             }
         }

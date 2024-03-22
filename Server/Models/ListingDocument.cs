@@ -1,8 +1,15 @@
+using System.ComponentModel.DataAnnotations.Schema;
+using Server.Interfaces;
+
 namespace Server.Models;
 
-public class ListingDocument(Guid listingId, Guid documentId) : ListingResource(listingId)
+public class ListingDocument(Guid listingId, Guid resourceId) : IListingResource<Document>
 {
-    public Guid DocumentId { get; set; } = documentId;
-    public Document? Document { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public Guid Id { get; set; }
 
+    public Guid ListingId { get; set; } = listingId;
+    public Listing? Listing { get; set; }
+    public Guid ResourceId { get; set; } = resourceId;
+    public Document? Resource { get; set; }
 }

@@ -1,12 +1,13 @@
-using System.ComponentModel.DataAnnotations.Schema;
+using Server.Models;
 
-namespace Server.Models;
+namespace Server.Interfaces;
 
-public class ListingResource(Guid listingId)
+public interface IListingResource<T>
 {
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid Id { get; set; }
+    Guid Id { get; set; }
 
-    public Guid ListingId { get; set; } = listingId;
-    public Listing? Listing { get; set; }
+    Guid ListingId { get; set; }
+    Listing? Listing { get; set; }
+    Guid ResourceId { get; set; }
+    T? Resource { get; set; }
 }
