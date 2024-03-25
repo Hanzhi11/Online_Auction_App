@@ -267,7 +267,7 @@ function Listing() {
                             <li key={index} className='md:text-sm flex'>
                                 <span>-</span>
                                 <Link
-                                    to={'/' + item.location}
+                                    to={'/document/' + item.location}
                                     className='border-b border-transparent hover:border-green-500 ml-1'
                                     target='_blank'
                                 >

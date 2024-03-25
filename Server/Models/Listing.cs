@@ -48,9 +48,9 @@ public class Listing(
 
     public ICollection<Photo>? Photos { get; }
 
-    public ICollection<ListingDocument>? ListingDocuments {get;}
+    public ICollection<ListingDocument>? ListingDocuments { get; }
 
-    public ICollection<Enquiry>? Enquiries {get;}
+    public ICollection<Enquiry>? Enquiries { get; }
 
     public ListingInfoViewModel GetInformation()
     {
@@ -121,7 +121,17 @@ public class Listing(
         {
             foreach (ListingDocument ListingDocument in ListingDocuments)
             {
-                DocumentViewModel document = new(ListingDocument.Resource!.DocumentType, ListingDocument.Resource.Location);
+                string[] locationStrings = ListingDocument.Resource!.Location.Split('/');
+                string location = "";
+                if (locationStrings.Length == 4)
+                {
+                    location = locationStrings[2] + "/" + locationStrings[3];
+                }
+                else
+                {
+                    location = locationStrings[3] + "/" + locationStrings[4];
+                }
+                DocumentViewModel document = new(ListingDocument.Resource!.DocumentType, location);
                 documents.Add(document);
             }
         }

@@ -7,10 +7,11 @@ using Server.Services;
 
 namespace Server.Controllers;
 
-public class PdfController(AppDbContext context, IConfiguration iConfig) : ControllerBase
+public class PdfController(AppDbContext context, IConfiguration iConfig, IWebHostEnvironment env) : ControllerBase
 {
     private readonly AppDbContext _context = context;
     private readonly IConfiguration _config = iConfig;
+    private readonly IWebHostEnvironment _env = env;
 
     public IActionResult Index()
     {
@@ -24,17 +25,43 @@ public class PdfController(AppDbContext context, IConfiguration iConfig) : Contr
             return NotFound("Pdf file not found.");
         }
 
-        Document? document = _context.Document.Where(r => r.Location == $"pdf/{id}").FirstOrDefault();
+        string? parentObject = HttpContext.Request.Query["About"];
 
-        if (document == null)
+        if (parentObject == null)
         {
             return NotFound("Pdf file not found.");
         }
 
-        RegionEndpoint bucketRegion = RegionEndpoint.APSoutheast2;
-        using AmazonS3Client client = new(bucketRegion);
-        Stream stream = new AmazonS3Service(_config).DownloadObjectFromBucketAsync($"pdf/{id}").Result;
+        string objectKey = $"listing/document/{parentObject}/{id}";
+        if (!int.TryParse(parentObject, out _))
+        {
+            objectKey = $"listing/document/shared/{parentObject}/{id}";
+        }
+        if (_env.IsProduction())
+        {
+            Document? document = _context.Document.Where(r => r.Location == objectKey).FirstOrDefault();
 
-        return File(stream, "application/pdf");
+            if (document == null)
+            {
+                return NotFound("Pdf file not found.");
+            }
+            RegionEndpoint bucketRegion = RegionEndpoint.APSoutheast2;
+            using AmazonS3Client client = new(bucketRegion);
+
+            Stream stream = new AmazonS3Service(_config).DownloadObjectFromBucketAsync(objectKey).Result;
+
+            return File(stream, "application/pdf");
+        }
+        else
+        {
+            string filePath = Path.Combine(_env.ContentRootPath, "public", objectKey);
+
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound("Pdf file not found.");
+            }
+
+            return PhysicalFile(filePath, "application/pdf");
+        }
     }
 }

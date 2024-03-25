@@ -41,7 +41,7 @@ function App() {
     const location = useLocation();
     let isPdfPage = false;
     const locationPathFrags = location.pathname.split('/');
-    if (locationPathFrags.length > 0 && locationPathFrags[1] === 'pdf') {
+    if (locationPathFrags.length > 0 && locationPathFrags[1] === 'document') {
         isPdfPage = true;
     }
     useEffect(() => {
@@ -68,7 +68,7 @@ function App() {
                         <Routes>
                             <Route path='/' element={<Home />} />
                             <Route path='/listing/:id' element={<Listing />} />
-                            <Route path='/pdf/:id' element={<Pdf />} />
+                            <Route path='/document/:about/:id' element={<Pdf />} />
                             <Route path='/*' element={<Home />} />
                         </Routes>
                         {!isPdfPage && <Footer />}

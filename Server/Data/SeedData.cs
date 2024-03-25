@@ -163,7 +163,9 @@ public static class SeedData
                 PropertyType.House,
                 agency1.Id,
                 auctioneer1.Id
-                );
+                ){
+                    ListingNumber = 1
+                };
             context.Listing.Add(listing);
 
             ListingAgent listingAgent1 = new(listing.Id, agent1.Id);
@@ -190,8 +192,8 @@ public static class SeedData
                 }
             }
 
-            Document document1 = new("auction conditions", "pdf/REIQ_Auction_Conditions.pdf", DocumentType.REIQ_Auction_Conditions);
-            Document document2 = new("inspection reports", "pdf/Building_And_Pest_Inspection_Report.pdf", DocumentType.Building_And_Pest_Inspection_Report);
+            Document document1 = new("auction conditions", "listing/document/shared/QLD/REIQ_Auction_Conditions.pdf", DocumentType.REIQ_Auction_Conditions);
+            Document document2 = new("inspection reports", "listing/document/1/Building_And_Pest_Inspection_Report.pdf", DocumentType.Building_And_Pest_Inspection_Report);
             context.Document.AddRange(
                 document1,
                 document2
