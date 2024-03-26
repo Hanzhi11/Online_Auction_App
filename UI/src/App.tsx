@@ -40,10 +40,13 @@ function App() {
 
     const location = useLocation();
     let isPdfPage = false;
-    const locationPathFrags = location.pathname.split('/');
-    if (locationPathFrags.length > 0 && locationPathFrags[1] === 'document') {
-        isPdfPage = true;
+
+    // eslint-disable-next-line no-useless-escape
+    const regex = /^\/document\/[^\/]+\/[^\/]+\/*?$/
+    if(location.pathname.match(regex)) {
+        isPdfPage = true
     }
+
     useEffect(() => {
         window.onresize = () => {
             setWindowSize({

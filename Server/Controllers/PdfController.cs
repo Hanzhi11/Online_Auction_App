@@ -22,14 +22,14 @@ public class PdfController(AppDbContext context, IConfiguration iConfig, IWebHos
     {
         if (id == null)
         {
-            return NotFound("Pdf file not found.");
+            return NotFound("Document not found.");
         }
 
         string? parentObject = HttpContext.Request.Query["About"];
 
         if (parentObject == null)
         {
-            return NotFound("Pdf file not found.");
+            return NotFound("Document not found.");
         }
 
         string objectKey = $"listing/document/{parentObject}/{id}";
@@ -43,7 +43,7 @@ public class PdfController(AppDbContext context, IConfiguration iConfig, IWebHos
 
             if (document == null)
             {
-                return NotFound("Pdf file not found.");
+                return NotFound("Document not found.");
             }
             RegionEndpoint bucketRegion = RegionEndpoint.APSoutheast2;
             using AmazonS3Client client = new(bucketRegion);
@@ -58,7 +58,7 @@ public class PdfController(AppDbContext context, IConfiguration iConfig, IWebHos
 
             if (!System.IO.File.Exists(filePath))
             {
-                return NotFound("Pdf file not found.");
+                return NotFound("Document not found.");
             }
 
             return PhysicalFile(filePath, "application/pdf");
