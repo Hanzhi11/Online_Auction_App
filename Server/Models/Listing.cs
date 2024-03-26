@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Server.ViewModels;
 using Server.Data;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace Server.Models;
 
@@ -26,8 +27,12 @@ public class Listing(
 
     public string Heading { get; set; } = heading;
     public string CopyWriting { get; set; } = copyWriting;
+
+    [CustomValidation(typeof(Listing), nameof(ValidateNumber))]
     public int BedNumber { get; set; } = bedNumber;
+    [CustomValidation(typeof(Listing), nameof(ValidateNumber))]
     public int BathNumber { get; set; } = bathNumber;
+    [CustomValidation(typeof(Listing), nameof(ValidateNumber))]
     public int GarageNumber { get; set; } = garageNumber;
     public DateTime DateTimeCreated { get; set; } = DateTime.UtcNow;
 
@@ -51,6 +56,16 @@ public class Listing(
     public ICollection<ListingDocument>? ListingDocuments { get; }
 
     public ICollection<Enquiry>? Enquiries { get; }
+
+    public static ValidationResult ValidateNumber(int value, ValidationContext validationContext)
+    {
+        if (validationContext.ObjectInstance is Listing instance && instance.PropertyType == PropertyType.Land && value > 0)
+        {
+            return new ValidationResult("Land must have 0 bed room, 0 bath room and 0 garage.");
+        }
+
+        return ValidationResult.Success!;
+    }
 
     public ListingInfoViewModel GetInformation()
     {
