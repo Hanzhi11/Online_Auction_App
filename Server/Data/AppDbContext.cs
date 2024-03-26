@@ -36,7 +36,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             new("4122", "QLD")
         );
 
-        modelBuilder.HasSequence<int>("ListingNumbers");
+        modelBuilder.HasSequence<int>("ListingNumbers").StartsAt(100);
 
         modelBuilder.Entity<Listing>()
         .Property(l => l.ListingNumber)
