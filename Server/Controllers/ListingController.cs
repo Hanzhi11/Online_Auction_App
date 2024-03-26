@@ -20,7 +20,7 @@ public class ListingController(AppDbContext context) : ControllerBase
 
     public IActionResult Information()
     {
-        string? state = HttpContext.Request.Query["State"]!;
+        string? state = HttpContext.Request.Query["State"];
         string? address = HttpContext.Request.Query["Address"];
         string? auctionDateTime = HttpContext.Request.Query["Date"];
 
@@ -32,7 +32,8 @@ public class ListingController(AppDbContext context) : ControllerBase
         )
         .Include(l => l.Agency)
         .Include(l => l.Photos)
-        .OrderBy(l => l.AuctionDateTime)];
+        .OrderBy(l => l.AuctionDateTime)
+        ];
 
         List<ListingInfoViewModel> listingsInfo = [];
         foreach (Listing listing in listings)
