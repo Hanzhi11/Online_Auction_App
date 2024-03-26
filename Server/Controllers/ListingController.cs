@@ -1,9 +1,10 @@
-namespace Server.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
 using Server.Models;
 using Server.ViewModels;
+
+namespace Server.Controllers;
 
 public class ListingController(AppDbContext context) : ControllerBase
 {
@@ -19,10 +20,16 @@ public class ListingController(AppDbContext context) : ControllerBase
 
     public IActionResult Information()
     {
+        string? state = HttpContext.Request.Query["State"]!;
+        string? address = HttpContext.Request.Query["Address"];
+        string? auctionDateTime = HttpContext.Request.Query["Date"];
 
         List<Listing> listings = [.. _context.Listing
         .Include(l => l.Address)
         .ThenInclude(a => a!.State)
+        .Where(l => (state == null || l.Address!.State!.Name == state ) &&
+        (auctionDateTime == null || l.AuctionDateTime.ToLocalTime().Date == DateTime.Parse(auctionDateTime).Date)
+        )
         .Include(l => l.Agency)
         .Include(l => l.Photos)
         .OrderBy(l => l.AuctionDateTime)];
@@ -31,7 +38,10 @@ public class ListingController(AppDbContext context) : ControllerBase
         foreach (Listing listing in listings)
         {
             ListingInfoViewModel info = listing.GetInformation();
-            listingsInfo.Add(info);
+            if (address == null || info.Address.Contains(address, StringComparison.CurrentCultureIgnoreCase))
+            {
+                listingsInfo.Add(info);
+            }
         }
 
         return Ok(listingsInfo);

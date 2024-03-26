@@ -82,7 +82,7 @@ public class Listing(
             dataUrl = $"data:image/jpeg;base64,{base64String}";
         }
         ListingInfoViewModel information = new(
-            Address!.FormatToFullAddressWithoutState(),
+            Address!.FormatToFullAddress(),
             AuctionDateTime,
             agencyName,
             ListingNumber,

@@ -22,3 +22,11 @@ export function scrollCountryDropdown(
         });
     }
 }
+
+export interface ListingInfo {
+    address: string;
+    auctionDateTime: Date;
+    agencyName: string;
+    photoDataURL: string;
+    listingNumber: number;
+}

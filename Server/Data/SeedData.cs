@@ -41,7 +41,7 @@ public static class SeedData
             string postCode1 = postCodes[0];
             string postCode2 = postCodes[1];
             string postCode3 = postCodes[2];
-            string postCode4 = postCodes[3];
+            string postCode4 = postCodes[4];
 
             Address agencyAddress1 = new("1", "Agency Avenue", "Zhongjie Gongsi", postCode3);
             Address agencyAddress2 = new("2", "Agency Avenue", "Zhongjie Gongsi", postCode3);
@@ -53,7 +53,7 @@ public static class SeedData
             Address houseAddress4 = new("5", "Hehua Street", "Wanhuayuan Hehuayuan", postCode4);
 
             Address landAddress1 = new("6", "Huaihua Street", "Wanhuayuan Huaihuayuan", postCode2);
-            
+
             Address townhouseAddress1 = new("14", "Hehua Street", "Wanhuayuan Hehuayuan", postCode4)
             {
                 UnitNumber = "1"
@@ -154,7 +154,7 @@ public static class SeedData
                 auctioneer2
             );
 
-            DateTime auctionDateTime1 = DateTime.SpecifyKind(new DateTime(2024, 3, 23, 14, 30, 0), DateTimeKind.Local).ToUniversalTime();
+            DateTime auctionDateTime1 = new DateTime(2024, 3, 23, 04, 30, 0, DateTimeKind.Utc);
             string heading1 = "Exquisite Luxury Awaits: Discover Your Dream Two-Storey Home Today!";
             string copyWriting1 = "<p>Nestled in the heart of Wanhuayuan Hehuayuan, this magnificent two-storey luxury residence epitomizes grandeur and sophistication. Boasting meticulous craftsmanship and timeless design, every corner of this opulent abode exudes luxury.<p>";
 
@@ -174,9 +174,9 @@ public static class SeedData
                 ListingNumber = 1
             };
 
-            DateTime auctionDateTime2 = DateTime.SpecifyKind(new DateTime(2024, 4, 27, 10, 30, 0), DateTimeKind.Local).ToUniversalTime();
+            DateTime auctionDateTime2 = new DateTime(2024, 4, 27, 00, 30, 0, DateTimeKind.Utc);
             string heading2 = "Stunning Townhouse for Sale: Modern Living in a Prime Location";
-            string copyWriting2 = ConvertTextToHtml("public/copyWriting2.txt"); 
+            string copyWriting2 = ConvertTextToHtml("public/copyWriting2.txt");
 
             Listing listing2 = new(
                 heading2,
@@ -194,9 +194,9 @@ public static class SeedData
                 ListingNumber = 2
             };
 
-            DateTime auctionDateTime3 = DateTime.SpecifyKind(new DateTime(2024, 4, 27, 15, 30, 0), DateTimeKind.Local).ToUniversalTime();
+            DateTime auctionDateTime3 = new DateTime(2024, 4, 28, 05, 30, 0, DateTimeKind.Utc);
             string heading3 = "Modern Luxury Awaits: Spectacular Apartment for Sale in the Heart of the City";
-            string copyWriting3 = ConvertTextToHtml("public/copyWriting3.txt"); 
+            string copyWriting3 = ConvertTextToHtml("public/copyWriting3.txt");
 
             Listing listing3 = new(
                 heading3,
@@ -214,7 +214,7 @@ public static class SeedData
                 ListingNumber = 3
             };
 
-            DateTime auctionDateTime4 = DateTime.SpecifyKind(new DateTime(2024, 4, 27, 9, 30, 0), DateTimeKind.Local).ToUniversalTime();
+            DateTime auctionDateTime4 = new DateTime(2024, 4, 25, 23, 30, 0, DateTimeKind.Utc);
             string heading4 = "Build Your Dream Home: Prime Block of Land for Sale in a Desirable Location";
             string copyWriting4 = "";
 
@@ -348,7 +348,7 @@ public static class SeedData
     public static string ConvertTextToHtml(string filePath)
     {
         StringBuilder htmlBuilder = new StringBuilder();
-        
+
         using (StreamReader reader = new StreamReader(filePath))
         {
             string? line;
@@ -357,7 +357,7 @@ public static class SeedData
                 htmlBuilder.Append("<p>").Append(line).Append("</p>");
             }
         }
-        
+
         return htmlBuilder.ToString();
     }
 

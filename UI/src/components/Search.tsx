@@ -2,10 +2,11 @@ import { IconContext } from 'react-icons';
 import { IoIosArrowForward } from 'react-icons/io';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { useState } from 'react';
+import { Dispatch, useState, SetStateAction } from 'react';
 import classNames from 'classnames';
 import Button from './Button';
 import SectionContainer from './SectionContainer';
+import { ListingInfo } from '../shared/Utils';
 
 type StartDate = Date | null;
 
@@ -36,7 +37,13 @@ const STATE_OPTIONS = [
     'Western Australia',
 ];
 
-function Search() {
+interface Props {
+    setListingsInfo: Dispatch<SetStateAction<ListingInfo[]>>;
+}
+
+function Search(props: Props) {
+    const { setListingsInfo } = props;
+
     const [address, setAddress] = useState<string>('');
     const [selectedState, setSelectedState] = useState<string>(
         STATE_OPTIONS[0],
@@ -62,14 +69,58 @@ function Search() {
         }
     };
 
-    const handleSubmit = (event: React.MouseEvent<HTMLElement>) => {
-        event.preventDefault();
-        const formData = {
-            address: address,
-            state: selectedState,
-            date: startDate,
-        };
-        console.log(formData);
+    const handleSubmit = () => {
+        let url = `${import.meta.env.VITE_BASE_URL}/Listing/Information`;
+        const params = [];
+        if (address) {
+            params.push(`Address=${address.replaceAll(' ', '_')}`);
+        }
+        if (startDate) {
+            console.log(startDate.toISOString())
+            params.push(`Date=${startDate.toISOString()}`);
+        }
+        if (selectedState !== STATE_OPTIONS[0]) {
+            let state = '';
+            switch (selectedState) {
+                case STATE_OPTIONS[1]:
+                    state = 'ACT';
+                    break;
+                case STATE_OPTIONS[2]:
+                    state = 'NSW';
+                    break;
+                case STATE_OPTIONS[3]:
+                    state = 'NT';
+                    break;
+                case STATE_OPTIONS[4]:
+                    state = 'QLD';
+                    break;
+                case STATE_OPTIONS[5]:
+                    state = 'SA';
+                    break;
+                case STATE_OPTIONS[6]:
+                    state = 'TAS';
+                    break;
+                case STATE_OPTIONS[7]:
+                    state = 'VIC';
+                    break;
+                case STATE_OPTIONS[8]:
+                    state = 'WA';
+                    break;
+            }
+            params.push(`State=${state}`);
+        }
+        if (params.length !== 0) {
+            url = url + '?' + params.join('&');
+        }
+
+        fetch(url)
+            .then((res) => res.json())
+            .then((data) => {
+                setListingsInfo(data);
+                setAddress('')
+                setSelectedState(STATE_OPTIONS[0])
+                setStartDate(null)
+            });
     };
 
     return (
@@ -84,7 +135,7 @@ function Search() {
                 <search className='flex flex-col md:h-10 md:flex-row'>
                     <input
                         type='text'
-                        placeholder='Suburb or Postcode'
+                        placeholder='Address'
                         autoComplete='address-input'
                         value={address}
                         onChange={handleOnChange}
