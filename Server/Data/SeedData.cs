@@ -40,19 +40,24 @@ public static class SeedData
             string postCode1 = postCodes[0];
             string postCode2 = postCodes[1];
             string postCode3 = postCodes[2];
+            string postCode4 = postCodes[3];
 
             Address agencyAddress1 = new("1", "Agency Avenue", "Zhongjie Gongsi", postCode3);
             Address agencyAddress2 = new("2", "Agency Avenue", "Zhongjie Gongsi", postCode3);
+
             Address houseAddress1 = new("28", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1);
             Address houseAddress2 = new("15", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1);
-            Address houseAddress3 = new("15", "Hehua Street", "Wanhuayuan Hehuayuan", postCode2);
-            Address houseAddress4 = new("5", "Hehua Street", "Wanhuayuan Hehuayuan", postCode2);
-            Address houseAddress5 = new("6", "Hehua Street", "Wanhuayuan Hehuayuan", postCode2);
-            Address townhouseAddress1 = new("14", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1)
+
+            Address houseAddress3 = new("15", "Hehua Street", "Wanhuayuan Hehuayuan", postCode4);
+            Address houseAddress4 = new("5", "Hehua Street", "Wanhuayuan Hehuayuan", postCode4);
+
+            Address landAddress1 = new("6", "Huaihua Street", "Wanhuayuan Huaihuayuan", postCode2);
+            
+            Address townhouseAddress1 = new("14", "Hehua Street", "Wanhuayuan Hehuayuan", postCode4)
             {
                 UnitNumber = "1"
             };
-            Address townhouseAddress2 = new("14", "Meihua Street", "Wanhuayuan Meihuayuan District", postCode1)
+            Address townhouseAddress2 = new("14", "Hehua Street", "Wanhuayuan Hehuayuan", postCode4)
             {
                 UnitNumber = "2"
             };
@@ -71,7 +76,7 @@ public static class SeedData
                 houseAddress2,
                 houseAddress3,
                 houseAddress4,
-                houseAddress5,
+                landAddress1,
                 townhouseAddress1,
                 townhouseAddress2,
                 unitAddress1,
@@ -148,29 +153,94 @@ public static class SeedData
                 auctioneer2
             );
 
-            DateTime auctionDateTime = DateTime.SpecifyKind(new DateTime(2024, 3, 23, 14, 30, 0), DateTimeKind.Local).ToUniversalTime();
-            string heading = "Exquisite Luxury Awaits: Discover Your Dream Two-Storey Home Today!";
-            string copyWriting = "Nestled in the heart of Wanhuayuan Hehuayuan, this magnificent two-storey luxury residence epitomizes grandeur and sophistication. Boasting meticulous craftsmanship and timeless design, every corner of this opulent abode exudes luxury.";
+            DateTime auctionDateTime1 = DateTime.SpecifyKind(new DateTime(2024, 3, 23, 14, 30, 0), DateTimeKind.Local).ToUniversalTime();
+            string heading1 = "Exquisite Luxury Awaits: Discover Your Dream Two-Storey Home Today!";
+            string copyWriting1 = "Nestled in the heart of Wanhuayuan Hehuayuan, this magnificent two-storey luxury residence epitomizes grandeur and sophistication. Boasting meticulous craftsmanship and timeless design, every corner of this opulent abode exudes luxury.";
 
-            Listing listing = new(
-                heading,
-                copyWriting,
+            Listing listing1 = new(
+                heading1,
+                copyWriting1,
                 4,
                 3,
                 2,
-                auctionDateTime,
+                auctionDateTime1,
                 houseAddress1.Id,
                 PropertyType.House,
                 agency1.Id,
                 auctioneer1.Id
-                ){
-                    ListingNumber = 1
-                };
-            context.Listing.Add(listing);
+                )
+            {
+                ListingNumber = 1
+            };
 
-            ListingAgent listingAgent1 = new(listing.Id, agent1.Id);
-            ListingAgent listingAgent2 = new(listing.Id, agent3.Id);
-            context.ListingAgent.AddRange(listingAgent1, listingAgent2);
+            DateTime auctionDateTime2 = DateTime.SpecifyKind(new DateTime(2024, 4, 27, 10, 30, 0), DateTimeKind.Local).ToUniversalTime();
+            string heading2 = "Stunning Townhouse for Sale: Modern Living in a Prime Location";
+            string copyWriting2 = File.ReadAllText("public/copyWriting2.txt");
+
+            Listing listing2 = new(
+                heading2,
+                copyWriting2,
+                3,
+                2,
+                2,
+                auctionDateTime2,
+                townhouseAddress1.Id,
+                PropertyType.Townhouse,
+                agency2.Id,
+                auctioneer2.Id
+                )
+            {
+                ListingNumber = 2
+            };
+
+            DateTime auctionDateTime3 = DateTime.SpecifyKind(new DateTime(2024, 4, 27, 15, 30, 0), DateTimeKind.Local).ToUniversalTime();
+            string heading3 = "Modern Luxury Awaits: Spectacular Apartment for Sale in the Heart of the City";
+            string copyWriting3 = File.ReadAllText("public/copyWriting3.txt");
+
+            Listing listing3 = new(
+                heading3,
+                copyWriting3,
+                3,
+                2,
+                1,
+                auctionDateTime3,
+                unitAddress1.Id,
+                PropertyType.Unit,
+                agency1.Id,
+                auctioneer1.Id
+                )
+            {
+                ListingNumber = 3
+            };
+
+            DateTime auctionDateTime4 = DateTime.SpecifyKind(new DateTime(2024, 4, 27, 9, 30, 0), DateTimeKind.Local).ToUniversalTime();
+            string heading4 = "Build Your Dream Home: Prime Block of Land for Sale in a Desirable Location";
+            string copyWriting4 = "";
+
+            Listing listing4 = new(
+                heading4,
+                copyWriting4,
+                0,
+                0,
+                0,
+                auctionDateTime4,
+                landAddress1.Id,
+                PropertyType.Land,
+                agency1.Id,
+                auctioneer1.Id
+                )
+            {
+                ListingNumber = 4
+            };
+
+            context.Listing.AddRange(listing1, listing2, listing3, listing4);
+
+            ListingAgent listingAgent1 = new(listing1.Id, agent1.Id);
+            ListingAgent listingAgent2 = new(listing1.Id, agent3.Id);
+            ListingAgent listingAgent3 = new(listing2.Id, agent2.Id);
+            ListingAgent listingAgent4 = new(listing3.Id, agent1.Id);
+            ListingAgent listingAgent5 = new(listing4.Id, agent2.Id);
+            context.ListingAgent.AddRange(listingAgent1, listingAgent2, listingAgent3, listingAgent4, listingAgent5);
 
             ImageDownloader imageDownloader = new ImageDownloader();
             byte[][] imageBytesArray = await imageDownloader.DownloadImagesAsync(HouseOutURLs.Concat(HouseInURLs));
@@ -182,13 +252,67 @@ public static class SeedData
                     string name = $"house{i + 1}";
                     Photo photo = new(name, imageBytesArray[i])
                     {
-                        Listing = listing
+                        Listing = listing1
                     };
                     context.Photo.Add(photo);
                 }
                 else
                 {
                     Console.WriteLine($"Failed to download house image {i + 1}.");
+                }
+            }
+            byte[][] imageBytesArray2 = await imageDownloader.DownloadImagesAsync(TownHouseOutURLs.Concat(TownHouseInURLs));
+
+            for (int i = 0; i < imageBytesArray2.Length; i++)
+            {
+                if (imageBytesArray2[i] != null)
+                {
+                    string name = $"townHouse{i + 1}";
+                    Photo photo = new(name, imageBytesArray2[i])
+                    {
+                        Listing = listing2
+                    };
+                    context.Photo.Add(photo);
+                }
+                else
+                {
+                    Console.WriteLine($"Failed to download town house image {i + 1}.");
+                }
+            }
+            byte[][] imageBytesArray3 = await imageDownloader.DownloadImagesAsync(UnitOutURLs.Concat(UnitInURLs));
+
+            for (int i = 0; i < imageBytesArray3.Length; i++)
+            {
+                if (imageBytesArray3[i] != null)
+                {
+                    string name = $"unit{i + 1}";
+                    Photo photo = new(name, imageBytesArray3[i])
+                    {
+                        Listing = listing3
+                    };
+                    context.Photo.Add(photo);
+                }
+                else
+                {
+                    Console.WriteLine($"Failed to download unit image {i + 1}.");
+                }
+            }
+            byte[][] imageBytesArray4 = await imageDownloader.DownloadImagesAsync(LandURLs);
+
+            for (int i = 0; i < imageBytesArray4.Length; i++)
+            {
+                if (imageBytesArray4[i] != null)
+                {
+                    string name = $"land{i + 1}";
+                    Photo photo = new(name, imageBytesArray4[i])
+                    {
+                        Listing = listing4
+                    };
+                    context.Photo.Add(photo);
+                }
+                else
+                {
+                    Console.WriteLine($"Failed to download land image {i + 1}.");
                 }
             }
 
@@ -198,8 +322,8 @@ public static class SeedData
                 document1,
                 document2
             );
-            ListingDocument listingDocument1 = new(listing.Id, document1.Id);
-            ListingDocument listingDocument2 = new(listing.Id, document2.Id);
+            ListingDocument listingDocument1 = new(listing1.Id, document1.Id);
+            ListingDocument listingDocument2 = new(listing1.Id, document2.Id);
             context.ListingDocument.AddRange(listingDocument1, listingDocument2);
 
             context.SaveChanges();
@@ -216,6 +340,7 @@ public static class SeedData
             {
                 Console.WriteLine("Error Message is " + ex.Message);
             }
+
         }
     }
 
@@ -229,5 +354,25 @@ public static class SeedData
         "https://images.unsplash.com/photo-1554995207-c18c203602cb?w=1750&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8aG91c2V8ZW58MHx8MHx8fDA%3D",
         "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=1750&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjN8fGhvdXNlfGVufDB8fDB8fHww",
         "https://images.unsplash.com/photo-1629079448081-c6ab9cbea877?w=1750&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHRvd25ob3VzZXxlbnwwfHwwfHx8MA%3D%3D"
+    ];
+    private static readonly IEnumerable<string> TownHouseOutURLs =
+    [
+        "https://images.unsplash.com/photo-1625283518755-6047df2fb180?q=80&w=1175&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    ];
+    private static readonly IEnumerable<string> TownHouseInURLs =
+    [
+        "https://plus.unsplash.com/premium_photo-1674815329488-c4fc6bf4ced8?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    ];
+    private static readonly IEnumerable<string> UnitOutURLs =
+    [
+        "https://images.unsplash.com/photo-1515263487990-61b07816b324?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    ];
+    private static readonly IEnumerable<string> UnitInURLs =
+    [
+        "https://images.unsplash.com/photo-1586105251261-72a756497a11?q=80&w=1258&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    ];
+    private static readonly IEnumerable<string> LandURLs =
+    [
+        "https://plus.unsplash.com/premium_photo-1663133686323-5a078d8d3fa7?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     ];
 }

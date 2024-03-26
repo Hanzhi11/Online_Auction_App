@@ -33,7 +33,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             new("4113", "QLD"),
             new("4109", "QLD"),
             new("4116", "QLD"),
-            new("4122", "QLD")
+            new("2000", "NSW")
         );
 
         modelBuilder.HasSequence<int>("ListingNumbers").StartsAt(100);
