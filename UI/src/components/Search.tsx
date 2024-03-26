@@ -39,10 +39,11 @@ const STATE_OPTIONS = [
 
 interface Props {
     setListingsInfo: Dispatch<SetStateAction<ListingInfo[]>>;
+    setBatchNumber: Dispatch<SetStateAction<number>>;
 }
 
 function Search(props: Props) {
-    const { setListingsInfo } = props;
+    const { setListingsInfo, setBatchNumber } = props;
 
     const [address, setAddress] = useState<string>('');
     const [selectedState, setSelectedState] = useState<string>(
@@ -113,6 +114,7 @@ function Search(props: Props) {
             url = url + '?' + params.join('&');
         }
 
+        console.log(url)
         fetch(url)
             .then((res) => res.json())
             .then((data) => {
@@ -120,6 +122,7 @@ function Search(props: Props) {
                 setAddress('')
                 setSelectedState(STATE_OPTIONS[0])
                 setStartDate(null)
+                setBatchNumber(1)
             });
     };
 

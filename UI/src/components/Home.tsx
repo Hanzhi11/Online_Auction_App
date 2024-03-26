@@ -5,6 +5,7 @@ import { ListingInfo } from '../shared/Utils';
 
 function Home() {
     const [listingsInfo, setListingsInfo] = useState<ListingInfo[]>([]);
+    const [batchNumber, setBatchNumber] = useState(1)
 
     useEffect(() => {
         fetch(`${import.meta.env.VITE_BASE_URL}/Listing/Information`)
@@ -14,8 +15,8 @@ function Home() {
 
     return (
         <>
-            <Search setListingsInfo={setListingsInfo}/>
-            <Auctions listingsInfo={listingsInfo}/>
+            <Search setListingsInfo={setListingsInfo} setBatchNumber={setBatchNumber}/>
+            <Auctions listingsInfo={listingsInfo} batchNumber={batchNumber} setBatchNumber={setBatchNumber}/>
         </>
     );
 }
