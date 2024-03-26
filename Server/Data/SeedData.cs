@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -155,7 +156,7 @@ public static class SeedData
 
             DateTime auctionDateTime1 = DateTime.SpecifyKind(new DateTime(2024, 3, 23, 14, 30, 0), DateTimeKind.Local).ToUniversalTime();
             string heading1 = "Exquisite Luxury Awaits: Discover Your Dream Two-Storey Home Today!";
-            string copyWriting1 = "Nestled in the heart of Wanhuayuan Hehuayuan, this magnificent two-storey luxury residence epitomizes grandeur and sophistication. Boasting meticulous craftsmanship and timeless design, every corner of this opulent abode exudes luxury.";
+            string copyWriting1 = "<p>Nestled in the heart of Wanhuayuan Hehuayuan, this magnificent two-storey luxury residence epitomizes grandeur and sophistication. Boasting meticulous craftsmanship and timeless design, every corner of this opulent abode exudes luxury.<p>";
 
             Listing listing1 = new(
                 heading1,
@@ -175,7 +176,7 @@ public static class SeedData
 
             DateTime auctionDateTime2 = DateTime.SpecifyKind(new DateTime(2024, 4, 27, 10, 30, 0), DateTimeKind.Local).ToUniversalTime();
             string heading2 = "Stunning Townhouse for Sale: Modern Living in a Prime Location";
-            string copyWriting2 = File.ReadAllText("public/copyWriting2.txt");
+            string copyWriting2 = ConvertTextToHtml("public/copyWriting2.txt"); 
 
             Listing listing2 = new(
                 heading2,
@@ -195,7 +196,7 @@ public static class SeedData
 
             DateTime auctionDateTime3 = DateTime.SpecifyKind(new DateTime(2024, 4, 27, 15, 30, 0), DateTimeKind.Local).ToUniversalTime();
             string heading3 = "Modern Luxury Awaits: Spectacular Apartment for Sale in the Heart of the City";
-            string copyWriting3 = File.ReadAllText("public/copyWriting3.txt");
+            string copyWriting3 = ConvertTextToHtml("public/copyWriting3.txt"); 
 
             Listing listing3 = new(
                 heading3,
@@ -342,6 +343,22 @@ public static class SeedData
             }
 
         }
+    }
+
+    public static string ConvertTextToHtml(string filePath)
+    {
+        StringBuilder htmlBuilder = new StringBuilder();
+        
+        using (StreamReader reader = new StreamReader(filePath))
+        {
+            string? line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                htmlBuilder.Append("<p>").Append(line).Append("</p>");
+            }
+        }
+        
+        return htmlBuilder.ToString();
     }
 
     private static readonly IEnumerable<string> HouseOutURLs =

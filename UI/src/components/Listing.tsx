@@ -81,7 +81,7 @@ const ReadLess = (
     </>
 );
 
-const DefaultCopyWritingStyle = 'max-h-24 overflow-hidden';
+const DefaultCopyWritingStyle = 'max-h-24 overflow-hidden mt-5';
 
 function Listing() {
     const windowSize = useContext(WindowSizeContext);
@@ -117,7 +117,7 @@ function Listing() {
             return;
         }
         if (target.innerText == 'Read More') {
-            setCopyWritingStyle('');
+            setCopyWritingStyle('mt-5 flex flex-col gap-y-3');
             setReadButtonContent(ReadLess);
         } else {
             setCopyWritingStyle(DefaultCopyWritingStyle);
@@ -249,9 +249,7 @@ function Listing() {
                     <MdOutlinePictureAsPdf />
                 </IconContext.Provider>
             ),
-            content: [
-                ...documents
-            ],
+            content: [...documents],
         },
     ];
 
@@ -260,6 +258,7 @@ function Listing() {
             ? [...info.content]
             : info.content;
         if (Array.isArray(content)) {
+            if (content.length === 0) return;
             content = (
                 <ul>
                     {content.map((item, index) => {
@@ -271,7 +270,7 @@ function Listing() {
                                     className='border-b border-transparent hover:border-green-500 ml-1'
                                     target='_blank'
                                 >
-                                    {item.documentType.replaceAll("_", " ")}
+                                    {item.documentType.replaceAll('_', ' ')}
                                 </Link>
                             </li>
                         );
@@ -348,10 +347,12 @@ function Listing() {
                 },
             )}
         >
-            <h3 className='mb-5 font-medium md:text-2xl'>{heading}</h3>
-            <p id='copyWriting' className={copyWritingStyle}>
-                {copyWriting}
-            </p>
+            <h3 className='font-medium md:text-2xl'>{heading}</h3>
+            {copyWriting && (
+                <div id='copyWriting' className={copyWritingStyle} dangerouslySetInnerHTML={{ __html: copyWriting }}>
+                    {/* {copyWriting} */}
+                </div>
+            )}
             {showReadButton && (
                 <Button
                     onClick={handleReadButtonContent}
