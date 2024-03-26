@@ -24,7 +24,8 @@ public class ListingController(AppDbContext context) : ControllerBase
         .Include(l => l.Address)
         .ThenInclude(a => a!.State)
         .Include(l => l.Agency)
-        .Include(l => l.Photos)];
+        .Include(l => l.Photos)
+        .OrderBy(l => l.AuctionDateTime)];
 
         List<ListingInfoViewModel> listingsInfo = [];
         foreach (Listing listing in listings)
