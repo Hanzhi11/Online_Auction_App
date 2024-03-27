@@ -38,7 +38,7 @@ const STATE_OPTIONS = [
 ];
 
 interface Props {
-    setListingsInfo: Dispatch<SetStateAction<ListingInfo[]>>;
+    setListingsInfo: Dispatch<SetStateAction<ListingInfo[] | null>>;
     setBatchNumber: Dispatch<SetStateAction<number>>;
 }
 
@@ -114,7 +114,6 @@ function Search(props: Props) {
             url = url + '?' + params.join('&');
         }
 
-        console.log(url)
         fetch(url)
             .then((res) => res.json())
             .then((data) => {

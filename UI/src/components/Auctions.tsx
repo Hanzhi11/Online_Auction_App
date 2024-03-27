@@ -8,7 +8,7 @@ import { ListingInfo } from '../shared/Utils';
 import { Dispatch, SetStateAction } from 'react';
 
 interface Props {
-    listingsInfo: ListingInfo[];
+    listingsInfo: ListingInfo[] | null;
     batchNumber: number;
     setBatchNumber: Dispatch<SetStateAction<number>>;
 }
@@ -18,8 +18,8 @@ const recordsPerBatch = 6;
 function Auctions(props: Props) {
     const { listingsInfo, batchNumber, setBatchNumber } = props;
 
-    let content;
-    if (listingsInfo.length > 0) {
+    let content: JSX.Element[] | null = listingsInfo ? [] : null;
+    if (listingsInfo && listingsInfo.length > 0) {
         content = listingsInfo
             .slice(0, batchNumber * recordsPerBatch)
             .map((listingInfo, index) => {
@@ -125,7 +125,7 @@ function Auctions(props: Props) {
         setBatchNumber(newBatchNumber);
     }
 
-    const isLastBatch = !(
+    const isLastBatch = !(listingsInfo && 
         listingsInfo.length - batchNumber * recordsPerBatch >
         0
     );
@@ -135,7 +135,7 @@ function Auctions(props: Props) {
             header='Upcoming Auctions'
             className='px-3 md:px-0 md:mb-9 mb-3'
         >
-            {content ? (
+            {content ? ( content.length > 0 ?
                 <>
                     <div
                         className={classNames(
@@ -162,11 +162,11 @@ function Auctions(props: Props) {
                             </IconContext.Provider>
                         </Button>
                     )}
-                </>
-            ) : (
-                <h4 className='my-10 text-center'>
+                </> : <h4 className='my-10 text-center'>
                     No auctions matching the search criteria were found.
                 </h4>
+            ) : (
+                <></>
             )}
         </SectionContainer>
     );

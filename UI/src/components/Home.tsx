@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { ListingInfo } from '../shared/Utils';
 
 function Home() {
-    const [listingsInfo, setListingsInfo] = useState<ListingInfo[]>([]);
+    const [listingsInfo, setListingsInfo] = useState<ListingInfo[] | null>(null);
     const [batchNumber, setBatchNumber] = useState(1)
 
     useEffect(() => {
